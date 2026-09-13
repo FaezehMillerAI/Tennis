@@ -162,6 +162,56 @@ const LTA_FRAMEWORK = {
         }
     },
 
+    // OFFICIAL LTA TACTIC INTENTIONS -> MEASURABLE COURT GEOMETRY & BALL PHYSICS
+    // Every tactic changes where the ball is struck from, where it lands, how
+    // high it clears the net and how fast it travels, so the drawn diagram and
+    // the live 3D simulation both visibly express the selected intention.
+    tacticProfiles: {
+        CONSISTENCY: {
+            targetInset: 0.07,      // Pull the target away from the lines (safety margin)
+            depthBias: -0.015,      // Slightly shorter, well inside the baseline
+            contactShift: -0.02,    // Strike from a fraction further back
+            apexScale: 1.45,        // Much higher net clearance
+            paceScale: 0.85,        // Softer, more repeatable pace
+            labelSuffix: ' (High Margin)'
+        },
+        CONTROL_SPACE: {
+            targetInset: -0.05,     // Push the target closer to the sideline (sharper angle)
+            depthBias: 0.03,        // Deeper, pushing the opponent back
+            contactShift: 0.0,
+            apexScale: 1.0,
+            paceScale: 1.0,
+            labelSuffix: ' (Open Court Angle)'
+        },
+        CONTROL_TIME: {
+            targetInset: 0.0,
+            depthBias: 0.02,
+            contactShift: 0.08,     // Step well inside to take the ball on the rise
+            apexScale: 0.72,        // Flatter, lower trajectory
+            paceScale: 1.28,        // Robs the opponent of reaction time
+            arc: 'solid',
+            labelSuffix: ' (Early / On the Rise)'
+        },
+        STRENGTHS: {
+            targetInset: -0.02,
+            depthBias: 0.03,
+            contactShift: 0.04,
+            apexScale: 0.85,
+            paceScale: 1.18,
+            runAround: 0.10,        // Runs around to impose the dominant wing (inside-out)
+            labelSuffix: ' (Weapon / Inside-Out)'
+        },
+        WEAKNESSES: {
+            targetInset: 0.0,
+            depthBias: 0.025,
+            contactShift: 0.0,
+            apexScale: 1.15,        // Heavier, higher ball into the weaker wing
+            paceScale: 0.95,
+            exposeBackhand: true,   // Repositions the opponent so the target is on their backhand
+            labelSuffix: " (Into Opponent's Backhand)"
+        }
+    },
+
     // OFFICIAL LTA TACTICAL MATRIX: BALL CHARACTERISTICS (5 Reception & Projection Variables)
     ballCharacteristics: {
         HEIGHT: {
@@ -379,6 +429,110 @@ const LTA_FRAMEWORK = {
      * Synthesize 3D Court Elements & Trajectories for ANY Tactical Matrix Selection
      * Instantly updates the 3D court when coaches change options on the right panel.
      */
+    /**
+     * Applies the selected TACTIC and BALL CHARACTERISTICS to a built layout so
+     * that the diagram geometry itself encodes every option the coach picked.
+     * Any ball / feed / movement path that referenced a moved element is
+     * re-anchored, keeping the diagram and the 3D simulation consistent.
+     */
+    applyMatrixModifiers: function(elements, drawings, tactic, ballChars, situation, phase, stageKey) {
+        const profile = this.tacticProfiles[tactic] || this.tacticProfiles.CONTROL_SPACE;
+        const chars = Array.isArray(ballChars) ? ballChars : [];
+        const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+        const samePoint = (a, b) => a && b && Math.abs(a.x - b.x) < 0.006 && Math.abs(a.y - b.y) < 0.006;
+
+        // Re-anchor every path endpoint that sat on an element we just moved
+        const reanchor = (oldPos, newPos) => {
+            if (samePoint(oldPos, newPos)) return;
+            drawings.forEach(d => {
+                if (samePoint(d.from, oldPos)) d.from = { x: newPos.x, y: newPos.y };
+                if (samePoint(d.to, oldPos)) d.to = { x: newPos.x, y: newPos.y };
+            });
+        };
+
+        const players = elements.filter(e => e.type === 'player');
+        const p1 = players.find(e => e.id === 'p1') || players.find(e => e.y > 0.5) || players[0];
+        const p2 = players.find(e => e !== p1);
+
+        // Primary target = the highest scoring target on the far side of the net
+        const targets = elements.filter(e => e.type === 'target');
+        const farTargets = targets.filter(t => t.y < 0.5);
+        const primary = (farTargets.length ? farTargets : targets)
+            .slice()
+            .sort((a, b) => (b.points || 0) - (a.points || 0))[0];
+
+        // -----------------------------------------------------------------
+        // 1. TACTIC + DEPTH/HEIGHT applied to the primary target
+        // -----------------------------------------------------------------
+        if (primary) {
+            const before = { x: primary.x, y: primary.y };
+            const isFar = primary.y < 0.5;
+            const deeper = isFar ? -1 : 1;           // "deeper" = further from the net
+            const isServeBox = (situation === 'SERVE' && stageKey === 'DEMO_CLOSED') ||
+                               (situation === 'SERVE' && isFar);
+            // A serve must stay inside the service box, so depth moves are halved
+            const depthScale = isServeBox ? 0.4 : 1.0;
+
+            let depthBias = profile.depthBias;
+            if (chars.includes('DEPTH')) depthBias += 0.035;   // Explicitly coaching depth
+            if (phase === 'ATTACK') depthBias += 0.01;
+            if (phase === 'DEFEND') depthBias += 0.02;         // Deep neutralising ball
+            primary.y = clamp(primary.y + deeper * depthBias * depthScale, 0.08, 0.92);
+
+            // Lateral margin / angle (skip a deliberate down-the-middle target)
+            const offCentre = primary.x - 0.5;
+            if (Math.abs(offCentre) > 0.05 && profile.targetInset) {
+                const towardsSideline = offCentre > 0 ? 1 : -1;
+                primary.x = clamp(primary.x - towardsSideline * profile.targetInset, 0.10, 0.90);
+            }
+            reanchor(before, primary);
+
+            // -------------------------------------------------------------
+            // 2. WEAKNESSES: reposition the opponent so the target really is
+            //    on their backhand wing (right-hander: their left = high x)
+            // -------------------------------------------------------------
+            if (profile.exposeBackhand && p2 && isFar) {
+                const p2Before = { x: p2.x, y: p2.y };
+                p2.x = clamp(primary.x + 0.19, 0.12, 0.88);
+                reanchor(p2Before, p2);
+                p2.label = p2.label && !/Backhand/.test(p2.label) ? p2.label + ' — Backhand Wing' : p2.label;
+            }
+        }
+
+        // -----------------------------------------------------------------
+        // 3. TACTIC applied to the striker's contact position
+        //    (Control Time steps in early, Strengths runs around the wing)
+        // -----------------------------------------------------------------
+        if (p1 && stageKey !== 'DEMO_CLOSED_SERVE') {
+            const before = { x: p1.x, y: p1.y };
+            if (profile.contactShift) {
+                // Near-court player: smaller y == further inside the court
+                p1.y = clamp(p1.y - profile.contactShift, 0.52, 0.97);
+            }
+            if (profile.runAround && situation !== 'AT_NET' && situation !== 'SERVE') {
+                p1.x = clamp(p1.x - profile.runAround, 0.10, 0.90);
+            }
+            reanchor(before, p1);
+        }
+
+        // -----------------------------------------------------------------
+        // 4. Trajectory shape + label so the drawn arc matches the intention
+        // -----------------------------------------------------------------
+        const strikePath = drawings.find(d => d.type === 'ball_path' && primary && samePoint(d.to, primary));
+        if (strikePath) {
+            if (chars.includes('HEIGHT') || phase === 'DEFEND' || profile.arc === 'loop') {
+                strikePath.style = 'loop';
+            } else if (profile.arc === 'solid' || chars.includes('SPEED')) {
+                strikePath.style = 'solid';
+            }
+            if (profile.labelSuffix && strikePath.label && strikePath.label.indexOf(profile.labelSuffix) === -1) {
+                strikePath.label = strikePath.label + profile.labelSuffix;
+            }
+        }
+
+        return { elements, drawings };
+    },
+
     buildTacticalLayout: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT', level = 'RED', shotDirection = 'CROSSCOURT') {
         const isClosed = (stageKey === 'DEMO_CLOSED');
         const hasHeight = ballChars.includes('HEIGHT');
@@ -479,7 +633,7 @@ const LTA_FRAMEWORK = {
                 );
             }
 
-            return { elements, drawings };
+            return this.applyMatrixModifiers(elements, drawings, tactic, ballChars, situation, phase, stageKey);
         }
 
         // Open / Assessment / Game Scenarios (Dynamic 2-Player Tactical Setup)
@@ -682,7 +836,7 @@ const LTA_FRAMEWORK = {
             elements.push({ type: 'coach', id: 'coach_obs', x: 0.12, y: 0.50, label: 'Coach' });
         }
 
-        return { elements, drawings };
+        return this.applyMatrixModifiers(elements, drawings, tactic, ballChars, situation, phase, stageKey);
     },
 
     /**

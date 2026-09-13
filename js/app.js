@@ -176,6 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
             simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${dirDef.titleEn}${ballSuffix}`;
         }
 
+        // Highlight the court format matching the session's LTA stage
+        formatTabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.format === court.courtFormat);
+        });
+
         // Highlight active surface button
         surfaceButtons.forEach(btn => {
             if (btn.dataset.surface === court.surface) {
@@ -212,7 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 ballCharacteristics: session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
                 stageKey: currentStageKey,
                 level: session.level || 'RED',
-                shotDirection: activeDir
+                shotDirection: activeDir,
+                surface: session.surface || court.surface
             });
         }
     }

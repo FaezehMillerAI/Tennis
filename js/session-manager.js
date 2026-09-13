@@ -36,6 +36,19 @@ class LTASessionManager {
         }
     }
 
+    /**
+     * Fingerprint of every Tactical Matrix choice that shapes a court layout.
+     * A stage whose stored diagram was built under a different fingerprint is
+     * stale and gets regenerated, so switching tier always shows (and
+     * simulates) the options currently selected.
+     */
+    matrixSignature(session) {
+        const s = session || this.activeSession;
+        if (!s) return '';
+        const chars = (s.ballCharacteristics || []).slice().sort().join('+');
+        return [s.situation, s.phaseOfPlay, s.tactic, s.shotDirection, chars, s.level].join('|');
+    }
+
     loadSession(sessionData) {
         this.activeSession = JSON.parse(JSON.stringify(sessionData));
 
@@ -45,8 +58,23 @@ class LTASessionManager {
         if (!this.activeSession.ballCharacteristics) this.activeSession.ballCharacteristics = ['DEPTH', 'DIRECTION'];
         if (!this.activeSession.shotDirection) this.activeSession.shotDirection = 'CROSSCOURT';
 
+        // A freshly loaded session's diagrams match its own matrix settings
+        const loadedSignature = this.matrixSignature();
+        Object.values(this.activeSession.stages || {}).forEach(stage => {
+            if (stage) stage.matrixSignature = loadedSignature;
+        });
+
         if (this.activeSession.surface && this.court) {
             this.court.setSurface(this.activeSession.surface);
+        }
+
+        // The LTA Youth Stage dictates the court format actually played on
+        // (Red = 36ft mini court, Orange = 60ft, Green/Yellow = full court).
+        if (this.court?.getLevelProfile) {
+            const stageFormat = this.court.getLevelProfile(this.activeSession.level).format;
+            if (stageFormat !== this.court.courtFormat) {
+                this.court.setCourtFormat(stageFormat);
+            }
         }
 
         this.setStage('GAME_ASSESSMENT', false);
@@ -63,8 +91,12 @@ class LTASessionManager {
 
         this.activeStageKey = stageKey;
 
+        const signature = this.matrixSignature();
         let stageData = this.activeSession.stages[stageKey];
-        if (!stageData || !stageData.elements || stageData.elements.length === 0) {
+        const isEmpty = !stageData || !stageData.elements || stageData.elements.length === 0;
+        const isStale = !!stageData && stageData.matrixSignature !== undefined && stageData.matrixSignature !== signature;
+
+        if (isEmpty || isStale) {
             if (window.LTA_FRAMEWORK?.buildTacticalLayout) {
                 const layout = LTA_FRAMEWORK.buildTacticalLayout(
                     this.activeSession.situation || 'BOTH_BACK',
@@ -85,6 +117,7 @@ class LTASessionManager {
                 }
                 stageData.elements = layout.elements;
                 stageData.drawings = layout.drawings;
+                stageData.matrixSignature = signature;
             }
         }
 
@@ -97,7 +130,8 @@ class LTASessionManager {
                 ballCharacteristics: this.activeSession.ballCharacteristics,
                 shotDirection: this.activeSession.shotDirection || 'CROSSCOURT',
                 stageKey: stageKey,
-                level: this.activeSession.level
+                level: this.activeSession.level,
+                surface: this.activeSession.surface || this.court.surface
             });
         }
 
@@ -129,6 +163,7 @@ class LTASessionManager {
             }
             session.stages[currentStageKey].elements = layout.elements;
             session.stages[currentStageKey].drawings = layout.drawings;
+            session.stages[currentStageKey].matrixSignature = this.matrixSignature();
 
             if (this.court) {
                 this.court.loadPhase(session.stages[currentStageKey]);
@@ -139,7 +174,8 @@ class LTASessionManager {
                     ballCharacteristics: session.ballCharacteristics,
                     shotDirection: session.shotDirection || 'CROSSCOURT',
                     stageKey: currentStageKey,
-                    level: session.level
+                    level: session.level,
+                    surface: session.surface || this.court.surface
                 });
             }
         }
