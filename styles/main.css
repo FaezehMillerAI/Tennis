@@ -1,0 +1,953 @@
+/* 
+ * LTA Coach Studio Stylesheet
+ * Premium Grand Slam Tennis Theme: Wimbledon Greens, Optic Yellow, Clay & Hard Court Blues
+ * Responsive Grid, Glassmorphism, Interactive Court Toolbar, Print-Ready A4
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap');
+
+:root {
+    --bg-main: #0a0f1d;
+    --bg-card: rgba(17, 24, 39, 0.85);
+    --bg-card-hover: rgba(30, 41, 59, 0.9);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(56, 189, 248, 0.3);
+
+    --tennis-yellow: #CCFF00;
+    --tennis-green: #10B981;
+    --wimbledon-green: #0B3B24;
+    --clay-orange: #C45731;
+    --us-blue: #195B9C;
+    --aus-blue: #0085C7;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --font-fa: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-en: 'Outfit', sans-serif;
+
+    --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 20px rgba(204, 255, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-fa);
+    direction: rtl;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(25, 91, 156, 0.08) 0%, transparent 40%);
+}
+
+/* Header */
+.app-header {
+    background: rgba(10, 15, 29, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo-badge {
+    background: linear-gradient(135deg, #0B3B24, #10B981);
+    color: #FFFFFF;
+    font-family: var(--font-en);
+    font-weight: 900;
+    font-size: 17px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    border: 1px solid rgba(204, 255, 0, 0.3);
+}
+
+.brand-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Surface Selector Toolbar */
+.surface-selector-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(17, 24, 39, 0.7);
+    padding: 4px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.surface-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 0 6px;
+    font-weight: 600;
+}
+
+.surface-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-fa);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.surface-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.surface-btn.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    border-color: var(--border-accent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.surface-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.surface-dot.grass { background: #1e5f38; box-shadow: 0 0 6px #10b981; }
+.surface-dot.clay { background: #C45731; box-shadow: 0 0 6px #f97316; }
+.surface-dot.hard_blue { background: #195B9C; box-shadow: 0 0 6px #38bdf8; }
+.surface-dot.hard_aus { background: #0085C7; box-shadow: 0 0 6px #0ea5e9; }
+.surface-dot.carpet { background: #334155; box-shadow: 0 0 6px #94a3b8; }
+
+/* Header Action Buttons */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: var(--font-fa);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #FFFFFF;
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-1px);
+}
+
+.btn-ai {
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    color: #FFFFFF;
+    border: 1px solid rgba(147, 197, 253, 0.3);
+    box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
+.btn-ai:hover {
+    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(51, 65, 85, 0.9);
+    border-color: var(--border-accent);
+}
+
+.btn-icon {
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--tennis-yellow);
+    border-color: var(--tennis-yellow);
+}
+
+/* Main Layout Grid */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 20px;
+    padding: 20px 24px;
+    max-width: 1720px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Court Column */
+.court-column {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.court-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.court-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.court-format-tabs {
+    display: flex;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.format-tab {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.format-tab.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+#tennis-court-canvas {
+    display: block;
+    cursor: crosshair;
+    user-select: none;
+    touch-action: none;
+}
+
+/* Court Drawing Toolbar */
+.court-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tool-btn:hover {
+    background: rgba(51, 65, 85, 0.8);
+    color: var(--text-primary);
+}
+
+.tool-btn.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+}
+
+.tool-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Elements Palette (Drag & Drop Items) */
+.elements-palette-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: var(--shadow-soft);
+}
+
+.palette-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.palette-item-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.palette-item-btn:hover {
+    background: rgba(51, 65, 85, 0.9);
+    border-color: var(--tennis-yellow);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.palette-item-btn svg, .palette-item-btn .item-icon {
+    width: 22px;
+    height: 22px;
+}
+
+/* LTA Hourglass Lesson Structure Column */
+.lta-column {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Visual Hourglass Widget */
+.hourglass-visual-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+.hourglass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.hourglass-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hourglass-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* The 4 Trapeze/Blocks matching user's image */
+.hourglass-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hourglass-tier {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #FFFFFF;
+    position: relative;
+}
+
+/* Shape tapering like the user's uploaded diagram */
+.hourglass-tier.tier-1 {
+    /* Inverted Trapezoid (Game Assessment) - Dark Navy */
+    background: linear-gradient(135deg, #0F2552, #1E3A8A);
+    clip-path: polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%);
+    text-align: center;
+    padding: 14px 28px;
+}
+
+.hourglass-tier.tier-2 {
+    /* Upper Middle (Demo Teaching Closed) - Lighter Blue */
+    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    clip-path: polygon(8% 0%, 92% 0%, 96% 100%, 4% 100%);
+    padding: 13px 24px;
+}
+
+.hourglass-tier.tier-3 {
+    /* Lower Middle (Progressing Open) - Vibrant Blue */
+    background: linear-gradient(135deg, #1D4ED8, #2563EB);
+    clip-path: polygon(4% 0%, 96% 0%, 100% 100%, 0% 100%);
+    padding: 13px 20px;
+}
+
+.hourglass-tier.tier-4 {
+    /* Bottom Base (Game) - Wide Navy */
+    background: linear-gradient(135deg, #0F2552, #1E3A8A);
+    border-radius: 0 0 10px 10px;
+    padding: 14px 18px;
+}
+
+.hourglass-tier:hover {
+    filter: brightness(1.15);
+    transform: scale(1.01);
+}
+
+.hourglass-tier.active {
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.7);
+    border-color: #38bdf8;
+    filter: brightness(1.25);
+}
+
+.tier-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tier-number {
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.tier-title-en {
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.tier-title-fa {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+/* Stage Details Editor Card */
+.stage-editor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.editor-stage-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.editor-stage-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: var(--font-fa);
+    font-size: 13px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/* Coaching Cues List Tag Input */
+.cues-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cue-tag {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Session Metadata Drawer / Bar */
+.session-meta-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    background: #111827;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+}
+
+/* Preset Cards */
+.preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preset-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preset-card:hover {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: var(--border-accent);
+    transform: translateX(-4px);
+}
+
+.preset-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: #FFFFFF;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    background: rgba(17, 24, 39, 0.95);
+    border: 1px solid var(--border-accent);
+    color: #FFFFFF;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* PRINT STYLESHEET (A4 Coaching Sheet) */
+#print-container {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #print-container, #print-container * {
+        visibility: visible;
+    }
+    #print-container {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #FFFFFF;
+        color: #111827;
+        font-family: var(--font-fa);
+        direction: rtl;
+        padding: 10mm;
+    }
+
+    .print-page {
+        page-break-after: always;
+    }
+
+    .print-header {
+        border-bottom: 2px solid #0F2552;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+    }
+
+    .print-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #4b5563;
+        margin-bottom: 4px;
+    }
+
+    .lta-logo-badge {
+        background: #0B3B24;
+        color: #FFFFFF;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 800;
+    }
+
+    .print-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #0F2552;
+        margin: 6px 0;
+    }
+
+    .print-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        font-size: 12px;
+        background: #f3f4f6;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+    }
+
+    .print-body {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 16px;
+    }
+
+    .print-section-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0F2552;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 4px;
+        margin-bottom: 8px;
+    }
+
+    .print-court-img {
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+    }
+
+    .print-equipment {
+        font-size: 11px;
+        margin-top: 8px;
+        padding: 6px 8px;
+        background: #f9fafb;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .print-stage-box {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        padding: 8px 10px;
+        background: #FFFFFF;
+    }
+
+    .print-stage-box.stage-1 { border-right: 4px solid #1E3A8A; }
+    .print-stage-box.stage-2 { border-right: 4px solid #3B82F6; }
+    .print-stage-box.stage-3 { border-right: 4px solid #2563EB; }
+    .print-stage-box.stage-4 { border-right: 4px solid #1E3A8A; }
+
+    .print-stage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .stage-num {
+        background: #0F2552;
+        color: #FFFFFF;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        margin-left: 6px;
+    }
+
+    .stage-time {
+        font-size: 11px;
+        color: #6b7280;
+    }
+
+    .print-stage-content {
+        font-size: 11px;
+        color: #374151;
+        line-height: 1.5;
+    }
+
+    .print-footer {
+        margin-top: 20px;
+        padding-top: 8px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #9ca3af;
+    }
+}

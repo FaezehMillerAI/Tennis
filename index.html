@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTA Coach Studio | استودیوی طراحی سناریوی مربیان تنیس</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230B3B24'/><circle cx='50' cy='50' r='40' fill='%23CCFF00'/><path d='M25 50 Q50 25 75 50' stroke='%23ffffff' stroke-width='4' fill='none'/><path d='M25 50 Q50 75 75 50' stroke='%23ffffff' stroke-width='4' fill='none'/></svg>">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <span class="brand-logo-badge">LTA</span>
+            <div>
+                <div class="brand-title">
+                    استودیوی مربیگری تنیس LTA
+                    <span style="font-size: 11px; background: rgba(204,255,0,0.15); color: #ccff00; padding: 2px 6px; border-radius: 4px; font-family: 'Outfit', sans-serif;">PRO COACH</span>
+                </div>
+                <div class="brand-subtitle">طراحی سناریوهای استاندارد آموزشی بر اساس ساختار ۴ مرحله‌ای LTA</div>
+            </div>
+        </div>
+
+        <!-- Court Surface Selector Bar -->
+        <div class="surface-selector-bar">
+            <span class="surface-label">سطح کورت:</span>
+            <button class="surface-btn" data-surface="grass" title="چمن طبیعی ویمبلدون">
+                <span class="surface-dot grass"></span> چمن ویمبلدون
+            </button>
+            <button class="surface-btn" data-surface="clay" title="خاک رس رولان گاروس">
+                <span class="surface-dot clay"></span> خاک رس
+            </button>
+            <button class="surface-btn active" data-surface="hard_blue" title="هاردکورت آبی US Open">
+                <span class="surface-dot hard_blue"></span> هاردکورت US
+            </button>
+            <button class="surface-btn" data-surface="hard_aus" title="هاردکورت آبی روشن استرالیا">
+                <span class="surface-dot hard_aus"></span> استرالیا
+            </button>
+            <button class="surface-btn" data-surface="carpet" title="کفپوش سالن سرپوشیده">
+                <span class="surface-dot carpet"></span> سالن سرپوشیده
+            </button>
+        </div>
+
+        <!-- Actions -->
+        <div class="header-actions">
+            <button class="btn btn-ai" id="btn-open-generator" title="تولید خودکار سناریوی کامل LTA با هوش مصنوعی">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                طراحی هوشمند LTA
+            </button>
+            <button class="btn btn-secondary" id="btn-open-presets">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                بانک تمرینات آماده
+            </button>
+            <button class="btn btn-secondary" id="btn-open-saved">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                جلسات من
+            </button>
+            <button class="btn btn-secondary" id="btn-new-session" title="جلسه جدید">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                طرح جدید
+            </button>
+            <button class="btn btn-primary" id="btn-save-session" title="ذخیره جلسه در آرشیو">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                ذخیره
+            </button>
+            <button class="btn btn-secondary" id="btn-print-pdf" title="چاپ یا خروجی PDF طرح درس A4">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                چاپ طرح درس (PDF)
+            </button>
+            <button class="btn-icon" id="btn-sound-toggle" title="قطع / وصل صداهای تنیس">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="main-layout">
+        
+        <!-- Left: Interactive Court & Drawing Toolbar -->
+        <section class="court-column">
+            <div class="court-card">
+                <div class="court-card-header">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:14px; font-weight:800; color:#f8fafc;">تخته تاکتیکی تعاملی کورت</span>
+                        <div class="court-format-tabs">
+                            <button class="format-tab active" data-format="full">زمین کامل (Full Court)</button>
+                            <button class="format-tab" data-format="red_stage">کورت مینی Red (۳۶ فوت)</button>
+                            <button class="format-tab" data-format="orange_stage">کورت Orange (۶۰ فوت)</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="btn-export-png" style="font-size:11px; padding:4px 10px;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        خروجی عکس کورت
+                    </button>
+                </div>
+
+                <!-- Canvas Container -->
+                <div class="canvas-wrapper">
+                    <canvas id="tennis-court-canvas"></canvas>
+                </div>
+
+                <!-- Tactical Drawing Toolbar -->
+                <div class="court-toolbar">
+                    <div class="tool-group">
+                        <button class="tool-btn active" data-tool="select" title="انتخاب، جابجایی و کشیدن المان‌ها">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
+                            انتخاب و جابجایی
+                        </button>
+                        <button class="tool-btn" data-tool="draw_ball" title="رسم مسیر پرواز توپ تنیس">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="2.5"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="12 5 19 5 19 12"/></svg>
+                            مسیر توپ
+                        </button>
+                        <select id="ball-path-style" class="form-select" style="width: auto; padding: 4px 8px; font-size: 11px;">
+                            <option value="solid">ضربه فلت / مستقیم</option>
+                            <option value="loop">تاپ‌اسپین قوسی (Loop)</option>
+                        </select>
+                        <button class="tool-btn" data-tool="draw_move" title="رسم مسیر دویدن و ریکاوری بازیکن">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            حرکت بازیکن
+                        </button>
+                        <button class="tool-btn" data-tool="draw_feed" title="رسم خط فید مربی با توپ زرد">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2"><circle cx="6" cy="12" r="3"/><path d="M10 12h10M16 8l4 4-4 4"/></svg>
+                            فید مربی
+                        </button>
+                        <button class="tool-btn" data-tool="draw_target_zone" title="رسم محدوده و زون هدف">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 2"/></svg>
+                            زون هدف
+                        </button>
+                        <button class="tool-btn" data-tool="eraser" title="پاک‌کن: برای حذف هر المان یا خط، روی آن کلیک کنید">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+                            پاک‌کن
+                        </button>
+                    </div>
+
+                    <div class="tool-group">
+                        <button class="tool-btn" id="btn-undo" title="مرحله قبل (Undo)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                        </button>
+                        <button class="tool-btn" id="btn-redo" title="مرحله بعد (Redo)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+                        </button>
+                        <button class="tool-btn danger" id="btn-clear-court" title="پاکسازی کامل زمین">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            پاکسازی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elements Palette (Click to add to court) -->
+            <div class="elements-palette-card">
+                <div class="palette-title">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                    پالت تجهیزات و نفرات (برای افزودن به زمین کلیک کنید):
+                </div>
+                <div class="palette-grid">
+                    <button class="palette-item-btn" data-type="player" data-color="#2563EB" data-label="P1">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:#2563EB; border:2px solid #fff;"></span>
+                        بازیکن ۱ (آبی)
+                    </button>
+                    <button class="palette-item-btn" data-type="player" data-color="#DC2626" data-label="P2">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:#DC2626; border:2px solid #fff;"></span>
+                        بازیکن ۲ (قرمز)
+                    </button>
+                    <button class="palette-item-btn" data-type="player" data-color="#9333EA" data-label="P3">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:#9333EA; border:2px solid #fff;"></span>
+                        بازیکن ۳ (بنفش)
+                    </button>
+                    <button class="palette-item-btn" data-type="coach" data-label="مربی">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; background:#0F766E; border:2px solid #facc15;"></span>
+                        مربی LTA
+                    </button>
+                    <button class="palette-item-btn" data-type="ball">
+                        <span style="display:inline-block; width:14px; height:14px; border-radius:50%; background:#CCFF00; box-shadow:0 0 6px #CCFF00;"></span>
+                        توپ تنیس
+                    </button>
+                    <button class="palette-item-btn" data-type="hopper">
+                        <span style="display:inline-block; width:16px; height:18px; background:#475569; border-radius:3px; border:1px solid #94a3b8;"></span>
+                        سبد توپ
+                    </button>
+                    <button class="palette-item-btn" data-type="cone" data-color="#f97316">
+                        <span style="display:inline-block; width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:16px solid #f97316;"></span>
+                        مانع نارنجی
+                    </button>
+                    <button class="palette-item-btn" data-type="cone" data-color="#eab308">
+                        <span style="display:inline-block; width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:16px solid #eab308;"></span>
+                        مانع زرد
+                    </button>
+                    <button class="palette-item-btn" data-type="target" data-points="5" data-color="#10b981">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; border:2px dashed #10b981; background:rgba(16,185,129,0.3); text-align:center; font-size:9px; line-height:16px; color:#fff;">+5</span>
+                        تارگت ۵ امتیازی
+                    </button>
+                    <button class="palette-item-btn" data-type="target" data-points="10" data-color="#38bdf8">
+                        <span style="display:inline-block; width:18px; height:18px; border-radius:50%; border:2px dashed #38bdf8; background:rgba(56,189,248,0.3); text-align:center; font-size:9px; line-height:16px; color:#fff;">+10</span>
+                        تارگت ۱۰ امتیازی
+                    </button>
+                    <button class="palette-item-btn" data-type="ladder">
+                        <span style="display:inline-block; width:16px; height:20px; border:2px solid #facc15; background:repeating-linear-gradient(0deg, #facc15, #facc15 2px, transparent 2px, transparent 6px);"></span>
+                        نردبان چابکی
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: LTA Hourglass 4-Tier Lesson Structure Column -->
+        <section class="lta-column">
+            
+            <!-- Visual Hourglass Structure Widget matching User's Uploaded Image -->
+            <div class="hourglass-visual-card">
+                <div class="hourglass-header">
+                    <div class="hourglass-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><polygon points="22 2 2 2 10 12 10 19 14 21 14 12 22 2"/></svg>
+                        مدل ساعت‌شنی ۴ مرحله‌ای LTA (Lesson Framework)
+                    </div>
+                    <span class="hourglass-badge">استاندارد بریتانیا</span>
+                </div>
+
+                <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">
+                    روی هر مرحله کلیک کنید تا چیدمان زمین و اهداف آموزشی مربوط به آن مرحله بارگذاری و ویرایش شوند:
+                </p>
+
+                <!-- Hourglass Tiers (Trapezoids corresponding to user's uploaded diagram) -->
+                <div class="hourglass-tiers">
+                    
+                    <!-- Tier 1: Game Assessment (Inverted Trapezoid) -->
+                    <div class="hourglass-tier tier-1 active" data-stage="GAME_ASSESSMENT" title="مرحله اول: ارزیابی اولیه در بازی">
+                        <div class="tier-info">
+                            <span class="tier-number">۱</span>
+                            <div>
+                                <div class="tier-title-en">GAME ASSESSMENT</div>
+                                <div class="tier-title-fa">ارزیابی اولیه در بازی (تشخیص نیاز فنی/تاکتیکی)</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+
+                    <!-- Tier 2: Demo / Teaching Closed (Middle Upper) -->
+                    <div class="hourglass-tier tier-2" data-stage="DEMO_CLOSED" title="مرحله دوم: آموزش و تمرین بسته">
+                        <div class="tier-info">
+                            <span class="tier-number">۲</span>
+                            <div>
+                                <div class="tier-title-en">DEMO TEACHING CLOSED</div>
+                                <div class="tier-title-fa">نمایش و تمرین بسته (فید ثابت و تثبیت بیومکانیک)</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+
+                    <!-- Tier 3: Progressing Open (Middle Lower) -->
+                    <div class="hourglass-tier tier-3" data-stage="PROGRESSING_OPEN" title="مرحله سوم: پیشرفت و تمرین باز">
+                        <div class="tier-info">
+                            <span class="tier-number">۳</span>
+                            <div>
+                                <div class="tier-title-en">PROGRESSING OPEN</div>
+                                <div class="tier-title-fa">پیشرفت و تمرین باز (رالی پویا، متغیرها و تصمیم‌گیری)</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+
+                    <!-- Tier 4: Game (Base) -->
+                    <div class="hourglass-tier tier-4" data-stage="GAME" title="مرحله چهارم: بازی پایانی و سنجش نهایی">
+                        <div class="tier-info">
+                            <span class="tier-number">۴</span>
+                            <div>
+                                <div class="tier-title-en">GAME</div>
+                                <div class="tier-title-fa">بازی مسابقه‌ای (سنجش کاربرد مهارت با امتیاز ویژه)</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Stage Details Editor -->
+            <div class="stage-editor-card">
+                <div class="editor-header">
+                    <div>
+                        <div class="editor-stage-title" id="stage-title-fa">ارزیابی اولیه در بازی (Game Assessment)</div>
+                        <div style="font-family:'Outfit', sans-serif; font-size:12px; color:#38bdf8; font-weight:700;" id="stage-title-en">GAME ASSESSMENT</div>
+                        <div class="editor-stage-desc" id="stage-description">شروع با سناریوی واقعی مسابقه برای تشخیص نقطه ضعف یا نیاز تکنیکی بازیکن.</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; background:rgba(15,23,42,0.8); padding:4px 8px; border-radius:6px; border:1px solid var(--border-color);">
+                        <span style="font-size:11px; color:#94a3b8;">زمان:</span>
+                        <input type="number" id="stage-time" value="10" min="5" max="90" style="width:45px; background:transparent; border:none; color:#f8fafc; font-weight:700; font-size:13px; text-align:center;">
+                        <span style="font-size:11px; color:#94a3b8;">دقیقه</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="stage-goal">هدف این مرحله (Stage Goal):</label>
+                    <textarea class="form-textarea" id="stage-goal" rows="2" placeholder="هدف مشخص این مرحله را بنویسید..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="stage-drill">دستورالعمل و شرح تمرین (Drill Description):</label>
+                    <textarea class="form-textarea" id="stage-drill" rows="3" placeholder="توضیحات تمرین، جایگیری و نحوه تغذیه توپ..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" id="stage-specific-label" for="stage-specific-input">مشاهدات مربی (Coach Observations):</label>
+                    <textarea class="form-textarea" id="stage-specific-input" rows="3" placeholder="نکات کلیدی یا سوالات مربی..."></textarea>
+                </div>
+            </div>
+
+            <!-- Session Metadata Card -->
+            <div class="session-meta-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="font-size:14px; color:#f8fafc;" id="session-title-display">رالی کراس‌کورت و بازگشت به مرکز</strong>
+                    <span id="session-meta-level" class="preset-badge" style="background:#ef4444;">LTA Red (۶ تا ۸ سال)</span>
+                </div>
+                <div class="meta-grid">
+                    <div>
+                        <span style="font-size:11px; color:#94a3b8;">وضعیت بازی:</span>
+                        <div style="font-size:12px; font-weight:700; color:#f8fafc;" id="session-meta-situation">رالی از انتهای زمین (Both at Baseline)</div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px;">
+                        <button class="btn btn-secondary" id="btn-export-json" style="font-size:11px; padding:4px 8px;">
+                            دانلود فایل JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Modal 1: Smart AI Generator -->
+    <div class="modal-overlay" id="generator-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                    مولد هوشمند سناریو بر اساس متدولوژی ۴ مرحله‌ای LTA
+                </div>
+                <button class="close-btn">&times;</button>
+            </div>
+
+            <p style="font-size:13px; color:#94a3b8;">
+                با انتخاب مشخصات شاگردان و هدف جلسه، سیستم یک سناریوی کامل ۴ مرحله‌ای (از Game Assessment تا Game پایانی) همراه با چیدمان کامل تخته تاکتیکی تولید می‌کند:
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group">
+                    <label class="form-label" for="gen-level">رده سنی و سطح LTA:</label>
+                    <select class="form-select" id="gen-level">
+                        <option value="BLUE">LTA Blue (۴ تا ۶ سال - فومی و حرکتی)</option>
+                        <option value="RED" selected>LTA Red (۶ تا ۸ سال - زمین ۳۶ فوت)</option>
+                        <option value="ORANGE">LTA Orange (۸ تا ۹ سال - زمین ۶۰ فوت)</option>
+                        <option value="GREEN">LTA Green (۹ تا ۱۰ سال - زمین کامل ۲۵٪)</option>
+                        <option value="YELLOW_BEG">بزرگسالان / زرد مبتدی (Beginner)</option>
+                        <option value="YELLOW_INT">بزرگسالان / زرد متوسط (Intermediate)</option>
+                        <option value="YELLOW_ADV">بزرگسالان / زرد پیشرفته (Performance)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gen-situation">وضعیت بازی LTA (Game Situation):</label>
+                    <select class="form-select" id="gen-situation">
+                        <option value="SERVE">۱. سرویس زدن (Serving)</option>
+                        <option value="RETURN">۲. بازگرداندن سرویس (Returning)</option>
+                        <option value="BOTH_BACK" selected>۳. رالی از انتهای زمین (Both at Baseline)</option>
+                        <option value="APPROACH_NET">۴. حمله و بازی پای تور (Approaching & at Net)</option>
+                        <option value="DEFEND_NET">۵. دفاع و پاسینگ مقابل بازیکن تور (Defending)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gen-capacity">ظرفیت عملکردی اصلی (4 Capacities):</label>
+                    <select class="form-select" id="gen-capacity">
+                        <option value="TACTICAL" selected>تاکتیکی (Tactical - انتخاب ضربه، فضا و زمان)</option>
+                        <option value="TECHNICAL">تکنیکی (Technical - بیومکانیک، نقطه برخورد و گریپ)</option>
+                        <option value="PHYSICAL">بدنی (Physical - چابکی، تعادل و بازی پا)</option>
+                        <option value="MENTAL">روانی و ذهنی (Psychological - تمرکز و تصمیم‌گیری)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gen-surface">سطح زمین تمرین:</label>
+                    <select class="form-select" id="gen-surface">
+                        <option value="hard_blue" selected>هاردکورت آبی US Open</option>
+                        <option value="clay">خاک رس رولان گاروس</option>
+                        <option value="grass">چمن ویمبلدون</option>
+                        <option value="hard_aus">هاردکورت استرالیا</option>
+                        <option value="carpet">سالن سرپوشیده</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="gen-topic">موضوع یا چالش خاص (اختیاری):</label>
+                <input type="text" class="form-input" id="gen-topic" placeholder="مثال: فورهند اینساید-اوت تحت فشار، ضربه والی اول بعد از اپروچ، سرویس دوم چرخشی...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="gen-duration">مدت جلسه (دقیقه):</label>
+                <input type="number" class="form-input" id="gen-duration" value="60" min="30" max="120">
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+                <button class="btn btn-secondary btn-close-modal">انصراف</button>
+                <button class="btn btn-ai" id="btn-generate-ai">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                    تولید آنی طرح درس LTA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Presets Library -->
+    <div class="modal-overlay" id="presets-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">بانک طرح درس‌های استاندارد LTA</div>
+                <button class="close-btn">&times;</button>
+            </div>
+            <p style="font-size:13px; color:#94a3b8;">
+                تمرینات آماده و کارشناسی‌شده LTA برای رده‌های سنی Blue، Red، Orange، Green و بزرگسالان. با کلیک بر روی هر سناریو، کل طرح درس و چیدمان زمین روی صفحه بارگذاری می‌شود:
+            </p>
+            <div class="preset-list" id="presets-list-container">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Saved Sessions & JSON Import -->
+    <div class="modal-overlay" id="saved-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">جلسات ذخیره‌شده مربی</div>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(30,41,59,0.5); padding:10px 14px; border-radius:8px;">
+                <span style="font-size:12px; color:#94a3b8;">ایمپورت طرح درس از فایل JSON:</span>
+                <input type="file" id="import-json-file" accept=".json" style="font-size:11px; color:#94a3b8;">
+            </div>
+            <div class="preset-list" id="saved-list-container">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Dedicated Print Container for A4 PDF Output -->
+    <div id="print-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/audio-fx.js"></script>
+    <script src="js/lta-framework.js"></script>
+    <script src="js/presets-library.js"></script>
+    <script src="js/smart-generator.js"></script>
+    <script src="js/court-engine.js"></script>
+    <script src="js/session-manager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
