@@ -569,14 +569,18 @@ const LTA_FRAMEWORK = {
                 passLabel = phase === 'DEFEND' ? 'Topspin Center Lob' : 'Body Jam Drive';
             }
 
+            // Net Rusher starts at midcourt approach point and rushes the net!
             elements.push(
                 { type: 'player', id: 'p1', x: 0.65, y: 0.88, label: 'Passer (P1)', color: '#2563EB' },
-                { type: 'player', id: 'p2', x: 0.48, y: 0.42, label: 'Net Rusher (P2)', color: '#DC2626' },
+                { type: 'player', id: 'p2', x: 0.48, y: 0.24, label: 'Net Rusher (P2)', color: '#DC2626' },
+                { type: 'cone', id: 'c_rec1', x: 0.52, y: 0.88, color: '#f59e0b' },
                 { type: 'target', id: 't_pass', x: passTarget.x, y: passTarget.y, points: 10, color: '#10b981' }
             );
             drawings.push(
-                { type: 'ball_path', from: { x: 0.65, y: 0.88 }, to: { x: passTarget.x, y: passTarget.y }, style: phase === 'DEFEND' ? 'loop' : 'solid', color: '#CCFF00', label: passLabel },
-                { type: 'move_path', from: { x: 0.65, y: 0.88 }, to: { x: 0.52, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
+                { type: 'feed_path', from: { x: 0.48, y: 0.24 }, to: { x: 0.65, y: 0.86 }, style: 'dotted', color: '#facc15', label: 'Approach Drive' },
+                { type: 'move_path', from: { x: 0.48, y: 0.24 }, to: { x: 0.48, y: 0.40 }, style: 'dashed', color: '#DC2626', label: 'Rush the Net' },
+                { type: 'ball_path', from: { x: 0.65, y: 0.86 }, to: { x: passTarget.x, y: passTarget.y }, style: phase === 'DEFEND' ? 'loop' : 'solid', color: '#CCFF00', label: passLabel },
+                { type: 'move_path', from: { x: 0.65, y: 0.88 }, to: { x: 0.52, y: 0.88 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
             );
         } else {
             // BOTH_BACK (Most common tactical scenario)
@@ -587,7 +591,7 @@ const LTA_FRAMEWORK = {
             let recConePos = { x: 0.54, y: 0.86 };
 
             if (phase === 'ATTACK') {
-                p1Pos = { x: 0.62, y: 0.76 };
+                p1Pos = { x: 0.62, y: 0.74 };
                 if (dir === 'DOWN_THE_LINE') {
                     targetPos = { x: 0.76, y: 0.16 };
                     shotLabel = 'Down-the-Line Attack';
@@ -610,8 +614,10 @@ const LTA_FRAMEWORK = {
                     { type: 'target', id: 't_att', x: targetPos.x, y: targetPos.y, points: 10, color: '#10b981' }
                 );
                 drawings.push(
+                    { type: 'feed_path', from: { x: p2Pos.x, y: p2Pos.y }, to: { x: p1Pos.x, y: p1Pos.y }, style: 'dotted', color: '#facc15', label: 'Short Feed' },
                     { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'solid', color: '#CCFF00', label: shotLabel },
-                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: 0.52, y: 0.65 }, style: 'dashed', color: '#38bdf8', label: 'Approach to Net' }
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: 0.52, y: 0.60 }, style: 'dashed', color: '#38bdf8', label: 'Approach to Net' },
+                    { type: 'move_path', from: { x: p2Pos.x, y: p2Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'dashed', color: '#DC2626', label: 'Scramble Defense' }
                 );
             } else if (phase === 'DEFEND') {
                 p1Pos = { x: 0.82, y: 0.94 };
@@ -634,6 +640,7 @@ const LTA_FRAMEWORK = {
                     { type: 'target', id: 't_def', x: targetPos.x, y: targetPos.y, points: 5, color: '#38bdf8' }
                 );
                 drawings.push(
+                    { type: 'feed_path', from: { x: 0.50, y: 0.18 }, to: { x: p1Pos.x, y: p1Pos.y }, style: 'solid', color: '#facc15', label: 'Heavy Deep Feed' },
                     { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'loop', color: '#CCFF00', label: shotLabel },
                     { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: recConePos.x, y: recConePos.y }, style: 'dashed', color: '#38bdf8', label: 'Sprint Recovery to Centre' }
                 );
@@ -662,6 +669,7 @@ const LTA_FRAMEWORK = {
                     { type: 'target', id: 't_deep', x: targetPos.x, y: targetPos.y, points: 5, color: '#10b981' }
                 );
                 drawings.push(
+                    { type: 'feed_path', from: { x: p2Pos.x, y: p2Pos.y }, to: { x: p1Pos.x, y: p1Pos.y }, style: 'dotted', color: '#facc15', label: 'Rally Feed' },
                     { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: arcStyle, color: '#CCFF00', label: shotLabel },
                     { type: 'ball_path', from: { x: targetPos.x, y: targetPos.y }, to: { x: p1Pos.x - 0.1, y: p1Pos.y }, style: arcStyle, color: '#38bdf8', label: 'Rally Reply' },
                     { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: recConePos.x, y: recConePos.y }, style: 'dashed', color: '#38bdf8', label: 'Recovery Reset' }

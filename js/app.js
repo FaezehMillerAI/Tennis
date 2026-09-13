@@ -171,7 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const simScenarioTitle = document.getElementById('sim-scenario-title');
         if (simScenarioTitle) {
-            simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${dirDef.titleEn}`;
+            const ballVars = (session.ballCharacteristics || []).map(b => b.charAt(0) + b.slice(1).toLowerCase()).join('+');
+            const ballSuffix = ballVars ? ` [${ballVars}]` : '';
+            simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${dirDef.titleEn}${ballSuffix}`;
         }
 
         // Highlight active surface button
