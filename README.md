@@ -71,3 +71,4 @@ No build tools or node packages required. Simply open `index.html` in any modern
 python3 serve.py
 ```
 And navigate to `http://localhost:8080`.
+
