@@ -1,10 +1,10 @@
 /**
- * Smart LTA Session Generator
+ * Smart LTA Session Generator (100% English)
  * Algorithmic generator producing complete 4-tier LTA coaching plans based on:
  * - Stage/Level (Blue, Red, Orange, Green, Yellow)
  * - Game Situation (Serve, Return, Both Back, Approach/Net, Defend/Net)
  * - Capacity Focus (Tactical, Technical, Physical, Psychological)
- * - Topic / Custom Goal
+ * - Custom Topic / Goal
  */
 
 class SmartLTAGenerator {
@@ -16,7 +16,7 @@ class SmartLTAGenerator {
             surface = 'hard_blue',
             customTopic = '',
             duration = 60,
-            playersCount = '2 بازیکن'
+            playersCount = '2 Players'
         } = options;
 
         const levelInfo = LTA_FRAMEWORK.levels[level] || LTA_FRAMEWORK.levels.RED;
@@ -49,7 +49,7 @@ class SmartLTAGenerator {
             duration: parseInt(duration, 10),
             playersCount: playersCount,
             equipment: this.generateEquipment(level),
-            overview: `طرح درس تخصصی مهندسی‌شده بر اساس متدولوژی ۴ مرحله‌ای LTA بریتانیا با تمرکز بر ${capacityInfo.titleFa} در وضعیت ${situationInfo.titleFa} ویژه ${levelInfo.nameFa}.`,
+            overview: `Accredited LTA session plan designed with the 4-tier Hourglass framework. Focus: ${capacityInfo.titleEn} capacity during ${situationInfo.titleEn} for ${levelInfo.nameEn}.`,
             stages: {
                 GAME_ASSESSMENT: assessment,
                 DEMO_CLOSED: closed,
@@ -62,114 +62,114 @@ class SmartLTAGenerator {
     generateTitle(level, situation, capacity) {
         const titles = {
             SERVE: {
-                TACTICAL: 'هدف‌گیری زوایای باکس سرویس و استراتژی شروع امتیاز',
-                TECHNICAL: 'اصلاح پرتاب توپ (Toss) و پرونیشن مچ در سرویس',
-                PHYSICAL: 'انفجار پاها و ریتم پرش به داخل زمین در سرویس',
-                MENTAL: 'مدیریت استرس سرویس دوم در موقعیت‌های بریک‌پوینت'
+                TACTICAL: 'Service Box Corner Targeting & First Strike Strategy',
+                TECHNICAL: 'Toss Precision, Trophy Position & Wrist Pronation',
+                PHYSICAL: 'Leg Drive Explosion & Dynamic Landing Balance',
+                MENTAL: 'Second Serve Composure on Break Points'
             },
             RETURN: {
-                TACTICAL: 'خنثی‌سازی سرویس اول با ارسال عمیق به مرکز زمین',
-                TECHNICAL: 'بک‌سوئینگ کوتاه و بلاک ضربه روی سرویس‌های سرعتی',
-                PHYSICAL: 'اسپلیت-استپ پیش‌بینانه و واکنش انفجاری پاها',
-                MENTAL: 'شجاعت هجومی برای گام نهادن داخل زمین در سرویس دوم'
+                TACTICAL: 'Neutralizing First Serves with Deep Central Placement',
+                TECHNICAL: 'Compact Backswing & Firm Block on Fast Serves',
+                PHYSICAL: 'Anticipatory Split-Step & Explosive First Step',
+                MENTAL: 'Aggressive Mindset to Step Inside on Weak Second Serves'
             },
             BOTH_BACK: {
-                TACTICAL: 'جابجا کردن حریف با تغییر زاویه کراس‌کورت و خط',
-                TECHNICAL: 'تولید تاپ‌اسپین سنگین با حرکت Low-to-High راکت',
-                PHYSICAL: 'استقامت هوازی در رالی‌های طولانی بالای ۱۰ ضربه',
-                MENTAL: 'صبر هوشمندانه در رالی و پرهیز از شوت‌های زودهنگام پرخطر'
+                TACTICAL: 'Moving Opponents Off-Court via Angle & Line Changes',
+                TECHNICAL: 'Heavy Topspin Production with Low-to-High Brush',
+                PHYSICAL: 'Aerobic Endurance & Footwork Reset in 10+ Shot Rallies',
+                MENTAL: 'Rally Patience & Eliminating Unforced Haste'
             },
             APPROACH_NET: {
-                TACTICAL: 'شناسایی فرصت حمله روی توپ‌های کوتاه و وال‌کردن',
-                TECHNICAL: 'تکنیک پانچ والی بدون سوئینگ و زاویه‌دهی صفحه راکت',
-                PHYSICAL: 'شتاب اولیه برای رسیدن سریع به منطقه ترنزیشن تور',
-                MENTAL: 'اعتماد به نفس در بستن تور و نترسیدن از پاسینگ‌شات'
+                TACTICAL: 'Short Ball Attack Recognition & Net Cut-Off Angles',
+                TECHNICAL: 'Compact Punch Volley Mechanics with Solid Wrist',
+                PHYSICAL: 'Forward Transition Speed & Decelerative Split-Step',
+                MENTAL: 'Confidence Closing the Net & Commitment Under Fire'
             },
             DEFEND_NET: {
-                TACTICAL: 'پاسینگ‌شات خطی یا لاب فورهند در شرایط اضطرار',
-                TECHNICAL: 'دایپ‌کردن توپ (Dipping) دقیقاً جلوی پای بازیکن پای تور',
-                PHYSICAL: 'تغییر جهت ناگهانی در انتهای زمین و اسلاید دفاعی',
-                MENTAL: 'تمرکز و آرامش هنگام مواجهه با حریف هجومی پای تور'
+                TACTICAL: 'Down-the-Line Passing Shot vs. High Defensive Topspin Lob',
+                TECHNICAL: 'Dipping Crosscourt Groundstrokes at Opponent’s Feet',
+                PHYSICAL: 'Lateral Open-Stance Sliding & Emergency Balance',
+                MENTAL: 'Composure & Laser Focus Under Heavy Net Pressure'
             }
         };
 
-        return titles[situation]?.[capacity] || `توسعه مهارت ${situation} در سطح ${level}`;
+        return titles[situation]?.[capacity] || `Mastering ${situation} in ${level}`;
     }
 
     generateEquipment(level) {
         switch (level) {
             case 'BLUE':
-                return 'توپ‌های فومی اسفنجی، راکت‌های ۱۷ تا ۱۹ اینچ، نردبان چابکی، دیسک‌های پرتابی رنگی';
+                return 'Red Sponge/Foam Balls, 17-19" Rackets, Agility Ladder, Throw-down Marker Discs';
             case 'RED':
-                return 'توپ‌های نمدی قرمز LTA Stage 3، راکت ۱۹ تا ۲۱ اینچ، ۴ مخروط بزرگ، ۲ نشانه‌گذار نواری';
+                return 'LTA Red Felt Balls (Stage 3), 19-21" Rackets, 4 Cones, Target Discs, Agility Ladder';
             case 'ORANGE':
-                return 'توپ‌های نارنجی LTA Stage 2، راکت ۲۳ تا ۲۵ اینچ، سبد توپ، اهداف دایره‌ای ۵ و ۱۰ امتیازی';
+                return 'LTA Orange Balls (Stage 2), 23-25" Rackets, Boundary Cones, +5 and +10 Target Rings';
             case 'GREEN':
-                return 'توپ‌های سبز ۲۵٪ کندتر LTA Stage 1، راکت ۲۵ تا ۲۶ اینچ، نوارهای مرزی بیس‌لاین، مانع کوتاه';
+                return 'LTA Green Balls (Stage 1), 25-26" Rackets, Baseline Depth Strips, Low Hurdles';
             default:
-                return 'توپ‌های استاندارد زرد LTA، راکت‌های تخصصی ۲۷ اینچ، سبد تغذیه، تارگت‌های نقطه‌ای بیس‌لاین و زون';
+                return 'Standard Yellow Balls, 27" Rackets, Ball Hopper, Baseline Depth Cones, Target Markers';
         }
     }
 
     buildAssessment(level, situation, capacity, title) {
         return {
-            goal: `تشخیص الگوی فعلی و عادات ناخودآگاه بازیکن در وضعیت ${situation} قبل از هرگونه دخالت آموزشی.`,
-            drillDescription: `شروع با بازی امتیازشماری زنده بین بازیکنان در موقعیت ${situation}. مربی در موقعیت ناظر ایستاده و آمادگی بازیکن در مواجهه با چالش "${title}" را ثبت می‌کند.`,
-            coachObservations: 'آیا بازیکن زمان‌بندی مناسبی دارد؟ آیا تصمیم‌گیری تاکتیکی متناسب با موقعیت حریف و فضا است یا تک‌بعدی ضربه می‌زند؟',
+            goal: `Diagnose current subconscious habits and timing breakdown in ${situation} before coaching intervention.`,
+            drillDescription: `Begin with live competitive points focusing on ${situation}. Coach positions at the umpire/side area to observe player decisions and biomechanics under game pressure.`,
+            coachObservations: 'Is the player recognizing incoming ball cues early? Is shot selection proactive or reactive? How is the balance upon contact?',
             timeMinutes: 10,
             elements: [
-                { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'بازیکن A' },
-                { type: 'player', id: 'p2', x: 0.55, y: 0.14, label: 'بازیکن B' },
-                { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'مربی (ناظر)' }
+                { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'Player A' },
+                { type: 'player', id: 'p2', x: 0.55, y: 0.14, label: 'Player B' },
+                { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'Coach' }
             ],
             drawings: [
-                { type: 'ball_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.55, y: 0.14 }, style: 'solid', color: '#CCFF00', label: 'تبادل اولیه' }
+                { type: 'ball_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.55, y: 0.14 }, style: 'solid', color: '#CCFF00', label: 'Live Play' }
             ]
         };
     }
 
     buildClosed(level, situation, capacity, title) {
         return {
-            goal: `تثبیت الگوی حرکتی و بیومکانیک صحیح بدون حضور متغیرهای پیش‌بینی‌ناپذیر با فید ثابت مربی.`,
-            drillDescription: `مربی با سبد توپ در موقعیت مناسب می‌ایستد. توپ‌ها با ریتم مشخص و یکنواخت فید می‌شوند. بازیکن روی ۳ نکته کلیدی کلامی (Cues) تمرکز کرده و سعی می‌کند توپ را در زون هدف بنشاند.`,
+            goal: `Isolate and groove the fundamental movement pattern and solid contact point with predictable feeds.`,
+            drillDescription: `Coach feeds from a basket with steady rhythm. Players focus strictly on 3 action cues to drive balls into designated target zones with an 80%+ success rate.`,
             coachingCues: [
-                'آمادگی بدنی زودهنگام (Early Unit Turn): چرخش همزمان شانه و باسن قبل از پرش توپ.',
-                'نقطه برخورد پایدار (Solid Contact Point): ضربه زدن به توپ در جلو بدن با دید مستقیم چشم به سیم‌ها.',
-                'فالو ترو و بازگشت متعادل (Balance Recovery): پایان حرکت راکت و استقرار سریع پاها برای آماده‌باش.'
+                'Early Unit Turn: Rotate shoulders and hips the instant the ball leaves the coach’s racket.',
+                'Contact Out Front: Meet the ball ahead of the front hip with a firm wrist and eyes on the contact point.',
+                'Follow-Through & Reset: Accelerate through the finish and execute an immediate balance recovery.'
             ],
             timeMinutes: 20,
             elements: [
-                { type: 'coach', id: 'coach', x: 0.35, y: 0.42, label: 'مربی' },
+                { type: 'coach', id: 'coach', x: 0.35, y: 0.42, label: 'Coach' },
                 { type: 'hopper', id: 'hop', x: 0.30, y: 0.41 },
-                { type: 'player', id: 'p1', x: 0.45, y: 0.82, label: 'بازیکن' },
+                { type: 'player', id: 'p1', x: 0.45, y: 0.82, label: 'Player' },
                 { type: 'target', id: 't1', x: 0.70, y: 0.18, points: 5, color: '#10b981' },
                 { type: 'cone', id: 'c1', x: 0.50, y: 0.82, color: '#f59e0b' }
             ],
             drawings: [
-                { type: 'feed_path', from: { x: 0.35, y: 0.42 }, to: { x: 0.45, y: 0.80 }, style: 'dotted', color: '#facc15', label: 'فید کنترل‌شده' },
-                { type: 'ball_path', from: { x: 0.45, y: 0.80 }, to: { x: 0.70, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'ارسال به تارگت' },
-                { type: 'move_path', from: { x: 0.45, y: 0.82 }, to: { x: 0.50, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'ریکاوری' }
+                { type: 'feed_path', from: { x: 0.35, y: 0.42 }, to: { x: 0.45, y: 0.80 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                { type: 'ball_path', from: { x: 0.45, y: 0.80 }, to: { x: 0.70, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Target Drive' },
+                { type: 'move_path', from: { x: 0.45, y: 0.82 }, to: { x: 0.50, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
             ]
         };
     }
 
     buildOpen(level, situation, capacity, title) {
         return {
-            goal: `انتقال مهارت به جریان دینامیک بازی با اضافه کردن فشار تصمیم‌گیری (Decision Making) و حریف مقابل.`,
-            drillDescription: `رالی پویا با شرایط ویژه LTA: بازیکن ۱ و ۲ در جریان رالی هستند. هر زمان که شرط خاصی پیش بیاید (مثلاً پرواز توپ بالای تور یا ورود به زون هدف)، بازیکن موظف است تصمیم تاکتیکی سریع اتخاذ کند.`,
+            goal: `Transfer the technical skill into dynamic rallies by introducing decision-making variables and court movement.`,
+            drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises (e.g. short ball or weak bounce) and execute the targeted tactical pattern.`,
             coachingCues: [
-                'خواندن سرنخ‌های بصری از زبان بدن حریف',
-                'تطبیق اندازه و سرعت گام‌ها با سرعت توپ ورودی'
+                'Read visual cues from opponent’s preparation angle.',
+                'Adjust footwork cadence to match incoming ball speed.'
             ],
             timeMinutes: 18,
             elements: [
-                { type: 'player', id: 'p1', x: 0.40, y: 0.84, label: 'بازیکن ۱' },
-                { type: 'player', id: 'p2', x: 0.60, y: 0.16, label: 'بازیکن ۲' },
+                { type: 'player', id: 'p1', x: 0.40, y: 0.84, label: 'Player 1' },
+                { type: 'player', id: 'p2', x: 0.60, y: 0.16, label: 'Player 2' },
                 { type: 'target', id: 't1', x: 0.75, y: 0.20, points: 3 },
                 { type: 'target', id: 't2', x: 0.25, y: 0.80, points: 3 }
             ],
             drawings: [
-                { type: 'ball_path', from: { x: 0.40, y: 0.84 }, to: { x: 0.60, y: 0.16 }, style: 'solid', color: '#CCFF00', label: 'رالی دینامیک' },
+                { type: 'ball_path', from: { x: 0.40, y: 0.84 }, to: { x: 0.60, y: 0.16 }, style: 'solid', color: '#CCFF00', label: 'Dynamic Rally' },
                 { type: 'ball_path', from: { x: 0.60, y: 0.16 }, to: { x: 0.75, y: 0.80 }, style: 'solid', color: '#f97316' },
                 { type: 'move_path', from: { x: 0.40, y: 0.84 }, to: { x: 0.70, y: 0.82 }, style: 'dashed', color: '#38bdf8' }
             ]
@@ -178,21 +178,21 @@ class SmartLTAGenerator {
 
     buildGame(level, situation, capacity, title) {
         return {
-            goal: `آزمون نهایی انتقال یادگیری به شرایط واقعی مسابقه با سیستم امتیازشماری تشویقی (Bonus Scoring).`,
-            drillDescription: `گیم‌های مسابقه‌ای با سرویس نوبتی. هر بار که بازیکنی با موفقیت ضربه آموخته‌شده را در شرایط مسابقه اجرا کند و به هدف بنشاند، امتیاز دوبل یا ۲ امتیاز تشویقی می‌گیرد.`,
+            goal: `Evaluate skill transfer in competitive match play with thematic bonus point rules, followed by player debrief.`,
+            drillDescription: `Match play games with rotating serve. Any player who wins a point by executing the session’s primary skill into the target zone receives 2 bonus points.`,
             debriefQuestions: [
-                'امروز در موقعیت‌های حساس چقدر تونستی تکنیک جدید رو به یاد بیاری؟',
-                'وقتی حریف تو رو تحت فشار گذاشت، چه نشانه‌ای کمکت کرد ضربه درست رو انتخاب کنی؟',
-                'برای جلسه آینده چه هدفی رو برای خودت اولویت قرار می‌دی؟'
+                'How did you maintain your composure and technique during crucial pressure points?',
+                'Which visual cue helped you choose the correct shot under pressure?',
+                'What is your personal focus area for our next practice session?'
             ],
             timeMinutes: 12,
             elements: [
-                { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'بازیکن ۱' },
-                { type: 'player', id: 'p2', x: 0.55, y: 0.12, label: 'بازیکن ۲' },
-                { type: 'coach', id: 'coach', x: 0.88, y: 0.50, label: 'مربی (ارزیاب)' }
+                { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Player 1' },
+                { type: 'player', id: 'p2', x: 0.55, y: 0.12, label: 'Player 2' },
+                { type: 'coach', id: 'coach', x: 0.88, y: 0.50, label: 'Coach' }
             ],
             drawings: [
-                { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.25, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'ضربه امتیاز مسابقه' }
+                { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.25, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Match Winning Shot' }
             ]
         };
     }

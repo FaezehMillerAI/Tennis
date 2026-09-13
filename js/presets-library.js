@@ -1,98 +1,98 @@
 /**
- * LTA Pre-loaded Standard Drills & Sessions Library
- * Curated authentic LTA sessions adhering to the 4-tier Hourglass structure.
+ * LTA Pre-loaded Standard Drills & Sessions Library (100% English)
+ * Authentic British LTA coaching sessions adhering to the 4-tier Hourglass structure.
  */
 
 const LTA_PRESETS = [
     {
         id: 'red_crosscourt_recovery',
-        title: 'رالی کراس‌کورت و بازگشت به مرکز (Crosscourt & Recovery)',
+        title: 'Crosscourt Rally & Dynamic Recovery',
         level: 'RED',
         situation: 'BOTH_BACK',
         capacity: 'PHYSICAL',
         surface: 'hard_blue',
         duration: 45,
-        playersCount: '2 تا 4 بازیکن',
-        equipment: 'توپ قرمز رد (Stage 3)، راکت 19-21 اینچ، 4 مخروط رنگی، 2 دیسک نشانه‌گذار، نردبان چابکی',
-        overview: 'آموزش ضربه زدن به صورت قطری (کراس‌کورت) و بازیابی سریع وضعیت به نقطه تعادل (Recovery Step) در زمین مینی ۳۶ فوتی.',
+        playersCount: '2 to 4 Players',
+        equipment: 'LTA Red Felt Balls (Stage 3), 19-21" Rackets, 4 Cones, 2 Marker Discs, Agility Ladder',
+        overview: 'Developing consistent diagonal groundstroke shape, solid contact out front, and active recovery back to the centre mark on a 36ft court.',
         
         stages: {
             GAME_ASSESSMENT: {
-                goal: 'مشاهده توانایی بازیکنان در نگه داشتن رالی در زاویه قطری و وضعیت ایستادن بعد از ضربه.',
-                drillDescription: 'بازی ۲ نفره در کورت قطری قرمز. بازیکنان از پشت خط شروع کرده و سعی می‌کنند رالی را ادامه دهند.',
-                coachObservations: 'آیا بازیکن بعد از ضربه در همان گوشه می‌ماند یا به سمت وسط گام ریکاوری برمی‌دارد؟ آیا به توپ نگاه می‌کند؟',
+                goal: 'Diagnose whether players recover dynamically after hitting or remain stuck in the corner.',
+                drillDescription: '2-player diagonal crosscourt rally on the Red 36ft court. Play begins with an underhand feed; players rally cooperatively to reach 6 consecutive shots.',
+                coachObservations: 'Check if players watch the ball onto the strings, stay balanced on contact, and execute side-shuffle recovery steps immediately following their finish.',
                 timeMinutes: 10,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.35, y: 0.85, label: 'بازیکن ۱' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.15, label: 'بازیکن ۲' },
+                    { type: 'player', id: 'p1', x: 0.35, y: 0.85, label: 'Player 1' },
+                    { type: 'player', id: 'p2', x: 0.65, y: 0.15, label: 'Player 2' },
                     { type: 'ball', id: 'b1', x: 0.36, y: 0.83 },
                     { type: 'cone', id: 'c1', x: 0.50, y: 0.85, color: '#f59e0b' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.35, y: 0.83 }, to: { x: 0.65, y: 0.17 }, style: 'solid', color: '#CCFF00', label: 'رالی قطری' },
-                    { type: 'move_path', from: { x: 0.35, y: 0.85 }, to: { x: 0.48, y: 0.85 }, style: 'dashed', color: '#38bdf8', label: 'ریکاوری' }
+                    { type: 'ball_path', from: { x: 0.35, y: 0.83 }, to: { x: 0.65, y: 0.17 }, style: 'solid', color: '#CCFF00', label: 'Diagonal Rally' },
+                    { type: 'move_path', from: { x: 0.35, y: 0.85 }, to: { x: 0.48, y: 0.85 }, style: 'dashed', color: '#38bdf8', label: 'Recovery Step' }
                 ]
             },
             DEMO_CLOSED: {
-                goal: 'آموزش گام ریکاوری و جهت‌دهی صفحه راکت به سمت کراس با فید ثابت مربی.',
-                drillDescription: 'مربی در کنار تور با سبد توپ می‌ایستد و توپ‌های آرام و یکنواخت به گوشه فورهند بازیکن می‌اندازد. بازیکن ضربه را زده و بلافاصله با گام‌های کنارپا (Side-shuffle) دور مخروط مرکزی می‌چرخد.',
+                goal: 'Isolate the preparation unit turn, solid contact point, and 3-step side-shuffle recovery around the centre cone.',
+                drillDescription: 'Coach positions with a ball hopper at the net post, delivering steady, predictable feeds to the forehand corner. Player strikes crosscourt to a target disc, then immediately shuffles around the centre cone.',
                 coachingCues: [
-                    'آمادگی زودرس: راکت را قبل از پرش توپ عقب ببر.',
-                    'نقطه برخورد: توپ را جلوی پای راهنما بزن.',
-                    'پوشش مرکز: بعد از فالوترو، ۳ گام ساید-شافل به مرکز زمین.'
+                    'Early Unit Turn: Turn shoulders before the incoming ball bounces.',
+                    'Contact Out Front: Strike the ball ahead of the front hip with a firm wrist.',
+                    'Centre Recovery: Immediately push off the outside leg with 3 rapid side-shuffles to reset.'
                 ],
                 timeMinutes: 15,
                 elements: [
-                    { type: 'coach', id: 'coach', x: 0.45, y: 0.45, label: 'مربی' },
+                    { type: 'coach', id: 'coach', x: 0.45, y: 0.45, label: 'Coach' },
                     { type: 'hopper', id: 'hop', x: 0.40, y: 0.44 },
-                    { type: 'player', id: 'p1', x: 0.32, y: 0.82, label: 'بازیکن' },
+                    { type: 'player', id: 'p1', x: 0.32, y: 0.82, label: 'Player' },
                     { type: 'cone', id: 'c1', x: 0.50, y: 0.82, color: '#f97316' },
                     { type: 'target', id: 't1', x: 0.70, y: 0.20, points: 5, color: '#10b981' },
                     { type: 'cone', id: 'c2', x: 0.75, y: 0.25, color: '#ef4444' }
                 ],
                 drawings: [
-                    { type: 'feed_path', from: { x: 0.43, y: 0.46 }, to: { x: 0.33, y: 0.80 }, style: 'dotted', color: '#facc15', label: 'فید مربی' },
-                    { type: 'ball_path', from: { x: 0.32, y: 0.80 }, to: { x: 0.70, y: 0.20 }, style: 'solid', color: '#CCFF00', label: 'ضربه به هدف' },
-                    { type: 'move_path', from: { x: 0.32, y: 0.82 }, to: { x: 0.48, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'گام بازگشت' }
+                    { type: 'feed_path', from: { x: 0.43, y: 0.46 }, to: { x: 0.33, y: 0.80 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                    { type: 'ball_path', from: { x: 0.32, y: 0.80 }, to: { x: 0.70, y: 0.20 }, style: 'solid', color: '#CCFF00', label: 'Crosscourt Drive' },
+                    { type: 'move_path', from: { x: 0.32, y: 0.82 }, to: { x: 0.48, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'Side-Shuffle' }
                 ]
             },
             PROGRESSING_OPEN: {
-                goal: 'رالی مشارکتی ۲ نفره با تغییر مداوم جهت و شرط بازگشت به پشت مخروط.',
-                drillDescription: 'دو بازیکن در زمین رالی می‌کنند. هر بار که بازیکن به توپ ضربه می‌زند، قبل از ضربه بعدی باید پای خود را پشت مخروط تعادل وسط بگذارد.',
+                goal: 'Introduce movement pressure and decision making: player must touch the centre recovery cone between every shot.',
+                drillDescription: 'Live 2-player rally with recovery constraint. Each player must retreat and touch their centre cone with their foot before striking the next ball. Rallies continue live until an error occurs.',
                 coachingCues: [
-                    'خوانش توپ حریف هنگام پرواز',
-                    'استفاده از پای کمکی برای فشار دادن به زمین و بازگشت'
+                    'Read the ball trajectory while moving back to centre.',
+                    'Split-step the exact moment the opponent strikes the ball.'
                 ],
                 timeMinutes: 12,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.32, y: 0.82, label: 'بازیکن ۱' },
-                    { type: 'player', id: 'p2', x: 0.68, y: 0.18, label: 'بازیکن ۲' },
+                    { type: 'player', id: 'p1', x: 0.32, y: 0.82, label: 'Player 1' },
+                    { type: 'player', id: 'p2', x: 0.68, y: 0.18, label: 'Player 2' },
                     { type: 'cone', id: 'c1', x: 0.50, y: 0.82, color: '#f97316' },
                     { type: 'cone', id: 'c2', x: 0.50, y: 0.18, color: '#f97316' },
                     { type: 'target', id: 't1', x: 0.68, y: 0.25, points: 3 }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.32, y: 0.82 }, to: { x: 0.68, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'رالی متقابل' },
+                    { type: 'ball_path', from: { x: 0.32, y: 0.82 }, to: { x: 0.68, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Live Rally' },
                     { type: 'ball_path', from: { x: 0.68, y: 0.18 }, to: { x: 0.32, y: 0.82 }, style: 'solid', color: '#CCFF00' },
                     { type: 'move_path', from: { x: 0.32, y: 0.82 }, to: { x: 0.48, y: 0.82 }, style: 'dashed', color: '#38bdf8' }
                 ]
             },
             GAME: {
-                goal: 'مسابقه تا امتیاز ۱۰ در کورت کراس‌کورت همراه با امتیاز ویژه برای ریکاوری صحیح.',
-                drillDescription: 'امتیازگیری استاندارد تنیس رد. قانون ویژه: اگر بازیکنی امتیاز را با ضربه به زون هدف ببرد، ۲ امتیاز دریافت می‌کند. مربی بازی پا را می‌سنجد.',
+                goal: 'First to 10 points tiebreak with a +2 bonus for any point won while recovering behind the cone.',
+                drillDescription: 'Match play on the Red court. Regular scoring with the bonus rule: hitting into the designated crosscourt zone or recovering cleanly behind the cone before winning the rally earns 2 points.',
                 debriefQuestions: [
-                    'وقتی ضربه‌ات رو زدی، احساس کردی زمان کافی برای رسیدن به توپ بعدی داری؟',
-                    'چرا برگشتن به وسط بهت کمک کرد زمین رو بهتر بپوشونی؟'
+                    'How did resetting to the centre help you reach the next shot with more time?',
+                    'When the opponent hit deep, how did your split-step help your balance?'
                 ],
                 timeMinutes: 8,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.35, y: 0.85, label: 'بازیکن ۱' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.15, label: 'بازیکن ۲' },
-                    { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'داور / مربی' },
+                    { type: 'player', id: 'p1', x: 0.35, y: 0.85, label: 'Player 1' },
+                    { type: 'player', id: 'p2', x: 0.65, y: 0.15, label: 'Player 2' },
+                    { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'Umpire / Coach' },
                     { type: 'target', id: 't1', x: 0.70, y: 0.25, points: 2, color: '#10b981' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.35, y: 0.85 }, to: { x: 0.70, y: 0.25 }, style: 'solid', color: '#CCFF00', label: 'امتیاز مسابقه' }
+                    { type: 'ball_path', from: { x: 0.35, y: 0.85 }, to: { x: 0.70, y: 0.25 }, style: 'solid', color: '#CCFF00', label: 'Match Point' }
                 ]
             }
         }
@@ -100,85 +100,85 @@ const LTA_PRESETS = [
 
     {
         id: 'orange_approach_volley',
-        title: 'اپروچ شات و حمله پای تور (Approach & First Volley)',
+        title: 'Approach Shot & Net Attack Transition',
         level: 'ORANGE',
         situation: 'APPROACH_NET',
         capacity: 'TACTICAL',
         surface: 'clay',
         duration: 60,
-        playersCount: '2 تا 4 بازیکن',
-        equipment: 'توپ نارنجی ۵۰٪، راکت 23-25 اینچ، مخروط‌های مرزی، طناب/نشانه‌گذار عمق',
-        overview: 'تشخیص توپ کوتاه حریف، ورود تهاجمی به داخل زمین، ضربه اپروچ به گوشه و فینیش با والی اول در زمین ۱۸ متری.',
+        playersCount: '2 to 4 Players',
+        equipment: 'LTA Orange Balls (50% compression), 23-25" Rackets, Boundary Cones, Target Discs',
+        overview: 'Recognizing the short ball, stepping aggressively inside the baseline, driving an approach down the line, and closing the net with a punch volley.',
 
         stages: {
             GAME_ASSESSMENT: {
-                goal: 'بررسی اینکه بازیکن چه زمانی تصمیم به حمله به سمت تور می‌گیرد و آیا توقف اسپلیت-استپ (Split-step) دارد یا نه.',
-                drillDescription: 'بازی امتیازشماری آزاد. مربی توپ‌های رندوم کوتاه در رالی وارد می‌کند و واکنش بازیکن به جلو آمدن را ثبت می‌کند.',
-                coachObservations: 'آیا بازیکن روی توپ کوتاه عقب می‌ماند و منتظر پرش می‌شود یا با زاویه تهاجمی به جلو می‌دود؟ آیا پای تور با تعادل والی می‌زند؟',
+                goal: 'Observe if players step inside the baseline on short balls or hesitate and let the ball drop deep.',
+                drillDescription: 'Live baseline points. Coach introduces short mid-court balls at random to observe player forward transition and net instincts.',
+                coachObservations: 'Does the player recognize the short ball early? Do they commit forward or stay glued to the baseline? Are volleys punched or swung?',
                 timeMinutes: 10,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.50, y: 0.85, label: 'مهاجم' },
-                    { type: 'player', id: 'p2', x: 0.50, y: 0.15, label: 'مدافع' }
+                    { type: 'player', id: 'p1', x: 0.50, y: 0.85, label: 'Attacker' },
+                    { type: 'player', id: 'p2', x: 0.50, y: 0.15, label: 'Defender' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.50, y: 0.15 }, to: { x: 0.40, y: 0.65 }, style: 'solid', color: '#CCFF00', label: 'توپ کوتاه حریف' }
+                    { type: 'ball_path', from: { x: 0.50, y: 0.15 }, to: { x: 0.40, y: 0.65 }, style: 'solid', color: '#CCFF00', label: 'Short Ball' }
                 ]
             },
             DEMO_CLOSED: {
-                goal: 'اصلاح بیومکانیک اپروچ فورهند داخل زمین و سپس جهش به سمت تور با اسپلیت-استپ قبل از والی.',
-                drillDescription: 'مربی از پشت تور توپی نرم و با پرش کوتاه جلوی خط سرویس می‌اندازد. بازیکن به جلو حرکت کرده، اپروچ به انتهای خط می‌زند، بلافاصله دو گام به سمت تور می‌آید، اسپلیت-استپ کرده و والی فورسند فید دوم را لمس می‌کند.',
+                goal: 'Rehearse forward momentum transfer on the approach drive followed by a split-step and compact punch volley.',
+                drillDescription: 'Coach feeds ball 1 short to the mid-court. Player drives approach down the line to target, advances forward into the transition zone, split-steps as coach feeds ball 2, and punches the volley.',
                 coachingCues: [
-                    'وزن بدن رو به جلو: با پای مخالف به داخل زمین قدم بگذار.',
-                    'اسپلیت-استپ: وقتی راکت حریف به توپ می‌خورد، هر دو پا روی پنجه بنشیند.',
-                    'پانچ والی: بدون چرخش راکت به عقب، مچ محکم و رو به جلو هل بده.'
+                    'Forward Weight Transfer: Step inside the court with authority.',
+                    'Split-Step at Service Line: Land on the balls of both feet as the opponent prepares to hit.',
+                    'Compact Punch: Keep the racket head above the wrist with no backswing.'
                 ],
                 timeMinutes: 20,
                 elements: [
-                    { type: 'coach', id: 'coach', x: 0.35, y: 0.40, label: 'مربی' },
+                    { type: 'coach', id: 'coach', x: 0.35, y: 0.40, label: 'Coach' },
                     { type: 'hopper', id: 'hop', x: 0.30, y: 0.39 },
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.70, label: 'بازیکن' },
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.70, label: 'Player' },
                     { type: 'target', id: 't1', x: 0.25, y: 0.15, points: 5, color: '#3b82f6' },
                     { type: 'cone', id: 'c1', x: 0.50, y: 0.45, color: '#f59e0b' }
                 ],
                 drawings: [
-                    { type: 'feed_path', from: { x: 0.35, y: 0.40 }, to: { x: 0.45, y: 0.68 }, style: 'dotted', color: '#facc15', label: 'فید ۱ (اپروچ)' },
-                    { type: 'ball_path', from: { x: 0.45, y: 0.68 }, to: { x: 0.25, y: 0.15 }, style: 'solid', color: '#CCFF00', label: 'اپروچ عمیق' },
-                    { type: 'move_path', from: { x: 0.45, y: 0.68 }, to: { x: 0.50, y: 0.45 }, style: 'dashed', color: '#38bdf8', label: 'پیشروی پای تور' }
+                    { type: 'feed_path', from: { x: 0.35, y: 0.40 }, to: { x: 0.45, y: 0.68 }, style: 'dotted', color: '#facc15', label: 'Short Feed 1' },
+                    { type: 'ball_path', from: { x: 0.45, y: 0.68 }, to: { x: 0.25, y: 0.15 }, style: 'solid', color: '#CCFF00', label: 'Approach Drive' },
+                    { type: 'move_path', from: { x: 0.45, y: 0.68 }, to: { x: 0.50, y: 0.45 }, style: 'dashed', color: '#38bdf8', label: 'Net Rush' }
                 ]
             },
             PROGRESSING_OPEN: {
-                goal: 'شبیه‌سازی سناریوی حمله با تصمیم باز: انتخاب ضربه اپروچ لاین یا کراس بر اساس جایگیری حریف.',
-                drillDescription: 'بازیکن ۱ و ۲ رالی می‌کنند. به محض اینکه توپ بازیکن ۲ از خط سرویس جلوتر افتاد، بازیکن ۱ باید فریاد "Attack" بزند، اپروچ کند و جلو بیاید. بازیکن ۲ اجازه دارد پاسینگ یا لاب بزند.',
+                goal: 'Open tactical decision: Player 1 attacks the net whenever Player 2 lands a ball short of the service line.',
+                drillDescription: 'Continuous rally. Player 1 must call "Attack!" on any ball landing in the short zone, drive an approach, and close the net. Player 2 attempts a pass or lob.',
                 coachingCues: [
-                    'خواندن موقعیت حریف: زدن اپروچ به فضای خالی پشت حریف',
-                    'بستن زاویه: پوشش سمتی از تور که حریف مجبور به شوت شده'
+                    'Approach to the open space behind the opponent.',
+                    'Cut off the volley angle along the line of ball flight.'
                 ],
                 timeMinutes: 18,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.50, y: 0.55, label: 'مهاجم تور' },
-                    { type: 'player', id: 'p2', x: 0.30, y: 0.15, label: 'مدافع انتهای زمین' },
+                    { type: 'player', id: 'p1', x: 0.50, y: 0.55, label: 'Net Attacker' },
+                    { type: 'player', id: 'p2', x: 0.30, y: 0.15, label: 'Baseline Defender' },
                     { type: 'target', id: 't1', x: 0.70, y: 0.20, points: 3 }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.50, y: 0.55 }, to: { x: 0.70, y: 0.20 }, style: 'solid', color: '#CCFF00', label: 'والی فینیش' },
-                    { type: 'move_path', from: { x: 0.50, y: 0.75 }, to: { x: 0.50, y: 0.55 }, style: 'dashed', color: '#38bdf8', label: 'اپروچ' }
+                    { type: 'ball_path', from: { x: 0.50, y: 0.55 }, to: { x: 0.70, y: 0.20 }, style: 'solid', color: '#CCFF00', label: 'Volley Finish' },
+                    { type: 'move_path', from: { x: 0.50, y: 0.75 }, to: { x: 0.50, y: 0.55 }, style: 'dashed', color: '#38bdf8', label: 'Approach' }
                 ]
             },
             GAME: {
-                goal: 'گیم استاندارد تنیس نارنجی با قانون بونس: ۳ امتیاز مستقیم برای بردن امتیاز پای تور.',
-                drillDescription: 'گیم ۴ امتیازی با سرویس چرخشی. امتیاز حمله تور = ۳ امتیاز، امتیاز معمولی = ۱ امتیاز.',
+                goal: 'Fast-4 match play with a 3-point reward for winning any point via a successful net volley.',
+                drillDescription: 'Standard Orange court match rules. Normal winner = 1 point; winning a point at the net following an approach = 3 bonus points.',
                 debriefQuestions: [
-                    'وقتی جلو اومدی چه تفاوتی در زمان عکس‌العمل داشتی؟',
-                    'کدوم اپروچ باعث شد حریف نتونه پاسینگ شات خوب بزنه؟'
+                    'What visual cues showed you that the opponent’s ball was going to land short?',
+                    'Which approach direction gave you the safest net coverage?'
                 ],
                 timeMinutes: 12,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.50, y: 0.85, label: 'سرویس‌زننده' },
-                    { type: 'player', id: 'p2', x: 0.35, y: 0.15, label: 'ریترن‌زننده' },
-                    { type: 'coach', id: 'coach', x: 0.85, y: 0.50, label: 'مربی LTA' }
+                    { type: 'player', id: 'p1', x: 0.50, y: 0.85, label: 'Server' },
+                    { type: 'player', id: 'p2', x: 0.35, y: 0.15, label: 'Receiver' },
+                    { type: 'coach', id: 'coach', x: 0.85, y: 0.50, label: 'LTA Coach' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.50, y: 0.85 }, to: { x: 0.35, y: 0.35 }, style: 'solid', color: '#CCFF00', label: 'سرویس + حمله' }
+                    { type: 'ball_path', from: { x: 0.50, y: 0.85 }, to: { x: 0.35, y: 0.35 }, style: 'solid', color: '#CCFF00', label: 'Serve + Attack' }
                 ]
             }
         }
@@ -186,62 +186,62 @@ const LTA_PRESETS = [
 
     {
         id: 'green_serve_plus_one',
-        title: 'الگوی سرویس + ضربه فورهند اول (Serve + 1 Forehand)',
+        title: 'Serve + 1 Dominant Forehand Attack',
         level: 'GREEN',
         situation: 'SERVE',
         capacity: 'TACTICAL',
         surface: 'grass',
         duration: 60,
-        playersCount: '2 تا 4 بازیکن',
-        equipment: 'توپ سبز ۲۵٪، راکت 25-26 اینچ، نشانه‌گذار زون سرویس، اهداف مخروطی عمیق',
-        overview: 'تسلط بر زدن سرویس هدفمند (T یا Wide) و جایگیری فوری برای زدن فورهند تهاجمی بر روی ریترن ضعیف حریف.',
+        playersCount: '2 to 4 Players',
+        equipment: 'LTA Green Balls (25% compression), 25-26" Rackets, Service Box Target Markers, Baseline Deep Zones',
+        overview: 'Mastering targeted first serves (T and Wide) followed by immediate dynamic positioning to dictate the point with a penetrating +1 forehand.',
 
         stages: {
             GAME_ASSESSMENT: {
-                goal: 'ارزیابی هوشیاری بازیکن در استفاده از ضربه بعد از سرویس برای دیکته کردن رالی.',
-                drillDescription: 'بازی مسابقه‌ای با سرویس از سمت دوس (Deuce Court). مربی ضربه بعد از سرویس را زیر نظر می‌گیرد.',
-                coachObservations: 'آیا بازیکن بعد از سرویس درجا می‌زند یا آماده زدن فورهند می‌شود؟ آیا سرویس فقط برای شروع است یا هدفی مشخص دارد؟',
+                goal: 'Assess if the server treats the serve as a weapon to set up shot #2 or merely as a ball restart.',
+                drillDescription: 'Match play from Deuce court. Coach tracks what percentage of second shots the server plays on their forehand versus backhand.',
+                coachObservations: 'Does the server land dynamically inside the baseline? Do they hunt the forehand on ball +1 or passively wait on the baseline?',
                 timeMinutes: 10,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'سرویس‌زننده' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'ریترنر' }
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Server' },
+                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'Returner' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.55, y: 0.38 }, style: 'solid', color: '#CCFF00', label: 'سرویس T' }
+                    { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.55, y: 0.38 }, style: 'solid', color: '#CCFF00', label: 'Serve to T' }
                 ]
             },
             DEMO_CLOSED: {
-                goal: 'تمرین الگوی تکراری: پرتاب سرویس، فرود روی پای چپ، استقرار برای فورهند داخل زمین (Inside-out یا Inside-in).',
-                drillDescription: 'بازیکن سرویس می‌زند. مربی بلافاصله از سبد توپی نرم به وسط زمین فید می‌دهد. بازیکن به سرعت دور توپ چرخیده و فورهند اینساید-اوت می‌زند.',
+                goal: 'Rehearse the repeatable pattern: targeted serve, dynamic split-step forward recovery, and inside-out forehand drive.',
+                drillDescription: 'Player serves into the Deuce T target. Coach immediately feeds a floating return to mid-court. Server pivots around the ball to strike an aggressive inside-out forehand into the deep corner.',
                 coachingCues: [
-                    'پرتاب توپ (Toss): به داخل زمین ساعت ۱ برای ایجاد شتاب.',
-                    'لندینگ فعال: فرود پویا و گام اول به سمت مرکز.',
-                    'لودینگ فورهند: زاویه‌سازی شانه و چرخش سریع مچ پا.'
+                    'Forward Toss: Toss at 1 o\'clock slightly inside the baseline to drive momentum.',
+                    'Dynamic Split-Step: Recover both feet in an athletic stance immediately on landing.',
+                    'Forehand Loading: Rotate hips and coil shoulders early to take the ball on the rise.'
                 ],
                 timeMinutes: 20,
                 elements: [
-                    { type: 'coach', id: 'coach', x: 0.70, y: 0.45, label: 'مربی' },
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'بازیکن' },
+                    { type: 'coach', id: 'coach', x: 0.70, y: 0.45, label: 'Coach' },
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Server' },
                     { type: 'target', id: 't1', x: 0.55, y: 0.38, points: 5, color: '#10b981' },
                     { type: 'target', id: 't2', x: 0.25, y: 0.15, points: 10, color: '#38bdf8' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.55, y: 0.38 }, style: 'solid', color: '#CCFF00', label: 'سرویس به هدف' },
-                    { type: 'feed_path', from: { x: 0.70, y: 0.45 }, to: { x: 0.48, y: 0.75 }, style: 'dotted', color: '#facc15', label: 'فید ریترن فرضی' },
-                    { type: 'ball_path', from: { x: 0.48, y: 0.75 }, to: { x: 0.25, y: 0.15 }, style: 'solid', color: '#CCFF00', label: 'فورهند اینساید-اوت' }
+                    { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.55, y: 0.38 }, style: 'solid', color: '#CCFF00', label: 'Targeted Serve' },
+                    { type: 'feed_path', from: { x: 0.70, y: 0.45 }, to: { x: 0.48, y: 0.75 }, style: 'dotted', color: '#facc15', label: 'Return Feed' },
+                    { type: 'ball_path', from: { x: 0.48, y: 0.75 }, to: { x: 0.25, y: 0.15 }, style: 'solid', color: '#CCFF00', label: 'Inside-Out Drive' }
                 ]
             },
             PROGRESSING_OPEN: {
-                goal: 'اجرای سناریو با ریترنر واقعی: ریترنر تلاش می‌کند به وسط بزند، سرویس‌زننده ملزم به زدن فورهند به گوشه‌هاست.',
-                drillDescription: 'سرویس زنده. ریترنر موظف است توپ را در عمق متوسط نگه دارد. اگر سرویس‌زننده بتواند ضربه +1 را فورهند به زون گل بزند امتیاز ۲ برابری می‌گیرد.',
+                goal: 'Live returner scenario: Server must hunt the forehand on shot +1 regardless of return location.',
+                drillDescription: 'Live serve and return. Returner attempts deep central returns. If server successfully executes an aggressive forehand on ball +1, they receive 2 points.',
                 coachingCues: [
-                    'خوانش زاویه راکت ریترنر',
-                    'پیش‌دستی ذهنی قبل از رسیدن توپ به زمین'
+                    'Read the returner\'s racket angle at contact.',
+                    'Anticipate and begin footwork before the return crosses the net.'
                 ],
                 timeMinutes: 18,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'سرویس‌زننده' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'ریترنر' },
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Server' },
+                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'Returner' },
                     { type: 'target', id: 't1', x: 0.20, y: 0.15, points: 5 },
                     { type: 'target', id: 't2', x: 0.80, y: 0.15, points: 5 }
                 ],
@@ -252,17 +252,17 @@ const LTA_PRESETS = [
                 ]
             },
             GAME: {
-                goal: 'تای‌بریک ۱۰ امتیازی مسابقه چمن با قانون طلایی سرویس.',
-                drillDescription: 'تای‌بریک تا ۱۰ امتیاز. مربی درصد موفقیت سرویس اول و تعداد بردهای مستقیم الگوی Serve+1 را ثبت می‌کند.',
+                goal: 'Match tiebreak to 10 points. Coach evaluates first serve percentage and Serve+1 conversion rate.',
+                drillDescription: '10-point Champions Tiebreak. Server switches every 2 points. Full match pressure with performance statistics tracked by the coach.',
                 debriefQuestions: [
-                    'سرویس به T چه فضایی در سمت بک‌هند حریف برات ایجاد کرد؟',
-                    'اگر ریترن حریف خیلی عمیق می‌آمد استراتژیت چه تغییری می‌کرد؟'
+                    'How did serving to the T open up the opposite corner for your forehand?',
+                    'When the return was struck deep, what adjustment kept you on offense?'
                 ],
                 timeMinutes: 12,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'بازیکن ۱' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'بازیکن ۲' },
-                    { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'تحلیل‌گر مربی' }
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Player 1' },
+                    { type: 'player', id: 'p2', x: 0.65, y: 0.12, label: 'Player 2' },
+                    { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'Coach / Analyst' }
                 ],
                 drawings: [
                     { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.55, y: 0.38 }, style: 'solid', color: '#CCFF00' }
@@ -273,61 +273,61 @@ const LTA_PRESETS = [
 
     {
         id: 'yellow_baseline_depth',
-        title: 'عمق‌دهی و تاپ‌اسپین سنگین از انتهای زمین (Heavy Topspin Depth)',
+        title: 'Heavy Topspin Depth & Baseline Control',
         level: 'YELLOW_INT',
         situation: 'BOTH_BACK',
         capacity: 'TECHNICAL',
         surface: 'clay',
         duration: 75,
-        playersCount: '2 بازیکن',
-        equipment: 'توپ استاندارد زرد، تارگت‌های خط بیس‌لاین، نوارهای ارتفاع بالای تور',
-        overview: 'تسلط بر رالی سنگین با ارتفاع ۱ متری از بالای تور برای ایجاد عمق بین خط سرویس و بیس‌لاین حریف.',
+        playersCount: '2 Players',
+        equipment: 'Standard Yellow Balls, Baseline Target Strips, Above-Net Clearance Ropes',
+        overview: 'Mastering heavy topspin with 3-4 feet net clearance to consistently push the opponent behind their baseline and control the tempo.',
 
         stages: {
             GAME_ASSESSMENT: {
-                goal: 'تشخیص اینکه چرا توپ‌های بازیکنان کوتاه افتاده و حریف امکان تهاجم پیدا می‌کند.',
-                drillDescription: 'رالی کراس‌کورت آزاد بین دو بازیکن. مربی محل فرود توپ‌ها را یادداشت می‌کند.',
-                coachObservations: 'آیا بازیکن توپ را فلت و نزدیک تور می‌زند؟ آیا با زاویه مچ به زیر توپ می‌رود تا چرخش ایجاد کند؟',
+                goal: 'Diagnose why player shots drop short into the service boxes, allowing the opponent to attack.',
+                drillDescription: 'Open baseline crosscourt rally. Coach charts the landing depth of 20 consecutive shots.',
+                coachObservations: 'Is the swing path too flat? Is the player dropping the racket head below the ball before accelerating upwards?',
                 timeMinutes: 12,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'بازیکن A' },
-                    { type: 'player', id: 'p2', x: 0.70, y: 0.12, label: 'بازیکن B' }
+                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'Player A' },
+                    { type: 'player', id: 'p2', x: 0.70, y: 0.12, label: 'Player B' }
                 ],
                 drawings: [
-                    { type: 'ball_path', from: { x: 0.30, y: 0.88 }, to: { x: 0.70, y: 0.28 }, style: 'solid', color: '#f59e0b', label: 'توپ کوتاه (خطرناک)' }
+                    { type: 'ball_path', from: { x: 0.30, y: 0.88 }, to: { x: 0.70, y: 0.28 }, style: 'solid', color: '#f59e0b', label: 'Short Ball (Vulnerable)' }
                 ]
             },
             DEMO_CLOSED: {
-                goal: 'آموزش مسیر حرکت راکت از پایین به بالا (Low-to-High Brush) و ارتفاع ایمن روی تور.',
-                drillDescription: 'مربی فید عمیق و یکدست می‌دهد. نواری به ارتفاع ۱ متر بالای تور نصب شده؛ بازیکن باید توپ را از بالای نوار رد کرده و در زون هدف عمقی بنشاند.',
+                goal: 'Refine the Low-to-High brush trajectory to produce heavy topspin with 3-4 feet net clearance.',
+                drillDescription: 'Coach feeds deep, heavy balls. A training cord is suspended 1 metre above the net. Player must drive balls over the cord into the deep baseline zone.',
                 coachingCues: [
-                    'افت سر راکت: راکت زیر سطح توپ پایین برود.',
-                    'براش پرقدرت: مالش سریع سیم‌های راکت از ساعت ۶ به ۱۲.',
-                    'فالو ترو در بالای شانه و چرخش کامل لگن.'
+                    'Racket Tip Drop: Drop the racket head below the height of the ball.',
+                    'Aggressive Brush: Accelerate strings upwards from 6 o\'clock to 12 o\'clock.',
+                    'High Finish: Complete follow-through above the shoulder with full hip rotation.'
                 ],
                 timeMinutes: 25,
                 elements: [
-                    { type: 'coach', id: 'coach', x: 0.50, y: 0.40, label: 'مربی' },
-                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'بازیکن' },
+                    { type: 'coach', id: 'coach', x: 0.50, y: 0.40, label: 'Coach' },
+                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'Player' },
                     { type: 'target', id: 't1', x: 0.70, y: 0.15, points: 5, color: '#10b981' },
                     { type: 'cone', id: 'c1', x: 0.70, y: 0.28, color: '#ef4444' }
                 ],
                 drawings: [
                     { type: 'feed_path', from: { x: 0.50, y: 0.40 }, to: { x: 0.30, y: 0.85 }, style: 'dotted', color: '#facc15' },
-                    { type: 'ball_path', from: { x: 0.30, y: 0.85 }, to: { x: 0.70, y: 0.15 }, style: 'loop', color: '#CCFF00', label: 'قوس سنگین تاپ‌اسپین' }
+                    { type: 'ball_path', from: { x: 0.30, y: 0.85 }, to: { x: 0.70, y: 0.15 }, style: 'loop', color: '#CCFF00', label: 'Heavy Arched Topspin' }
                 ]
             },
             PROGRESSING_OPEN: {
-                goal: 'رالی ۲ نفره با شرط فرود در زون عمق: هر توپ که جلوی خط سرویس بیفتد، بازیکن مقابل مجاز به شوت و تمام کردن است.',
-                drillDescription: 'بازی پیوسته بین دو بازیکن با شمارش رالی عمقی. هدف رسیدن به رالی‌های بالای ۱۰ ضربه بدون افتادن توپ در زون کوتاه.',
+                goal: 'Continuous depth rally: any ball bouncing inside the service boxes grants the opposing player immediate attack rights.',
+                drillDescription: 'Dynamic 2-player baseline rally. Players count consecutive shots landing between the service line and baseline.',
                 coachingCues: [
-                    'صبر در ساخت امتیاز (Patience)',
-                    'تنظیم مجدد پاها قبل از ضربه در شرایط حرکت حریف'
+                    'Maintain rally patience and wait for the short ball.',
+                    'Adjust micro-footwork when pushed deep behind the baseline.'
                 ],
                 timeMinutes: 20,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'بازیکن A' },
-                    { type: 'player', id: 'p2', x: 0.70, y: 0.12, label: 'بازیکن B' },
+                    { type: 'player', id: 'p1', x: 0.30, y: 0.88, label: 'Player A' },
+                    { type: 'player', id: 'p2', x: 0.70, y: 0.12, label: 'Player B' },
                     { type: 'target', id: 't1', x: 0.30, y: 0.15, points: 2 },
                     { type: 'target', id: 't2', x: 0.70, y: 0.85, points: 2 }
                 ],
@@ -337,105 +337,21 @@ const LTA_PRESETS = [
                 ]
             },
             GAME: {
-                goal: 'گیم کامل ۶ امتیازی در زمین خاک رس با امتیاز دوبل برای وادار کردن حریف به زدن ضربه خارج از بیس‌لاین.',
-                drillDescription: 'بازی استاندارد. هر بازیکنی که بتواند با اسپین عمیق حریف را ۲ متر پشت خط عقب براند امتیاز ویژه می‌گیرد.',
+                goal: 'Full 6-game set on clay with a double point reward for forcing the opponent 2+ metres behind their baseline.',
+                drillDescription: 'Standard match rules. Points won while pushing the opponent deep into defense score 2 points.',
                 debriefQuestions: [
-                    'پرش بلند خاک رس چه کمکی به عمق دادن توپ‌هات کرد؟',
-                    'چطور تونستی حتی وقتی خسته شدی ارتفاع توپ رو بالای تور حفظ کنی؟'
+                    'How did the clay court bounce amplify your heavy topspin?',
+                    'When fatigue set in, how did you maintain your net clearance?'
                 ],
                 timeMinutes: 18,
                 elements: [
-                    { type: 'player', id: 'p1', x: 0.50, y: 0.90, label: 'بازیکن A' },
-                    { type: 'player', id: 'p2', x: 0.50, y: 0.10, label: 'بازیکن B' },
-                    { type: 'coach', id: 'coach', x: 0.85, y: 0.50, label: 'مربی' }
+                    { type: 'player', id: 'p1', x: 0.50, y: 0.90, label: 'Player A' },
+                    { type: 'player', id: 'p2', x: 0.50, y: 0.10, label: 'Player B' },
+                    { type: 'coach', id: 'coach', x: 0.85, y: 0.50, label: 'Coach' }
                 ],
                 drawings: [
                     { type: 'ball_path', from: { x: 0.50, y: 0.90 }, to: { x: 0.30, y: 0.12 }, style: 'solid', color: '#CCFF00' }
                 ]
-            }
-        }
-    },
-
-    {
-        id: 'blue_movement_agility',
-        title: 'مهارت‌های پایه حرکتی، تعقیب توپ و مینی‌رالی (ABC & Fun)',
-        level: 'BLUE',
-        situation: 'BOTH_BACK',
-        capacity: 'PHYSICAL',
-        surface: 'carpet',
-        duration: 40,
-        playersCount: '4 تا 6 بازیکن',
-        equipment: 'توپ‌های فومی اسفنجی، راکت‌های ۱۷-۱۹ اینچ، نردبان چابکی، دیسک‌های پلاستیکی رنگی',
-        overview: 'توسعه چابکی، تعادل و هماهنگی (Agility, Balance, Coordination) برای خردسالان با استفاده از تمرینات بازی‌محور و شاد LTA Youth Blue.',
-
-        stages: {
-            GAME_ASSESSMENT: {
-                goal: 'مشاهده توانایی کودک در تشخیص مسیر حرکت توپ غلتان و متوقف کردن آن با کف دست یا راکت.',
-                drillDescription: 'بازی شاد "شکار خرگوش": مربی توپ‌های فومی رنگی را روی زمین می‌غلتاند و کودکان باید با دویدن آن را با راکت روی زمین بگیرند.',
-                coachObservations: 'تعادل حرکتی کودک، توانایی ترمز کردن، هماهنگی چشم و دست در حین حرکت.',
-                timeMinutes: 8,
-                elements: [
-                    { type: 'coach', id: 'coach', x: 0.50, y: 0.40, label: 'مربی' },
-                    { type: 'player', id: 'p1', x: 0.35, y: 0.70, label: 'کودک ۱' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.70, label: 'کودک ۲' },
-                    { type: 'ball', id: 'b1', x: 0.42, y: 0.55 },
-                    { type: 'ball', id: 'b2', x: 0.58, y: 0.55 }
-                ],
-                drawings: [
-                    { type: 'move_path', from: { x: 0.35, y: 0.70 }, to: { x: 0.42, y: 0.55 }, style: 'dashed', color: '#38bdf8' },
-                    { type: 'move_path', from: { x: 0.65, y: 0.70 }, to: { x: 0.58, y: 0.55 }, style: 'dashed', color: '#38bdf8' }
-                ]
-            },
-            DEMO_CLOSED: {
-                goal: 'آموزش گام‌های سریع از میان نردبان چابکی و سپس ضربه آرام فورهند به سمت هدف بزرگ با فید دستی.',
-                drillDescription: 'کودک دو پا در میان پله‌های نردبان می‌گذارد، سپس به سمت راست دویده و توپی که مربی از ارتفاع کم رها می‌کند با راکت به هدف رنگی می‌زند.',
-                coachingCues: [
-                    'پاهای سبک مثل پروانه',
-                    'راکت مثل قاشق بستنی: توپ رو نوازش کن و بالا بفرست'
-                ],
-                timeMinutes: 15,
-                elements: [
-                    { type: 'coach', id: 'coach', x: 0.40, y: 0.60, label: 'مربی' },
-                    { type: 'player', id: 'p1', x: 0.60, y: 0.85, label: 'کودک' },
-                    { type: 'target', id: 't1', x: 0.50, y: 0.30, points: 10, color: '#facc15' },
-                    { type: 'cone', id: 'c1', x: 0.60, y: 0.75, color: '#ef4444' }
-                ],
-                drawings: [
-                    { type: 'move_path', from: { x: 0.60, y: 0.85 }, to: { x: 0.45, y: 0.65 }, style: 'dashed', color: '#38bdf8' },
-                    { type: 'ball_path', from: { x: 0.45, y: 0.65 }, to: { x: 0.50, y: 0.30 }, style: 'solid', color: '#CCFF00' }
-                ]
-            },
-            PROGRESSING_OPEN: {
-                goal: 'بازی تیمی ۲ به ۲ با رد و بدل کردن توپ فومی از روی تور کوتاه بدون افتادن به زمین.',
-                drillDescription: 'تیم‌ها تلاش می‌کنند رکورد رد کردن توپ را جابجا کنند. مربی شمارش معکوس هیجان‌انگیز می‌گذارد.',
-                coachingCues: [
-                    'صدا زدن "من زدم" برای تقویت ارتباط تیمی',
-                    'استقرار آماده‌باش با زانوهای کمی خمیده'
-                ],
-                timeMinutes: 10,
-                elements: [
-                    { type: 'player', id: 'p1', x: 0.40, y: 0.65, label: 'یار ۱' },
-                    { type: 'player', id: 'p2', x: 0.60, y: 0.65, label: 'یار ۲' },
-                    { type: 'player', id: 'p3', x: 0.50, y: 0.35, label: 'یار ۳' }
-                ],
-                drawings: [
-                    { type: 'ball_path', from: { x: 0.40, y: 0.65 }, to: { x: 0.50, y: 0.35 }, style: 'solid', color: '#CCFF00' }
-                ]
-            },
-            GAME: {
-                goal: 'مسابقه فتح قله: هر ضربه از روی تور = ۱ ستاره برای تیم.',
-                drillDescription: 'کودکان در قالب بازی گروهی سرگرم‌کننده ستاره جمع می‌کنند تا به خط پایان برسند.',
-                debriefQuestions: [
-                    'کی امروز تونست قشنگ‌ترین پرش رو انجام بده؟',
-                    'نگاه کردن به توپ چطوری کمکت کرد راحت‌تر با راکت بزنیش؟'
-                ],
-                timeMinutes: 7,
-                elements: [
-                    { type: 'coach', id: 'coach', x: 0.50, y: 0.50, label: 'مربی کاپیتان' },
-                    { type: 'player', id: 'p1', x: 0.35, y: 0.75, label: 'تیم ستاره' },
-                    { type: 'player', id: 'p2', x: 0.65, y: 0.75, label: 'تیم قهرمان' }
-                ],
-                drawings: []
             }
         }
     }

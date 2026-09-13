@@ -1,71 +1,67 @@
 /**
- * LTA Framework & Standards Data Model
- * Incorporating LTA Lesson Structure (Hourglass / Funnel model from user diagram),
+ * LTA Framework & Standards Data Model (100% English)
+ * Incorporating official British LTA Lesson Hourglass Model,
  * LTA Youth Stages, 5 Game Situations, and 4 Performance Capacities.
  */
 
 const LTA_FRAMEWORK = {
-    // 4-Tier Lesson Structure (Hourglass Model from diagram)
+    // 4-Tier Lesson Structure (Hourglass / Funnel Model)
     stages: {
         GAME_ASSESSMENT: {
             id: 'GAME_ASSESSMENT',
-            titleFa: 'ارزیابی اولیه در بازی (Game Assessment)',
             titleEn: 'Game Assessment',
-            color: '#1E3A8A', // Dark Navy Blue as in diagram
+            titleShort: 'Game Assessment',
+            color: '#1E3A8A', // Dark Navy Blue
             icon: 'eye',
             stepNumber: 1,
-            descriptionFa: 'شروع با سناریوی واقعی مسابقه برای تشخیص نقطه ضعف، نیاز فنی یا چالش تاکتیکی بازیکن.',
-            descriptionEn: 'Start with a relevant game context to observe player tendencies and identify priority.',
-            coachFocus: 'مشاهده بازیکن بدون دخالت سریع، ارزیابی تصمیم‌گیری و مکانیک ضربه در شرایط واقعی.',
+            description: 'Start with a live game context to diagnose player tendencies, biomechanical breakdowns, and tactical needs.',
+            coachFocus: 'Observe without early intervention. Diagnose whether errors are tactical (decision/space) or technical (contact/timing).',
             keyQuestions: [
-                'آیا بازیکن زود تصمیم می‌گیرد یا دیر؟',
-                'نقطه برخورد توپ کجاست؟ (جلو، عقب، بالا، پایین)',
-                'آیا ریکاوری به مرکز زمین درست انجام می‌شود؟'
+                'Does the player recognize incoming ball depth early?',
+                'Where is the contact point relative to the front hip?',
+                'Is the recovery movement active or delayed after ball strike?'
             ]
         },
         DEMO_CLOSED: {
             id: 'DEMO_CLOSED',
-            titleFa: 'آموزش و تمرین بسته (Demo / Teaching Closed)',
             titleEn: 'Demo / Teaching (Closed)',
+            titleShort: 'Demo Teaching Closed',
             color: '#3B82F6', // Lighter Blue
             icon: 'graduation-cap',
             stepNumber: 2,
-            descriptionFa: 'نمایش شفاف و تدریس مهارت با فید ثابت و بدون عدم قطعیت برای تثبیت حافظه عضلانی و بیومکانیک.',
-            descriptionEn: 'Clear demo & isolated technical practice with repetitive, controlled feeds.',
-            coachFocus: 'ارائه نکات کلیدی کلامی و بصری (What, When, How, Why)، اصلاح گریپ، زاویه راکت و گام‌ها.',
+            description: 'Clear demonstration and isolated technical practice with repetitive, controlled feeds to build muscle memory.',
+            coachFocus: 'Deliver concise verbal and visual coaching cues (What, When, How, Why). Focus on grip, unit turn, contact point, and balance.',
             keyQuestions: [
-                'آیا نشانه‌های کلیدی (Coaching Cues) کوتاه و به یادماندنی هستند؟',
-                'آیا تکرار کافی با موفقیت بالای ۷۰٪ انجام می‌شود؟'
+                'Are coaching cues memorable and action-oriented?',
+                'Is repetition achieving an 80%+ success rate in closed feeds?'
             ]
         },
         PROGRESSING_OPEN: {
             id: 'PROGRESSING_OPEN',
-            titleFa: 'پیشرفت و تمرین باز (Progressing Open)',
             titleEn: 'Progressing (Open)',
+            titleShort: 'Progressing Open',
             color: '#2563EB', // Royal Vibrant Blue
             icon: 'trending-up',
             stepNumber: 3,
-            descriptionFa: 'افزایش پویایی، تصمیم‌گیری، حرکت در زمین و شبیه‌سازی رالی زنده با محدودیت‌ها و قوانین متغیر.',
-            descriptionEn: 'Increasing variability, decision making, court movement and dynamic rallies.',
-            coachFocus: 'هدایت بازیکن به "چه زمانی" و "به کجا" زدن توپ بر مبنای حریف و فضا، اعمال سناریوهای مشروط.',
+            description: 'Introduce variability, decision-making, and court movement through dynamic rallies with constraints and tactical triggers.',
+            coachFocus: 'Guide players on "When" and "Where" to direct the ball based on opponent positioning and incoming ball trajectory.',
             keyQuestions: [
-                'اگر توپ حریف کوتاه بود بازیکن چه تصمیمی می‌گیرد؟',
-                'آیا بازیکن تحت فشار زمان و فضا تکنیک را حفظ می‌کند؟'
+                'How does the player respond when receiving a short or deep ball?',
+                'Does technique hold up under movement and time pressure?'
             ]
         },
         GAME: {
             id: 'GAME',
-            titleFa: 'بازی و ارزیابی نهایی (Game)',
-            titleEn: 'Game',
+            titleEn: 'Game (Match Application)',
+            titleShort: 'Game',
             color: '#1E3A8A', // Base Navy Blue
             icon: 'trophy',
             stepNumber: 4,
-            descriptionFa: 'بازگشت به مسابقه با امتیازشماری ویژه (Bonus Point) و سنجش نهایی انتقال مهارت به بازی واقعی.',
-            descriptionEn: 'Return to competitive play to verify skill transfer and strategic execution.',
-            coachFocus: 'تشویق به اجرای مهارت زیر فشار امتیاز، ثبت پیشرفت، بازخورد پایانی و پرسش‌های جمع‌بندی.',
+            description: 'Return to competitive play with thematic bonus scoring to evaluate skill transfer under match pressure, followed by debrief.',
+            coachFocus: 'Evaluate retention during pressure points. Lead player debrief with open questions and set self-practice goals.',
             keyQuestions: [
-                'آیا بازیکن در امتیازات حساس از مهارت آموزش‌داده‌شده استفاده کرد؟',
-                'نتیجه یادگیری بازیکن برای جلسات آتی چیست؟'
+                'Did the player execute the tactical pattern in crucial points?',
+                'What is the key takeaway for their next match or session?'
             ]
         }
     },
@@ -74,73 +70,66 @@ const LTA_FRAMEWORK = {
     levels: {
         BLUE: {
             id: 'BLUE',
-            nameFa: 'رده آبی LTA Blue (۴ تا ۶ سال)',
             nameEn: 'LTA Youth Blue (Ages 4-6)',
-            ballType: 'توپ فومی بزرگ (Sponge/Foam)',
-            racketSize: '17 تا 19 اینچ',
-            courtSize: 'مینی کورت ۱/۴ با تور کوتاه',
+            ballType: 'Red Foam / Sponge Ball',
+            racketSize: '17" to 19"',
+            courtSize: 'Mini Court (1/4 size with low net)',
             badgeColor: '#0ea5e9',
-            description: 'آشنایی اولیه با راکت، غلتاندن توپ، ردیابی چشمی، هماهنگی عصب و عضله، دویدن و پرش با بازی‌های سرگرم‌کننده.'
+            description: 'Movement fundamentals, eye-hand coordination, agility, balance, tracking rolling balls, and playful racket games.'
         },
         RED: {
             id: 'RED',
-            nameFa: 'رده قرمز LTA Red (۶ تا ۸ سال)',
             nameEn: 'LTA Youth Red (Ages 6-8)',
-            ballType: 'توپ قرمز رد (۷۵٪ کندتر از توپ استاندارد)',
-            racketSize: '19 تا 21 اینچ',
-            courtSize: 'زمین ۳۶ فوتی (۱۱ متر عرضی)',
+            ballType: 'Red Felt Ball (75% slower than standard)',
+            racketSize: '19" to 21"',
+            courtSize: '36ft Mini Court (11m x 5.5m)',
             badgeColor: '#ef4444',
-            description: 'یادگیری رالی ساده از روی تور، تکنیک ضربات اولیه، فورهند و بک‌هند پایه، سرویس از بالا و حرکت به طرفین.'
+            description: 'Over-the-net rallies, fundamental groundstroke shapes, overhand serving basics, lateral movement, and recovery.'
         },
         ORANGE: {
             id: 'ORANGE',
-            nameFa: 'رده نارنجی LTA Orange (۸ تا ۹ سال)',
             nameEn: 'LTA Youth Orange (Ages 8-9)',
-            ballType: 'توپ نارنجی (۵۰٪ کندتر)',
-            racketSize: '23 تا 25 اینچ',
-            courtSize: 'زمین ۶۰ فوتی (۱۸ متر)',
+            ballType: 'Orange Ball (50% slower)',
+            racketSize: '23" to 25"',
+            courtSize: '60ft Court (18m x 6.5m)',
             badgeColor: '#f97316',
-            description: 'توسعه تاب کامل راکت، پیش‌بینی مسیر توپ حریف، ضربات پای تور و والی، کنترل عمق و زاویه ضربات.'
+            description: 'Developing full rotational swings, approaching the net, split-step footwork, depth control, and court geometry.'
         },
         GREEN: {
             id: 'GREEN',
-            nameFa: 'رده سبز LTA Green (۹ تا ۱۰ سال)',
             nameEn: 'LTA Youth Green (Ages 9-10)',
-            ballType: 'توپ سبز (۲۵٪ کندتر)',
-            racketSize: '25 تا 26 اینچ',
-            courtSize: 'زمین کامل (Full Court)',
+            ballType: 'Green Ball (25% slower)',
+            racketSize: '25" to 26"',
+            courtSize: 'Full Regulation Court (78ft)',
             badgeColor: '#10b981',
-            description: 'انتقال به زمین استاندارد کامل، ضربات چرخشی تاپ‌اسپین، سرویس دوم با چرخش، استراتژی‌های حمله و دفاع.'
+            description: 'Transition to full court dimensions, heavy topspin production, spin serves, tactical patterns, and endurance.'
         },
         YELLOW_BEG: {
             id: 'YELLOW_BEG',
-            nameFa: 'بزرگسالان / زرد مبتدی (Beginner)',
-            nameEn: 'Yellow Ball - Beginner',
-            ballType: 'توپ زرد استاندارد',
-            racketSize: '27 اینچ استاندارد',
-            courtSize: 'زمین کامل',
+            nameEn: 'Yellow Ball - Adult Beginner',
+            ballType: 'Standard Yellow Ball',
+            racketSize: '27" Standard',
+            courtSize: 'Full Regulation Court',
             badgeColor: '#eab308',
-            description: 'شروع تنیس استاندارد، یادگیری ضربات پایه زمینی، ثبات در سرویس و ریترن، جاگیری مناسب در زمین.'
+            description: 'Solidifying baseline groundstrokes, consistent directional serving, reliable returns, and basic court positioning.'
         },
         YELLOW_INT: {
             id: 'YELLOW_INT',
-            nameFa: 'بزرگسالان / زرد متوسط (Intermediate)',
             nameEn: 'Yellow Ball - Intermediate',
-            ballType: 'توپ زرد استاندارد',
-            racketSize: '27 اینچ',
-            courtSize: 'زمین کامل',
+            ballType: 'Standard Yellow Ball',
+            racketSize: '27" Standard',
+            courtSize: 'Full Regulation Court',
             badgeColor: '#8b5cf6',
-            description: 'کنترل ریتم بازی، افزایش سرعت، بازی هدفمند کراس و خط، تکنیک‌های اسلایس و فوت‌ورک پیشرفته.'
+            description: 'Pace control, heavy crosscourt and down-the-line targeting, slice variations, approach shots, and solid transition volleys.'
         },
         YELLOW_ADV: {
             id: 'YELLOW_ADV',
-            nameFa: 'پیشرفته / قهرمانی (Advanced & Performance)',
             nameEn: 'Yellow Ball - Advanced / Performance',
-            ballType: 'توپ زرد استاندارد تورنمنتی',
-            racketSize: '27 اینچ تخصصی',
-            courtSize: 'زمین کامل',
+            ballType: 'Tournament Grade Yellow Ball',
+            racketSize: '27" Performance',
+            courtSize: 'Full Regulation Court',
             badgeColor: '#ec4899',
-            description: 'تاکتیک‌های تخصصی مسابقه، تنوع ضربه، ضربات تحت فشار بالا، الگوهای امتیازگیری +1، آمادگی روانی و بدنی.'
+            description: 'High-performance match strategy, Serve+1 and Return+1 patterns, weapon development, and psychological resilience.'
         }
     },
 
@@ -148,38 +137,33 @@ const LTA_FRAMEWORK = {
     situations: {
         SERVE: {
             id: 'SERVE',
-            titleFa: '۱. سرویس زدن (Serving)',
-            titleEn: 'Serving',
+            titleEn: '1. Serving',
             icon: 'zap',
-            tacticalGoal: 'شروع نقطه با برتری تهاجمی، دقت به زوایای باکس، سرویس اول و دوم با تنوع چرخش.'
+            tacticalGoal: 'Seize immediate offensive advantage, target service box corners (T and Wide), and vary spin.'
         },
         RETURN: {
             id: 'RETURN',
-            titleFa: '۲. بازگرداندن سرویس (Returning)',
-            titleEn: 'Returning',
+            titleEn: '2. Returning',
             icon: 'shield',
-            tacticalGoal: 'خنثی‌سازی برتری حریف، ارسال توپ عمیق به وسط یا حمله به سرویس‌های ضعیف دوم.'
+            tacticalGoal: 'Neutralize server advantage with deep central returns, or punish weak second serves into open space.'
         },
         BOTH_BACK: {
             id: 'BOTH_BACK',
-            titleFa: '۳. رالی از انتهای زمین (Both at Baseline)',
-            titleEn: 'Both at Baseline',
+            titleEn: '3. Both at Baseline',
             icon: 'repeat',
-            tacticalGoal: 'کنترل ۵ فاکتور پرتاب (جهت، عمق، ارتفاع، سرعت، اسپین) و جابجا کردن حریف برای ایجاد فضا.'
+            tacticalGoal: 'Control the 5 ball reception/projection variables (Speed, Spin, Height, Depth, Direction) to dictate tempo.'
         },
         APPROACH_NET: {
             id: 'APPROACH_NET',
-            titleFa: '۴. حمله و بازی پای تور (Approaching & at Net)',
-            titleEn: 'Approaching & at Net',
+            titleEn: '4. Approaching & at Net',
             icon: 'arrow-up-right',
-            tacticalGoal: 'ورود سریع به زمین روی توپ‌های کوتاه، ضربات اپروچ، بستن زاویه‌ها و فینیش با والی یا اسمش.'
+            tacticalGoal: 'Exploit short balls, drive aggressive approaches down the line, close the net, and finish with decisive volleys.'
         },
         DEFEND_NET: {
             id: 'DEFEND_NET',
-            titleFa: '۵. دفاع مقابل بازیکن تور (Passing & Defending)',
-            titleEn: 'Defending against Net Player',
+            titleEn: '5. Defending against Net Player',
             icon: 'crosshair',
-            tacticalGoal: 'پاسینگ شات‌های تیز زمینی، شوت‌های پرشی، لاب‌های تاپ‌اسپین عمیق و ضربات قوس‌دار پای حریف.'
+            tacticalGoal: 'Execute sharp passing shots, dipping balls at the opponent\'s feet, and defensive topspin lobs.'
         }
     },
 
@@ -187,85 +171,86 @@ const LTA_FRAMEWORK = {
     capacities: {
         TACTICAL: {
             id: 'TACTICAL',
-            titleFa: 'تاکتیکی (Tactical)',
             titleEn: 'Tactical',
             badgeColor: '#3b82f6',
-            description: 'تشخیص فضا و زمان، انتخاب ضربه، خواندن بازی حریف و استراتژی.'
+            description: 'Shot selection, space and time awareness, opponent pattern recognition, and risk management.'
         },
         TECHNICAL: {
             id: 'TECHNICAL',
-            titleFa: 'تکنیکی (Technical)',
             titleEn: 'Technical',
             badgeColor: '#10b981',
-            description: 'بیومکانیک دست و راکت، گریپ، نقطه برخورد، چرخش مچ و تعقیب ضربه.'
+            description: 'Grip mechanics, racket trajectory, solid contact point, follow-through, and fluid stroke mechanics.'
         },
         PHYSICAL: {
             id: 'PHYSICAL',
-            titleFa: 'آمادگی جسمانی (Physical)',
             titleEn: 'Physical',
             badgeColor: '#f59e0b',
-            description: 'چابکی، تعادل، هماهنگی، سرعت واکنش، بازی پا (Footwork) و استقامت.'
+            description: 'Agility, Balance, Coordination (ABCs), reactive speed, split-step timing, dynamic recovery, and stamina.'
         },
         MENTAL: {
             id: 'MENTAL',
-            titleFa: 'روانی و ذهنی (Psychological)',
-            titleEn: 'Psychological',
+            titleEn: 'Mental / Psychological',
             badgeColor: '#8b5cf6',
-            description: 'تمرکز، آرامش زیر فشار، انگیزه، خودباوری و پذیرش اشتباهات.'
+            description: 'Focus under pressure, competitive resilience, emotional composure, and proactive problem solving.'
         }
     },
 
-    // Court Surfaces
+    // 3D Court Surfaces
     surfaces: {
         grass: {
             id: 'grass',
-            nameFa: 'چمن طبیعی ویمبلدون (Wimbledon Grass)',
             nameEn: 'Wimbledon Grass',
-            courtColor: '#1e5f38',
-            surroundColor: '#154528',
+            courtColor: '#1d5a35',
+            surroundColor: '#133e24',
             lineColor: '#FFFFFF',
-            speed: 'سریع (Fast) | پرش کوتاه و لغزنده',
-            accentColor: '#10b981'
+            speed: 'Fast | Low skid bounce',
+            accentColor: '#10b981',
+            specular: '#2d7a4b',
+            roughness: 0.8
         },
         clay: {
             id: 'clay',
-            nameFa: 'خاک رس رولان گاروس (Roland Garros Clay)',
             nameEn: 'Roland Garros Clay',
-            courtColor: '#C45731',
-            surroundColor: '#9C3E1F',
+            courtColor: '#c55831',
+            surroundColor: '#96391a',
             lineColor: '#FFFFFF',
-            speed: 'کند (Slow) | پرش بلند و چرخش سنگین',
-            accentColor: '#f97316'
+            speed: 'Slow | High heavy bounce with slide',
+            accentColor: '#f97316',
+            specular: '#d96e48',
+            roughness: 0.9
         },
         hard_blue: {
             id: 'hard_blue',
-            nameFa: 'هاردکورت آبی US Open (DecoTurf)',
-            nameEn: 'US Open Hard Court',
+            nameEn: 'US Open Hard Court (DecoTurf)',
             courtColor: '#195B9C',
-            surroundColor: '#286B43',
+            surroundColor: '#25633e',
             lineColor: '#FFFFFF',
-            speed: 'متوسط-سریع (Medium-Fast) | پرش یکنواخت و استاندارد',
-            accentColor: '#38bdf8'
+            speed: 'Medium-Fast | True uniform bounce',
+            accentColor: '#38bdf8',
+            specular: '#3a7dbf',
+            roughness: 0.5
         },
         hard_aus: {
             id: 'hard_aus',
-            nameFa: 'هاردکورت استرالیا (Australian Open Blue)',
             nameEn: 'Australian Open Blue',
             courtColor: '#0085C7',
-            surroundColor: '#00588A',
+            surroundColor: '#005580',
             lineColor: '#FFFFFF',
-            speed: 'متوسط (Medium) | پرش شفاف و بدون لغزش',
-            accentColor: '#0284c7'
+            speed: 'Medium | Bright Pacific blue finish',
+            accentColor: '#0284c7',
+            specular: '#22a2e6',
+            roughness: 0.5
         },
         carpet: {
             id: 'carpet',
-            nameFa: 'کارپت و کفپوش سالن (Indoor Carpet)',
-            nameEn: 'Indoor Carpet',
-            courtColor: '#1E293B',
-            surroundColor: '#0F172A',
-            lineColor: '#E2E8F0',
-            speed: 'بسیار سریع (Very Fast) | سرعت بالای تبادل توپ',
-            accentColor: '#94a3b8'
+            nameEn: 'Indoor Carpet / Graphite',
+            courtColor: '#1e293b',
+            surroundColor: '#0f172a',
+            lineColor: '#e2e8f0',
+            speed: 'Very Fast | Low flat trajectory',
+            accentColor: '#94a3b8',
+            specular: '#334155',
+            roughness: 0.6
         }
     }
 };

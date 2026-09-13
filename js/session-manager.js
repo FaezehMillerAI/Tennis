@@ -1,5 +1,5 @@
 /**
- * LTA Session Manager
+ * LTA Session Manager (100% English)
  * Handles session state, stage transitions (Hourglass 4-Tier Model),
  * localStorage persistence, JSON import/export, and print-to-PDF formatting.
  */
@@ -19,7 +19,7 @@ class LTASessionManager {
 
     loadSavedSessionsFromStorage() {
         try {
-            const raw = localStorage.getItem('lta_coach_sessions');
+            const raw = localStorage.getItem('lta_coach_sessions_en');
             return raw ? JSON.parse(raw) : [];
         } catch (e) {
             console.error('Failed to load sessions from storage', e);
@@ -29,30 +29,25 @@ class LTASessionManager {
 
     saveSessionsToStorage() {
         try {
-            localStorage.setItem('lta_coach_sessions', JSON.stringify(this.savedSessions));
+            localStorage.setItem('lta_coach_sessions_en', JSON.stringify(this.savedSessions));
         } catch (e) {
             console.error('Failed to save sessions to storage', e);
         }
     }
 
     loadSession(sessionData) {
-        // Deep copy
         this.activeSession = JSON.parse(JSON.stringify(sessionData));
 
-        // Sync surface if specified
         if (this.activeSession.surface && this.court) {
             this.court.setSurface(this.activeSession.surface);
         }
 
-        // Set to stage 1 (Game Assessment)
         this.setStage('GAME_ASSESSMENT', false);
     }
 
-    // Switch between the 4 hourglass stages
     setStage(stageKey, saveCurrent = true) {
         if (!this.activeSession) return;
 
-        // Save current canvas to current stage
         if (saveCurrent && this.court && this.activeSession.stages[this.activeStageKey]) {
             const currentData = this.court.getCurrentPhaseData();
             this.activeSession.stages[this.activeStageKey].elements = currentData.elements;
@@ -61,7 +56,6 @@ class LTASessionManager {
 
         this.activeStageKey = stageKey;
 
-        // Load stage data into court
         const stageData = this.activeSession.stages[stageKey];
         if (stageData && this.court) {
             this.court.loadPhase(stageData);
@@ -70,11 +64,9 @@ class LTASessionManager {
         window.tennisAudio?.playBounce();
     }
 
-    // Save active session to library
     saveCurrentSession() {
         if (!this.activeSession) return;
 
-        // Sync active court to active stage
         if (this.court && this.activeSession.stages[this.activeStageKey]) {
             const currentData = this.court.getCurrentPhaseData();
             this.activeSession.stages[this.activeStageKey].elements = currentData.elements;
@@ -95,48 +87,47 @@ class LTASessionManager {
         return this.activeSession;
     }
 
-    // Create new blank session
     createNewSession() {
         const newSession = {
             id: 'session_' + Date.now(),
-            title: 'جلسه تمرینی جدید LTA',
+            title: 'New LTA Coaching Session',
             level: 'YELLOW_INT',
             situation: 'BOTH_BACK',
             capacity: 'TECHNICAL',
             surface: this.court ? this.court.surface : 'hard_blue',
             duration: 60,
-            playersCount: '2 بازیکن',
-            equipment: 'توپ استاندارد زرد، ۴ مخروط، تارگت‌های نقطه‌ای',
-            overview: 'طراحی سناریوی آموزشی بر اساس ۴ مرحله استاندارد LTA.',
+            playersCount: '2 Players',
+            equipment: 'Standard Yellow Balls, 4 Cones, Target Markers',
+            overview: 'Custom training scenario designed according to the official British LTA 4-tier Hourglass structure.',
             stages: {
                 GAME_ASSESSMENT: {
-                    goal: 'ارزیابی مهارت اولیه بازیکن در جریان بازی واقعی.',
-                    drillDescription: 'بازی امتیازی کوتاه برای شناسایی نیاز تکنیکی یا تاکتیکی.',
-                    coachObservations: 'رفتار و تصمیم‌گیری بازیکن زیر نظر گرفته شود.',
+                    goal: 'Diagnose baseline tendencies and technical/tactical priorities under real game conditions.',
+                    drillDescription: 'Short competitive game or rally context to observe player shot execution and court recovery.',
+                    coachObservations: 'Monitor player balance, preparation timing, and tactical shot choices.',
                     timeMinutes: 10,
                     elements: [],
                     drawings: []
                 },
                 DEMO_CLOSED: {
-                    goal: 'ایزوله‌سازی مهارت و تمرین بسته با فید یکنواخت مربی.',
-                    drillDescription: 'نمایش شفاف تکنیک همراه با Cues و تکرار در شرایط کنترل‌شده.',
-                    coachingCues: ['آمادگی زودهنگام', 'ضربه در جلوی بدن', 'پایان حرکت کامل'],
+                    goal: 'Isolate technical mechanics and build muscle memory with controlled, predictable feeds.',
+                    drillDescription: 'Clear visual demonstration with concise cues (What, When, How, Why) and repetitive closed feeding.',
+                    coachingCues: ['Early Unit Turn', 'Solid Contact Out Front', 'Full Extension & Recovery'],
                     timeMinutes: 20,
                     elements: [],
                     drawings: []
                 },
                 PROGRESSING_OPEN: {
-                    goal: 'توسعه به رالی باز و تقویت تصمیم‌گیری تاکتیکی.',
-                    drillDescription: 'رالی پویا با محدودیت‌های هدفمند و تغییر سرعت و جهت.',
-                    coachingCues: ['خواندن مسیر توپ حریف', 'انتخاب هوشمندانه شوت'],
+                    goal: 'Advance to dynamic live rallies, introducing decision-making variables and spatial awareness.',
+                    drillDescription: 'Live rally with constraints: players respond dynamically based on incoming ball depth and opponent placement.',
+                    coachingCues: ['Anticipate opponent recovery', 'Execute targeted tactical pattern under movement'],
                     timeMinutes: 20,
                     elements: [],
                     drawings: []
                 },
                 GAME: {
-                    goal: 'بازگشت به شرایط مسابقه برای سنجش کاربرد مهارت.',
-                    drillDescription: 'مسابقه با سیستم امتیازدهی ویژه برای موفقیت در مهارت آموخته‌شده.',
-                    debriefQuestions: ['چه زمانی احساس تسلط بیشتری داشتی؟', 'هدف بعدی چیست؟'],
+                    goal: 'Evaluate skill transfer in competitive match play with thematic bonus scoring, followed by debrief.',
+                    drillDescription: 'Tiebreak or match play. Points won using the session\'s primary skill earn double points.',
+                    debriefQuestions: ['When did you feel most in control of the point?', 'What is your main takeaway for future matches?'],
                     timeMinutes: 10,
                     elements: [],
                     drawings: []
@@ -148,13 +139,11 @@ class LTASessionManager {
         return newSession;
     }
 
-    // Delete session
     deleteSession(sessionId) {
         this.savedSessions = this.savedSessions.filter(s => s.id !== sessionId);
         this.saveSessionsToStorage();
     }
 
-    // Export to JSON
     exportJSON() {
         if (!this.activeSession) return;
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.activeSession, null, 2));
@@ -167,7 +156,6 @@ class LTASessionManager {
         window.tennisAudio?.playClick();
     }
 
-    // Import from JSON
     importJSON(jsonString) {
         try {
             const parsed = JSON.parse(jsonString);
@@ -185,19 +173,22 @@ class LTASessionManager {
         return false;
     }
 
-    // Prepare and launch Print / PDF view
     printSessionCard() {
         if (!this.activeSession) return;
 
-        // Ensure current stage is synced
         if (this.court && this.activeSession.stages[this.activeStageKey]) {
             const currentData = this.court.getCurrentPhaseData();
             this.activeSession.stages[this.activeStageKey].elements = currentData.elements;
             this.activeSession.stages[this.activeStageKey].drawings = currentData.drawings;
         }
 
-        // Capture court snapshot image
-        const courtDataUrl = this.court ? this.court.canvas.toDataURL('image/png') : '';
+        // Render 3D scene and grab data URL
+        let courtDataUrl = '';
+        if (this.court && this.court.renderer) {
+            this.court.renderer.render(this.court.scene, this.court.camera);
+            courtDataUrl = this.court.renderer.domElement.toDataURL('image/png');
+        }
+
         const levelInfo = LTA_FRAMEWORK.levels[this.activeSession.level] || {};
         const situationInfo = LTA_FRAMEWORK.situations[this.activeSession.situation] || {};
         const capacityInfo = LTA_FRAMEWORK.capacities[this.activeSession.capacity] || {};
@@ -205,7 +196,6 @@ class LTASessionManager {
 
         const stages = this.activeSession.stages;
 
-        // Populate dedicated print container
         const printContainer = document.getElementById('print-container');
         if (!printContainer) return;
 
@@ -215,90 +205,90 @@ class LTASessionManager {
                     <div>
                         <div class="print-brand">
                             <span class="lta-logo-badge">LTA</span>
-                            <span>طرح درس مربیگری تنیس بریتانیا | Lawn Tennis Association</span>
+                            <span>British Lawn Tennis Association | Official Coaching Lesson Plan</span>
                         </div>
                         <h1 class="print-title">${this.activeSession.title}</h1>
                     </div>
                     <div class="print-meta-grid">
-                        <div><strong>سطح / سن:</strong> ${levelInfo.nameFa || this.activeSession.level}</div>
-                        <div><strong>وضعیت بازی:</strong> ${situationInfo.titleFa || this.activeSession.situation}</div>
-                        <div><strong>ظرفیت عملکردی:</strong> ${capacityInfo.titleFa || this.activeSession.capacity}</div>
-                        <div><strong>سطح زمین:</strong> ${surfaceInfo.nameFa || 'هاردکورت'}</div>
-                        <div><strong>مدت جلسه:</strong> ${this.activeSession.duration} دقیقه</div>
-                        <div><strong>تعداد بازیکنان:</strong> ${this.activeSession.playersCount || '۲ بازیکن'}</div>
+                        <div><strong>Stage / Age:</strong> ${levelInfo.nameEn || this.activeSession.level}</div>
+                        <div><strong>Game Situation:</strong> ${situationInfo.titleEn || this.activeSession.situation}</div>
+                        <div><strong>Focus Capacity:</strong> ${capacityInfo.titleEn || this.activeSession.capacity}</div>
+                        <div><strong>Surface:</strong> ${surfaceInfo.nameEn || 'Hard Court'}</div>
+                        <div><strong>Duration:</strong> ${this.activeSession.duration} mins</div>
+                        <div><strong>Group Size:</strong> ${this.activeSession.playersCount || '2 Players'}</div>
                     </div>
                 </div>
 
                 <div class="print-body">
                     <div class="print-court-section">
-                        <div class="print-section-title">دیاگرام زمین و چیدمان تاکتیکی (${LTA_FRAMEWORK.stages[this.activeStageKey]?.titleFa})</div>
-                        <img src="${courtDataUrl}" class="print-court-img" alt="Court Diagram" />
-                        <div class="print-equipment"><strong>تجهیزات مورد نیاز:</strong> ${this.activeSession.equipment || 'توپ و راکت'}</div>
+                        <div class="print-section-title">Tactical 3D Court Diagram (${LTA_FRAMEWORK.stages[this.activeStageKey]?.titleEn})</div>
+                        <img src="${courtDataUrl}" class="print-court-img" alt="3D Court Diagram" />
+                        <div class="print-equipment"><strong>Required Equipment:</strong> ${this.activeSession.equipment || 'Standard balls and rackets'}</div>
                     </div>
 
                     <div class="print-hourglass-section">
-                        <div class="print-section-title">مراحل ۴گانه درس بر اساس ساختار ساعت‌شنی LTA</div>
+                        <div class="print-section-title">4-Tier Lesson Structure (Hourglass Model)</div>
                         
                         <!-- 1. Game Assessment -->
                         <div class="print-stage-box stage-1">
                             <div class="print-stage-header">
-                                <span class="stage-num">۱</span>
-                                <strong>Game Assessment (ارزیابی اولیه در بازی)</strong>
-                                <span class="stage-time">${stages.GAME_ASSESSMENT?.timeMinutes || 10} دقیقه</span>
+                                <span class="stage-num">1</span>
+                                <strong>GAME ASSESSMENT</strong>
+                                <span class="stage-time">${stages.GAME_ASSESSMENT?.timeMinutes || 10} mins</span>
                             </div>
                             <div class="print-stage-content">
-                                <p><strong>هدف:</strong> ${stages.GAME_ASSESSMENT?.goal || '-'}</p>
-                                <p><strong>شرح تمرین:</strong> ${stages.GAME_ASSESSMENT?.drillDescription || '-'}</p>
-                                <p><strong>مشاهدات مربی:</strong> ${stages.GAME_ASSESSMENT?.coachObservations || '-'}</p>
+                                <p><strong>Goal:</strong> ${stages.GAME_ASSESSMENT?.goal || '-'}</p>
+                                <p><strong>Drill Context:</strong> ${stages.GAME_ASSESSMENT?.drillDescription || '-'}</p>
+                                <p><strong>Coach Observations:</strong> ${stages.GAME_ASSESSMENT?.coachObservations || '-'}</p>
                             </div>
                         </div>
 
                         <!-- 2. Demo / Teaching Closed -->
                         <div class="print-stage-box stage-2">
                             <div class="print-stage-header">
-                                <span class="stage-num">۲</span>
-                                <strong>Demo / Teaching Closed (آموزش و تمرین بسته)</strong>
-                                <span class="stage-time">${stages.DEMO_CLOSED?.timeMinutes || 20} دقیقه</span>
+                                <span class="stage-num">2</span>
+                                <strong>DEMO / TEACHING (CLOSED)</strong>
+                                <span class="stage-time">${stages.DEMO_CLOSED?.timeMinutes || 20} mins</span>
                             </div>
                             <div class="print-stage-content">
-                                <p><strong>هدف:</strong> ${stages.DEMO_CLOSED?.goal || '-'}</p>
-                                <p><strong>شرح تمرین:</strong> ${stages.DEMO_CLOSED?.drillDescription || '-'}</p>
-                                <p><strong>نکات کلیدی (Cues):</strong> ${(stages.DEMO_CLOSED?.coachingCues || []).join(' | ')}</p>
+                                <p><strong>Goal:</strong> ${stages.DEMO_CLOSED?.goal || '-'}</p>
+                                <p><strong>Drill Context:</strong> ${stages.DEMO_CLOSED?.drillDescription || '-'}</p>
+                                <p><strong>Coaching Cues:</strong> ${(stages.DEMO_CLOSED?.coachingCues || []).join(' • ')}</p>
                             </div>
                         </div>
 
                         <!-- 3. Progressing Open -->
                         <div class="print-stage-box stage-3">
                             <div class="print-stage-header">
-                                <span class="stage-num">۳</span>
-                                <strong>Progressing Open (پیشرفت و تمرین باز)</strong>
-                                <span class="stage-time">${stages.PROGRESSING_OPEN?.timeMinutes || 18} دقیقه</span>
+                                <span class="stage-num">3</span>
+                                <strong>PROGRESSING (OPEN)</strong>
+                                <span class="stage-time">${stages.PROGRESSING_OPEN?.timeMinutes || 18} mins</span>
                             </div>
                             <div class="print-stage-content">
-                                <p><strong>هدف:</strong> ${stages.PROGRESSING_OPEN?.goal || '-'}</p>
-                                <p><strong>شرح تمرین:</strong> ${stages.PROGRESSING_OPEN?.drillDescription || '-'}</p>
-                                <p><strong>تمرکز تصمیم‌گیری:</strong> ${(stages.PROGRESSING_OPEN?.coachingCues || []).join(' | ')}</p>
+                                <p><strong>Goal:</strong> ${stages.PROGRESSING_OPEN?.goal || '-'}</p>
+                                <p><strong>Drill Context:</strong> ${stages.PROGRESSING_OPEN?.drillDescription || '-'}</p>
+                                <p><strong>Decision Rules:</strong> ${(stages.PROGRESSING_OPEN?.coachingCues || []).join(' • ')}</p>
                             </div>
                         </div>
 
                         <!-- 4. Game -->
                         <div class="print-stage-box stage-4">
                             <div class="print-stage-header">
-                                <span class="stage-num">۴</span>
-                                <strong>Game (بازی پایانی و سنجش نهایی)</strong>
-                                <span class="stage-time">${stages.GAME?.timeMinutes || 12} دقیقه</span>
+                                <span class="stage-num">4</span>
+                                <strong>GAME (MATCH PLAY)</strong>
+                                <span class="stage-time">${stages.GAME?.timeMinutes || 12} mins</span>
                             </div>
                             <div class="print-stage-content">
-                                <p><strong>قانون مسابقه:</strong> ${stages.GAME?.drillDescription || '-'}</p>
-                                <p><strong>پرسش‌های جمع‌بندی (Debrief):</strong> ${(stages.GAME?.debriefQuestions || []).join(' | ')}</p>
+                                <p><strong>Match Rules & Bonus:</strong> ${stages.GAME?.drillDescription || '-'}</p>
+                                <p><strong>Player Debrief Questions:</strong> ${(stages.GAME?.debriefQuestions || []).join(' • ')}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="print-footer">
-                    <span>LTA Coach Studio • طراحی‌شده بر مبنای استانداردهای فدراسیون تنیس بریتانیا (Lawn Tennis Association)</span>
-                    <span>تاریخ تهیه: ${new Date().toLocaleDateString('fa-IR')}</span>
+                    <span>LTA Coach Studio 3D • Designed to official Lawn Tennis Association British Standards</span>
+                    <span>Date: ${new Date().toLocaleDateString('en-GB')}</span>
                 </div>
             </div>
         `;
@@ -306,7 +296,7 @@ class LTASessionManager {
         window.tennisAudio?.playWhistle();
         setTimeout(() => {
             window.print();
-        }, 150);
+        }, 200);
     }
 }
 

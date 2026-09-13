@@ -1,10 +1,10 @@
 /* 
- * LTA Coach Studio Stylesheet
- * Premium Grand Slam Tennis Theme: Wimbledon Greens, Optic Yellow, Clay & Hard Court Blues
- * Responsive Grid, Glassmorphism, Interactive Court Toolbar, Print-Ready A4
+ * LTA Coach Studio 3D Stylesheet (100% English & LTR)
+ * Grand Slam Tennis Theme: Wimbledon Greens, Optic Yellow, Clay Terracotta, Hard Court Blues
+ * Responsive Grid, Glassmorphism, 3D Viewport Overlays, Print-Ready A4
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     --bg-main: #0a0f1d;
@@ -24,8 +24,8 @@
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
 
-    --font-fa: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-en: 'Outfit', sans-serif;
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
     --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
     --shadow-glow: 0 0 20px rgba(204, 255, 0, 0.2);
@@ -41,9 +41,9 @@
 body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: var(--font-fa);
-    direction: rtl;
-    line-height: 1.6;
+    font-family: var(--font-body);
+    direction: ltr;
+    line-height: 1.55;
     min-height: 100vh;
     overflow-x: hidden;
     background-image: 
@@ -51,9 +51,13 @@ body {
         radial-gradient(circle at 90% 80%, rgba(25, 91, 156, 0.08) 0%, transparent 40%);
 }
 
+h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
+    font-family: var(--font-heading);
+}
+
 /* Header */
 .app-header {
-    background: rgba(10, 15, 29, 0.92);
+    background: rgba(10, 15, 29, 0.94);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
     padding: 12px 24px;
@@ -76,9 +80,8 @@ body {
 .brand-logo-badge {
     background: linear-gradient(135deg, #0B3B24, #10B981);
     color: #FFFFFF;
-    font-family: var(--font-en);
     font-weight: 900;
-    font-size: 17px;
+    font-size: 18px;
     padding: 4px 10px;
     border-radius: 6px;
     letter-spacing: 1px;
@@ -87,7 +90,7 @@ body {
 }
 
 .brand-title {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 800;
     color: var(--text-primary);
     display: flex;
@@ -96,7 +99,7 @@ body {
 }
 
 .brand-subtitle {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-muted);
     font-weight: 400;
 }
@@ -106,7 +109,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(17, 24, 39, 0.7);
+    background: rgba(17, 24, 39, 0.75);
     padding: 4px 6px;
     border-radius: 10px;
     border: 1px solid var(--border-color);
@@ -115,7 +118,7 @@ body {
 .surface-label {
     font-size: 12px;
     color: var(--text-secondary);
-    padding: 0 6px;
+    padding: 0 8px;
     font-weight: 600;
 }
 
@@ -128,7 +131,6 @@ body {
     border: 1px solid transparent;
     background: transparent;
     color: var(--text-secondary);
-    font-family: var(--font-fa);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -174,7 +176,6 @@ body {
     gap: 8px;
     padding: 8px 14px;
     border-radius: 8px;
-    font-family: var(--font-fa);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -235,7 +236,7 @@ body {
 /* Main Layout Grid */
 .main-layout {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1.25fr 0.85fr;
     gap: 20px;
     padding: 20px 24px;
     max-width: 1720px;
@@ -248,7 +249,7 @@ body {
     }
 }
 
-/* Court Column */
+/* 3D Court Column */
 .court-column {
     display: flex;
     flex-direction: column;
@@ -300,24 +301,79 @@ body {
     color: var(--text-primary);
 }
 
-.canvas-wrapper {
+/* 3D Viewport Container */
+.viewport-3d-wrapper {
     position: relative;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #000000;
+    height: 520px;
+    background: #070a13;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
 }
 
-#tennis-court-canvas {
+#tennis-court-3d-container {
+    width: 100%;
+    height: 100%;
     display: block;
-    cursor: crosshair;
-    user-select: none;
-    touch-action: none;
+    cursor: grab;
+}
+
+#tennis-court-3d-container:active {
+    cursor: grabbing;
+}
+
+/* 3D Camera & Overlay Toolbar */
+.viewport-overlay-controls {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 4px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+.camera-btn {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.camera-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.camera-btn.active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+
+.viewport-overlay-right {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
 }
 
 /* Court Drawing Toolbar */
@@ -328,7 +384,7 @@ body {
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px 14px;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.85);
     border-radius: 10px;
     border: 1px solid var(--border-color);
 }
@@ -372,7 +428,7 @@ body {
     color: #ef4444;
 }
 
-/* Elements Palette (Drag & Drop Items) */
+/* Elements Palette (3D Items) */
 .elements-palette-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -393,7 +449,7 @@ body {
 
 .palette-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 8px;
 }
 
@@ -421,11 +477,6 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.palette-item-btn svg, .palette-item-btn .item-icon {
-    width: 22px;
-    height: 22px;
-}
-
 /* LTA Hourglass Lesson Structure Column */
 .lta-column {
     display: flex;
@@ -433,7 +484,7 @@ body {
     gap: 14px;
 }
 
-/* Visual Hourglass Widget */
+/* Visual Hourglass Widget matching user's uploaded diagram */
 .hourglass-visual-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -448,7 +499,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .hourglass-title {
@@ -470,7 +521,7 @@ body {
     border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-/* The 4 Trapeze/Blocks matching user's image */
+/* The 4 Trapeze Tiers from User's Diagram */
 .hourglass-tiers {
     display: flex;
     flex-direction: column;
@@ -490,13 +541,13 @@ body {
     position: relative;
 }
 
-/* Shape tapering like the user's uploaded diagram */
+/* Tapered geometry matching user's uploaded diagram */
 .hourglass-tier.tier-1 {
-    /* Inverted Trapezoid (Game Assessment) - Dark Navy */
+    /* Top Inverted Trapezoid (Game Assessment) - Dark Navy */
     background: linear-gradient(135deg, #0F2552, #1E3A8A);
     clip-path: polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%);
-    text-align: center;
     padding: 14px 28px;
+    text-align: center;
 }
 
 .hourglass-tier.tier-2 {
@@ -514,7 +565,7 @@ body {
 }
 
 .hourglass-tier.tier-4 {
-    /* Bottom Base (Game) - Wide Navy */
+    /* Base (Game) - Wide Navy */
     background: linear-gradient(135deg, #0F2552, #1E3A8A);
     border-radius: 0 0 10px 10px;
     padding: 14px 18px;
@@ -550,14 +601,13 @@ body {
 }
 
 .tier-title-en {
-    font-family: var(--font-en);
     font-weight: 800;
     font-size: 14px;
     letter-spacing: 0.5px;
 }
 
-.tier-title-fa {
-    font-size: 12px;
+.tier-sub-desc {
+    font-size: 11px;
     opacity: 0.85;
 }
 
@@ -609,12 +659,12 @@ body {
 
 .form-input, .form-textarea, .form-select {
     width: 100%;
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(15, 23, 42, 0.75);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 10px 12px;
     color: var(--text-primary);
-    font-family: var(--font-fa);
+    font-family: var(--font-body);
     font-size: 13px;
     transition: all 0.2s;
     outline: none;
@@ -623,7 +673,7 @@ body {
 .form-input:focus, .form-textarea:focus, .form-select:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.95);
 }
 
 .form-textarea {
@@ -631,26 +681,7 @@ body {
     min-height: 70px;
 }
 
-/* Coaching Cues List Tag Input */
-.cues-container {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.cue-tag {
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #34d399;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Session Metadata Drawer / Bar */
+/* Session Metadata Card */
 .session-meta-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -678,7 +709,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.78);
     backdrop-filter: blur(8px);
     z-index: 100;
     display: none;
@@ -700,7 +731,7 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     padding: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -724,7 +755,7 @@ body {
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
 }
 
@@ -754,11 +785,11 @@ body {
 .preset-card:hover {
     background: rgba(51, 65, 85, 0.8);
     border-color: var(--border-accent);
-    transform: translateX(-4px);
+    transform: translateX(4px);
 }
 
 .preset-badge {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 4px;
@@ -816,8 +847,8 @@ body {
         width: 100%;
         background: #FFFFFF;
         color: #111827;
-        font-family: var(--font-fa);
-        direction: rtl;
+        font-family: var(--font-body);
+        direction: ltr;
         padding: 10mm;
     }
 
@@ -868,7 +899,7 @@ body {
 
     .print-body {
         display: grid;
-        grid-template-columns: 1fr 1.2fr;
+        grid-template-columns: 1fr 1.25fr;
         gap: 16px;
     }
 
@@ -904,10 +935,10 @@ body {
         background: #FFFFFF;
     }
 
-    .print-stage-box.stage-1 { border-right: 4px solid #1E3A8A; }
-    .print-stage-box.stage-2 { border-right: 4px solid #3B82F6; }
-    .print-stage-box.stage-3 { border-right: 4px solid #2563EB; }
-    .print-stage-box.stage-4 { border-right: 4px solid #1E3A8A; }
+    .print-stage-box.stage-1 { border-left: 4px solid #1E3A8A; }
+    .print-stage-box.stage-2 { border-left: 4px solid #3B82F6; }
+    .print-stage-box.stage-3 { border-left: 4px solid #2563EB; }
+    .print-stage-box.stage-4 { border-left: 4px solid #1E3A8A; }
 
     .print-stage-header {
         display: flex;
@@ -927,7 +958,7 @@ body {
         align-items: center;
         justify-content: center;
         font-size: 10px;
-        margin-left: 6px;
+        margin-right: 6px;
     }
 
     .stage-time {

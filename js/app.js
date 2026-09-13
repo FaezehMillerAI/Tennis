@@ -1,11 +1,11 @@
 /**
- * LTA Coach Studio - Main Application Controller
- * Connects Canvas Engine, Session Manager, Hourglass 4-Tier UI, Modals & Audio
+ * LTA Coach Studio 3D - Main Application Controller (100% English)
+ * Coordinates 3D WebGL Court Engine, Hourglass 4-Tier UI, Camera Presets & Modals
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Engines
-    const court = new TennisCourtEngine('tennis-court-canvas');
+    // 1. Initialize 3D Engine & Session Manager
+    const court = new TennisCourt3DEngine('tennis-court-3d-container');
     const sessionMgr = new LTASessionManager(court);
 
     window.court = court;
@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. UI Elements
     const surfaceButtons = document.querySelectorAll('.surface-btn');
     const formatTabs = document.querySelectorAll('.format-tab');
+    const cameraButtons = document.querySelectorAll('.camera-btn');
     const toolButtons = document.querySelectorAll('.tool-btn[data-tool]');
     const ballStyleSelect = document.getElementById('ball-path-style');
     const paletteButtons = document.querySelectorAll('.palette-item-btn');
     
     const hourglassTiers = document.querySelectorAll('.hourglass-tier');
-    const stageTitleFa = document.getElementById('stage-title-fa');
     const stageTitleEn = document.getElementById('stage-title-en');
     const stageDescription = document.getElementById('stage-description');
     
@@ -54,9 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update Stage Editor Texts
-        if (stageTitleFa) stageTitleFa.textContent = stageDef.titleFa;
         if (stageTitleEn) stageTitleEn.textContent = stageDef.titleEn;
-        if (stageDescription) stageDescription.textContent = stageDef.descriptionFa;
+        if (stageDescription) stageDescription.textContent = stageDef.description;
 
         if (stageGoalInput) stageGoalInput.value = stageData.goal || '';
         if (stageDrillInput) stageDrillInput.value = stageData.drillDescription || '';
@@ -65,20 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Custom label & input based on stage type (from diagram)
         if (stageSpecificLabel && stageSpecificInput) {
             if (currentStageKey === 'GAME_ASSESSMENT') {
-                stageSpecificLabel.textContent = 'مشاهدات مربی (Coach Observations):';
+                stageSpecificLabel.textContent = 'Coach Observations:';
+                stageSpecificInput.placeholder = 'e.g. Is contact point out front? Is recovery active or delayed?';
                 stageSpecificInput.value = stageData.coachObservations || '';
             } else if (currentStageKey === 'DEMO_CLOSED') {
-                stageSpecificLabel.textContent = 'نکات کلیدی فنی (Coaching Cues - با خط تیره جدا کنید):';
+                stageSpecificLabel.textContent = 'Action Coaching Cues (one per line):';
+                stageSpecificInput.placeholder = 'e.g. Early Unit Turn\nContact Out Front\nFull Follow-Through';
                 stageSpecificInput.value = Array.isArray(stageData.coachingCues) 
                     ? stageData.coachingCues.join('\n') 
                     : (stageData.coachingCues || '');
             } else if (currentStageKey === 'PROGRESSING_OPEN') {
-                stageSpecificLabel.textContent = 'تمرکز تصمیم‌گیری و متغیرها (Decisions & Constraints):';
+                stageSpecificLabel.textContent = 'Decision Rules & Constraints (one per line):';
+                stageSpecificInput.placeholder = 'e.g. If opponent hits short -> drive approach down the line\nSplit-step timing on ball contact';
                 stageSpecificInput.value = Array.isArray(stageData.coachingCues) 
                     ? stageData.coachingCues.join('\n') 
                     : (stageData.coachingCues || '');
             } else if (currentStageKey === 'GAME') {
-                stageSpecificLabel.textContent = 'پرسش‌های جمع‌بندی از بازیکن (Debrief Questions):';
+                stageSpecificLabel.textContent = 'Player Debrief Questions (one per line):';
+                stageSpecificInput.placeholder = 'e.g. When did you feel most in control of the rally?\nWhat is your personal goal for next session?';
                 stageSpecificInput.value = Array.isArray(stageData.debriefQuestions) 
                     ? stageData.debriefQuestions.join('\n') 
                     : (stageData.debriefQuestions || '');
@@ -94,14 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const sessionMetaLevel = document.getElementById('session-meta-level');
         if (sessionMetaLevel) {
             const lvl = LTA_FRAMEWORK.levels[session.level];
-            sessionMetaLevel.textContent = lvl ? lvl.nameFa : session.level;
+            sessionMetaLevel.textContent = lvl ? lvl.nameEn : session.level;
             sessionMetaLevel.style.backgroundColor = lvl?.badgeColor || '#3b82f6';
         }
 
         const sessionMetaSituation = document.getElementById('session-meta-situation');
         if (sessionMetaSituation) {
             const sit = LTA_FRAMEWORK.situations[session.situation];
-            sessionMetaSituation.textContent = sit ? sit.titleFa : session.situation;
+            sessionMetaSituation.textContent = sit ? sit.titleEn : session.situation;
         }
 
         // Highlight active surface button
@@ -153,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Surface Buttons
+    // 6. Surface Selector Buttons
     surfaceButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const surfaceKey = btn.dataset.surface;
@@ -163,11 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             surfaceButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            showToast(`سطح زمین به ${LTA_FRAMEWORK.surfaces[surfaceKey].nameFa.split('(')[0]} تغییر یافت`, 'info');
+            showToast(`Surface changed to ${LTA_FRAMEWORK.surfaces[surfaceKey].nameEn}`, 'info');
         });
     });
 
-    // 7. Court Format Tabs
+    // 7. Court Format Tabs (Full, Red 36ft, Orange 60ft)
     formatTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const format = tab.dataset.format;
@@ -178,7 +181,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 8. Court Drawing Tools
+    // 8. 3D Camera Preset Buttons
+    cameraButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const preset = btn.dataset.camera;
+            court.setCameraPreset(preset, true);
+            cameraButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Stadium Lighting Toggle (Day / Night)
+    document.getElementById('btn-toggle-lighting')?.addEventListener('click', function() {
+        const mode = court.toggleLighting();
+        this.innerHTML = mode === 'night'
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Night Session'
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Day Sun';
+        showToast(mode === 'night' ? 'Night Session stadium floodlights activated' : 'Daylight sun lighting activated', 'info');
+    });
+
+    // 9. Court Drawing Tools
     toolButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const tool = btn.dataset.tool;
@@ -199,17 +221,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-undo')?.addEventListener('click', () => court.undo());
     document.getElementById('btn-redo')?.addEventListener('click', () => court.redo());
     document.getElementById('btn-clear-court')?.addEventListener('click', () => {
-        if (confirm('آیا از پاک کردن تمامی المان‌ها و رسم‌های زمین اطمینان دارید؟')) {
+        if (confirm('Are you sure you want to clear all items and vectors from the 3D court?')) {
             court.clearCourt();
-            showToast('زمین پاکسازی شد', 'info');
+            showToast('3D Court cleared', 'info');
         }
     });
     document.getElementById('btn-export-png')?.addEventListener('click', () => {
         court.exportPNG();
-        showToast('تصویر باکیفیت زمین ذخیره شد', 'success');
+        showToast('High-resolution 3D diagram saved as PNG', 'success');
     });
 
-    // 9. Element Palette (Drag & Drop Items)
+    // 10. Element Palette (3D Items)
     paletteButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const type = btn.dataset.type;
@@ -219,21 +241,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btn.dataset.points) extra.points = parseInt(btn.dataset.points, 10);
 
             court.addItem(type, extra);
+            showToast(`Added 3D ${type} to court`, 'info');
         });
     });
 
-    // 10. Header Actions
+    // 11. Header Actions
     document.getElementById('btn-new-session')?.addEventListener('click', () => {
-        if (confirm('آیا می‌خواهید یک طرح درس جدید ایجاد کنید؟')) {
+        if (confirm('Create a new blank LTA coaching session?')) {
             sessionMgr.createNewSession();
             updateUIForCurrentStage();
-            showToast('طرح درس جدید آماده شد', 'success');
+            showToast('New session created', 'success');
         }
     });
 
     document.getElementById('btn-save-session')?.addEventListener('click', () => {
         sessionMgr.saveCurrentSession();
-        showToast('طرح درس با موفقیت ذخیره شد', 'success');
+        showToast('Session saved to library', 'success');
     });
 
     document.getElementById('btn-print-pdf')?.addEventListener('click', () => {
@@ -242,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-export-json')?.addEventListener('click', () => {
         sessionMgr.exportJSON();
-        showToast('فایل JSON سناریو دانلود شد', 'success');
+        showToast('Session JSON file downloaded', 'success');
     });
 
     document.getElementById('btn-sound-toggle')?.addEventListener('click', function() {
@@ -250,10 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.innerHTML = enabled 
             ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>'
             : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
-        showToast(enabled ? 'صداهای تنیس فعال شدند' : 'صداها بی‌صدا شدند', 'info');
+        showToast(enabled ? 'Tennis sounds enabled' : 'Sounds muted', 'info');
     });
 
-    // 11. Modal Handlers
+    // 12. Modal Handlers
     function openModal(modal) {
         if (!modal) return;
         modal.classList.add('active');
@@ -303,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionMgr.loadSession(generatedSession);
         updateUIForCurrentStage();
         closeModal(generatorModal);
-        showToast('سناریوی ۴ مرحله‌ای استاندارد LTA با موفقیت تولید شد!', 'success');
+        showToast('Accredited 4-tier LTA session plan generated successfully!', 'success');
     });
 
     // Presets Library Trigger
@@ -326,20 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div>
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                        <span class="preset-badge" style="background:${lvl.badgeColor || '#3b82f6'}">${lvl.nameFa || preset.level}</span>
-                        <span style="font-size:11px; color:#94a3b8;">${sit.titleFa}</span>
+                        <span class="preset-badge" style="background:${lvl.badgeColor || '#3b82f6'}">${lvl.nameEn || preset.level}</span>
+                        <span style="font-size:12px; color:#94a3b8; font-weight:600;">${sit.titleEn}</span>
                     </div>
                     <strong style="font-size:14px; color:#f8fafc;">${preset.title}</strong>
                     <div style="font-size:12px; color:#94a3b8; margin-top:4px;">${preset.overview}</div>
                 </div>
-                <button class="btn btn-secondary" style="font-size:12px; white-space:nowrap;">بارگذاری سناریو</button>
+                <button class="btn btn-secondary" style="font-size:12px; white-space:nowrap;">Load Session</button>
             `;
 
             card.addEventListener('click', () => {
                 sessionMgr.loadSession(preset);
                 updateUIForCurrentStage();
                 closeModal(presetsModal);
-                showToast(`سناریوی "${preset.title}" بارگذاری شد`, 'success');
+                showToast(`Loaded "${preset.title}"`, 'success');
             });
 
             container.appendChild(card);
@@ -358,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const list = sessionMgr.savedSessions;
         if (list.length === 0) {
-            container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:20px;">هنوز طرح درسی ذخیره نشده است. با زدن دکمه ذخیره جلسه می‌توانید جلسات خود را اینجا بایگانی کنید.</p>';
+            container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:24px;">No saved sessions found. Click the "Save" button in the header to archive your session plans here.</p>';
             return;
         }
 
@@ -370,12 +393,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                     <strong style="font-size:14px; color:#f8fafc;">${item.title}</strong>
                     <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
-                        سطح: ${item.level} • آخرین ویرایش: ${new Date(item.updatedAt || Date.now()).toLocaleDateString('fa-IR')}
+                        Level: ${item.level} • Last Modified: ${new Date(item.updatedAt || Date.now()).toLocaleDateString('en-GB')}
                     </div>
                 </div>
                 <div style="display:flex; gap:6px;">
-                    <button class="btn btn-secondary btn-load-saved" style="font-size:12px;">بارگذاری</button>
-                    <button class="btn btn-secondary btn-delete-saved" style="font-size:12px; color:#ef4444;">حذف</button>
+                    <button class="btn btn-secondary btn-load-saved" style="font-size:12px;">Load</button>
+                    <button class="btn btn-secondary btn-delete-saved" style="font-size:12px; color:#ef4444;">Delete</button>
                 </div>
             `;
 
@@ -384,15 +407,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionMgr.loadSession(item);
                 updateUIForCurrentStage();
                 closeModal(savedModal);
-                showToast(`طرح درس "${item.title}" بارگذاری شد`, 'success');
+                showToast(`Loaded "${item.title}"`, 'success');
             });
 
             card.querySelector('.btn-delete-saved').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (confirm(`آیا می‌خواهید "${item.title}" را حذف کنید؟`)) {
+                if (confirm(`Are you sure you want to delete "${item.title}"?`)) {
                     sessionMgr.deleteSession(item.id);
                     populateSavedList();
-                    showToast('طرح درس حذف شد', 'info');
+                    showToast('Session deleted', 'info');
                 }
             });
 
@@ -413,9 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (success) {
                     updateUIForCurrentStage();
                     closeModal(savedModal);
-                    showToast('طرح درس با موفقیت ایمپورت شد', 'success');
+                    showToast('Session successfully imported from JSON', 'success');
                 } else {
-                    alert('ساختار فایل JSON معتبر نیست.');
+                    alert('Invalid session JSON structure.');
                 }
             };
             reader.readAsText(file);
