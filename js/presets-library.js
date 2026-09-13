@@ -1,6 +1,8 @@
 /**
  * LTA Pre-loaded Standard Drills & Sessions Library (100% English)
- * Authentic British LTA coaching sessions adhering to the 4-tier Hourglass structure.
+ * Authentic British LTA coaching sessions adhering to:
+ * - 4-Tier Hourglass Model
+ * - Official LTA Tactical Matrix (Where, What, Tactic, Ball Characteristics)
  */
 
 const LTA_PRESETS = [
@@ -9,6 +11,9 @@ const LTA_PRESETS = [
         title: 'Crosscourt Rally & Dynamic Recovery',
         level: 'RED',
         situation: 'BOTH_BACK',
+        phaseOfPlay: 'RALLY',
+        tactic: 'CONTROL_SPACE',
+        ballCharacteristics: ['DIRECTION', 'DEPTH', 'HEIGHT'],
         capacity: 'PHYSICAL',
         surface: 'hard_blue',
         duration: 45,
@@ -102,7 +107,10 @@ const LTA_PRESETS = [
         id: 'orange_approach_volley',
         title: 'Approach Shot & Net Attack Transition',
         level: 'ORANGE',
-        situation: 'APPROACH_NET',
+        situation: 'AT_NET',
+        phaseOfPlay: 'ATTACK',
+        tactic: 'CONTROL_TIME',
+        ballCharacteristics: ['DEPTH', 'SPEED', 'DIRECTION'],
         capacity: 'TACTICAL',
         surface: 'clay',
         duration: 60,
@@ -189,6 +197,9 @@ const LTA_PRESETS = [
         title: 'Serve + 1 Dominant Forehand Attack',
         level: 'GREEN',
         situation: 'SERVE',
+        phaseOfPlay: 'ATTACK',
+        tactic: 'STRENGTHS',
+        ballCharacteristics: ['SPEED', 'DIRECTION', 'SPIN'],
         capacity: 'TACTICAL',
         surface: 'grass',
         duration: 60,
@@ -276,6 +287,9 @@ const LTA_PRESETS = [
         title: 'Heavy Topspin Depth & Baseline Control',
         level: 'YELLOW_INT',
         situation: 'BOTH_BACK',
+        phaseOfPlay: 'RALLY',
+        tactic: 'CONSISTENCY',
+        ballCharacteristics: ['HEIGHT', 'DEPTH', 'SPIN'],
         capacity: 'TECHNICAL',
         surface: 'clay',
         duration: 75,

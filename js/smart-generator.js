@@ -2,8 +2,12 @@
  * Smart LTA Session Generator (100% English)
  * Algorithmic generator producing complete 4-tier LTA coaching plans based on:
  * - Stage/Level (Blue, Red, Orange, Green, Yellow)
- * - Game Situation (Serve, Return, Both Back, Approach/Net, Defend/Net)
- * - Capacity Focus (Tactical, Technical, Physical, Psychological)
+ * - Official LTA Tactical Matrix:
+ *   - WHERE: Game Situation (Serve, Return, Both Back, At Net, Opponent at Net)
+ *   - WHAT: Phase of Play (Rally, Attack, Defend)
+ *   - TACTIC: Consistency, Control Space, Control Time, Strengths, Weaknesses
+ *   - BALL CHARACTERISTICS: Height, Depth, Direction, Speed, Spin
+ * - 4 Capacities (Tactical, Technical, Physical, Psychological)
  * - Custom Topic / Goal
  */
 
@@ -12,6 +16,9 @@ class SmartLTAGenerator {
         const {
             level = 'RED',
             situation = 'BOTH_BACK',
+            phaseOfPlay = 'RALLY',
+            tactic = 'CONTROL_SPACE',
+            ballCharacteristics = ['DEPTH', 'DIRECTION'],
             capacity = 'TACTICAL',
             surface = 'hard_blue',
             customTopic = '',
@@ -21,35 +28,40 @@ class SmartLTAGenerator {
 
         const levelInfo = LTA_FRAMEWORK.levels[level] || LTA_FRAMEWORK.levels.RED;
         const situationInfo = LTA_FRAMEWORK.situations[situation] || LTA_FRAMEWORK.situations.BOTH_BACK;
+        const phaseInfo = LTA_FRAMEWORK.phasesOfPlay[phaseOfPlay] || LTA_FRAMEWORK.phasesOfPlay.RALLY;
+        const tacticInfo = LTA_FRAMEWORK.tactics[tactic] || LTA_FRAMEWORK.tactics.CONTROL_SPACE;
         const capacityInfo = LTA_FRAMEWORK.capacities[capacity] || LTA_FRAMEWORK.capacities.TACTICAL;
 
         const title = customTopic 
             ? `${customTopic} (${levelInfo.nameEn})`
-            : this.generateTitle(level, situation, capacity);
+            : this.generateTitle(level, situation, phaseOfPlay, tactic);
 
         // Build Stage 1: Game Assessment
-        const assessment = this.buildAssessment(level, situation, capacity, title);
+        const assessment = this.buildAssessment(level, situation, phaseOfPlay, tactic, title);
 
         // Build Stage 2: Demo / Teaching Closed
-        const closed = this.buildClosed(level, situation, capacity, title);
+        const closed = this.buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title);
 
         // Build Stage 3: Progressing Open
-        const open = this.buildOpen(level, situation, capacity, title);
+        const open = this.buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title);
 
         // Build Stage 4: Game
-        const game = this.buildGame(level, situation, capacity, title);
+        const game = this.buildGame(level, situation, phaseOfPlay, tactic, title);
 
         return {
             id: 'generated_' + Date.now(),
             title: title,
             level: level,
             situation: situation,
+            phaseOfPlay: phaseOfPlay,
+            tactic: tactic,
+            ballCharacteristics: Array.isArray(ballCharacteristics) && ballCharacteristics.length > 0 ? ballCharacteristics : ['DEPTH', 'DIRECTION'],
             capacity: capacity,
             surface: surface,
             duration: parseInt(duration, 10),
             playersCount: playersCount,
             equipment: this.generateEquipment(level),
-            overview: `Accredited LTA session plan designed with the 4-tier Hourglass framework. Focus: ${capacityInfo.titleEn} capacity during ${situationInfo.titleEn} for ${levelInfo.nameEn}.`,
+            overview: `Official LTA Tactical Framework session. Phase: ${phaseInfo.titleEn} during ${situationInfo.titleEn}. Tactic: ${tacticInfo.titleEn}. Ball Variables: ${ballCharacteristics.join(', ')}.`,
             stages: {
                 GAME_ASSESSMENT: assessment,
                 DEMO_CLOSED: closed,
@@ -59,41 +71,32 @@ class SmartLTAGenerator {
         };
     }
 
-    generateTitle(level, situation, capacity) {
+    generateTitle(level, situation, phaseOfPlay, tactic) {
         const titles = {
-            SERVE: {
-                TACTICAL: 'Service Box Corner Targeting & First Strike Strategy',
-                TECHNICAL: 'Toss Precision, Trophy Position & Wrist Pronation',
-                PHYSICAL: 'Leg Drive Explosion & Dynamic Landing Balance',
-                MENTAL: 'Second Serve Composure on Break Points'
+            RALLY: {
+                CONSISTENCY: 'Baseline Rally Depth & Net Clearance Margin',
+                CONTROL_SPACE: 'Crosscourt Angles to Displace the Opponent',
+                CONTROL_TIME: 'Taking the Ball on the Rise in Heavy Rallies',
+                STRENGTHS: 'Dictating Baseline Exchanges with Forehand Dominance',
+                WEAKNESSES: 'Pinning the Opponent Deep on Their Weaker Wing'
             },
-            RETURN: {
-                TACTICAL: 'Neutralizing First Serves with Deep Central Placement',
-                TECHNICAL: 'Compact Backswing & Firm Block on Fast Serves',
-                PHYSICAL: 'Anticipatory Split-Step & Explosive First Step',
-                MENTAL: 'Aggressive Mindset to Step Inside on Weak Second Serves'
+            ATTACK: {
+                CONSISTENCY: 'High-Percentage Approach Drives & Solid Net Volleys',
+                CONTROL_SPACE: 'Short Ball Attack to Open Court & Cross-Volley Finish',
+                CONTROL_TIME: 'Forward Transition to Rob Opponent Recovery Time',
+                STRENGTHS: 'Aggressive Serve+1 Weapon Execution',
+                WEAKNESSES: 'Attacking the Opponent’s Second Serve into Weakness'
             },
-            BOTH_BACK: {
-                TACTICAL: 'Moving Opponents Off-Court via Angle & Line Changes',
-                TECHNICAL: 'Heavy Topspin Production with Low-to-High Brush',
-                PHYSICAL: 'Aerobic Endurance & Footwork Reset in 10+ Shot Rallies',
-                MENTAL: 'Rally Patience & Eliminating Unforced Haste'
-            },
-            APPROACH_NET: {
-                TACTICAL: 'Short Ball Attack Recognition & Net Cut-Off Angles',
-                TECHNICAL: 'Compact Punch Volley Mechanics with Solid Wrist',
-                PHYSICAL: 'Forward Transition Speed & Decelerative Split-Step',
-                MENTAL: 'Confidence Closing the Net & Commitment Under Fire'
-            },
-            DEFEND_NET: {
-                TACTICAL: 'Down-the-Line Passing Shot vs. High Defensive Topspin Lob',
-                TECHNICAL: 'Dipping Crosscourt Groundstrokes at Opponent’s Feet',
-                PHYSICAL: 'Lateral Open-Stance Sliding & Emergency Balance',
-                MENTAL: 'Composure & Laser Focus Under Heavy Net Pressure'
+            DEFEND: {
+                CONSISTENCY: 'Neutralizing Heavy Pace with Deep Central Height',
+                CONTROL_SPACE: 'Lateral Court Coverage & Sliding Defensive Recovery',
+                CONTROL_TIME: 'High Heavy Topspin Looping to Buy Court Reset Time',
+                STRENGTHS: 'Counter-Punching Passing Shots from Defensive Corners',
+                WEAKNESSES: 'Floating Dipping Balls at the Opponent’s Feet'
             }
         };
 
-        return titles[situation]?.[capacity] || `Mastering ${situation} in ${level}`;
+        return titles[phaseOfPlay]?.[tactic] || `${phaseOfPlay} Strategy in ${situation}`;
     }
 
     generateEquipment(level) {
@@ -111,11 +114,11 @@ class SmartLTAGenerator {
         }
     }
 
-    buildAssessment(level, situation, capacity, title) {
+    buildAssessment(level, situation, phaseOfPlay, tactic, title) {
         return {
-            goal: `Diagnose current subconscious habits and timing breakdown in ${situation} before coaching intervention.`,
-            drillDescription: `Begin with live competitive points focusing on ${situation}. Coach positions at the umpire/side area to observe player decisions and biomechanics under game pressure.`,
-            coachObservations: 'Is the player recognizing incoming ball cues early? Is shot selection proactive or reactive? How is the balance upon contact?',
+            goal: `Diagnose current subconscious habits in the ${phaseOfPlay} phase (${situation}) before coaching intervention.`,
+            drillDescription: `Begin with live competitive points focusing on ${situation}. Coach positions at the umpire/side area to observe player decisions, shot selection, and spatial control during the ${phaseOfPlay} phase.`,
+            coachObservations: `Observe: Does the player recognize when to ${phaseOfPlay.toLowerCase()}? Is shot selection proactive or panicked? Check balance and footwork reset.`,
             timeMinutes: 10,
             elements: [
                 { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'Player A' },
@@ -128,14 +131,15 @@ class SmartLTAGenerator {
         };
     }
 
-    buildClosed(level, situation, capacity, title) {
+    buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
+        const ballFocus = ballCharacteristics.join(' & ');
         return {
-            goal: `Isolate and groove the fundamental movement pattern and solid contact point with predictable feeds.`,
-            drillDescription: `Coach feeds from a basket with steady rhythm. Players focus strictly on 3 action cues to drive balls into designated target zones with an 80%+ success rate.`,
+            goal: `Isolate the biomechanical cues and ball control variables (${ballFocus}) with predictable closed feeds.`,
+            drillDescription: `Coach feeds from a basket with steady rhythm. Players focus on 3 action cues to manipulate ${ballFocus} into designated target zones with an 80%+ success rate.`,
             coachingCues: [
-                'Early Unit Turn: Rotate shoulders and hips the instant the ball leaves the coach’s racket.',
-                'Contact Out Front: Meet the ball ahead of the front hip with a firm wrist and eyes on the contact point.',
-                'Follow-Through & Reset: Accelerate through the finish and execute an immediate balance recovery.'
+                `Early Preparation: Unit turn coordinated with incoming ball flight.`,
+                `Solid Contact Out Front: Clean contact ahead of the front hip to regulate ${ballFocus.toLowerCase()}.`,
+                `Targeted Follow-Through: Complete stroke trajectory toward the intended target zone.`
             ],
             timeMinutes: 20,
             elements: [
@@ -153,13 +157,13 @@ class SmartLTAGenerator {
         };
     }
 
-    buildOpen(level, situation, capacity, title) {
+    buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
         return {
-            goal: `Transfer the technical skill into dynamic rallies by introducing decision-making variables and court movement.`,
-            drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises (e.g. short ball or weak bounce) and execute the targeted tactical pattern.`,
+            goal: `Transfer the ${phaseOfPlay} skill into dynamic rallies by introducing decision-making variables and court movement.`,
+            drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises to execute "${tactic}" and manipulate ball flight accordingly.`,
             coachingCues: [
                 'Read visual cues from opponent’s preparation angle.',
-                'Adjust footwork cadence to match incoming ball speed.'
+                'Anticipate bounce depth and adjust footwork cadence.'
             ],
             timeMinutes: 18,
             elements: [
@@ -176,14 +180,14 @@ class SmartLTAGenerator {
         };
     }
 
-    buildGame(level, situation, capacity, title) {
+    buildGame(level, situation, phaseOfPlay, tactic, title) {
         return {
             goal: `Evaluate skill transfer in competitive match play with thematic bonus point rules, followed by player debrief.`,
-            drillDescription: `Match play games with rotating serve. Any player who wins a point by executing the session’s primary skill into the target zone receives 2 bonus points.`,
+            drillDescription: `Match play games with rotating serve. Any player who wins a point by successfully executing the ${phaseOfPlay} objective receives 2 bonus points.`,
             debriefQuestions: [
-                'How did you maintain your composure and technique during crucial pressure points?',
-                'Which visual cue helped you choose the correct shot under pressure?',
-                'What is your personal focus area for our next practice session?'
+                `How did executing "${tactic}" give you the advantage in crucial points?`,
+                `Which ball characteristic (Height, Depth, Direction, Speed, Spin) felt most natural to control?`,
+                `What is your personal focus area for our next practice session?`
             ],
             timeMinutes: 12,
             elements: [

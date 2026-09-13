@@ -1,7 +1,7 @@
 /**
  * LTA Framework & Standards Data Model (100% English)
  * Incorporating official British LTA Lesson Hourglass Model,
- * LTA Youth Stages, 5 Game Situations, and 4 Performance Capacities.
+ * LTA Youth Stages, LTA Tactical Matrix (Where, What, Tactic, Ball Characteristics).
  */
 
 const LTA_FRAMEWORK = {
@@ -63,6 +63,136 @@ const LTA_FRAMEWORK = {
                 'Did the player execute the tactical pattern in crucial points?',
                 'What is the key takeaway for their next match or session?'
             ]
+        }
+    },
+
+    // OFFICIAL LTA TACTICAL MATRIX: WHERE (5 Game Situations)
+    situations: {
+        SERVE: {
+            id: 'SERVE',
+            titleEn: 'Serve',
+            category: 'WHERE',
+            icon: 'zap',
+            tacticalGoal: 'Seize offensive advantage, target corners of the service box (T and Wide), and vary spin.'
+        },
+        RETURN: {
+            id: 'RETURN',
+            titleEn: 'Return',
+            category: 'WHERE',
+            icon: 'shield',
+            tacticalGoal: 'Neutralize server advantage with deep central placement, or attack second serves.'
+        },
+        BOTH_BACK: {
+            id: 'BOTH_BACK',
+            titleEn: 'Both Back',
+            category: 'WHERE',
+            icon: 'repeat',
+            tacticalGoal: 'Control groundstroke depth, height, speed, spin, and direction to dictate the baseline rally.'
+        },
+        AT_NET: {
+            id: 'AT_NET',
+            titleEn: 'At Net',
+            category: 'WHERE',
+            icon: 'arrow-up-right',
+            tacticalGoal: 'Exploit short balls, drive aggressive approaches, close the net, and execute punch volleys.'
+        },
+        OPPONENT_AT_NET: {
+            id: 'OPPONENT_AT_NET',
+            titleEn: 'Opponent at Net',
+            category: 'WHERE',
+            icon: 'crosshair',
+            tacticalGoal: 'Execute dipping passing shots at the opponent\'s feet, sharp angles, and defensive lobs.'
+        }
+    },
+
+    // OFFICIAL LTA TACTICAL MATRIX: WHAT (3 Phases of Play)
+    phasesOfPlay: {
+        RALLY: {
+            id: 'RALLY',
+            titleEn: 'RALLY',
+            color: '#10B981', // Emerald Green as in LTA chart
+            bgColor: 'rgba(16, 185, 129, 0.25)',
+            borderColor: '#10B981',
+            description: 'Neutral groundstroke exchange, maintaining depth, rally tolerance, and constructing the point.'
+        },
+        ATTACK: {
+            id: 'ATTACK',
+            titleEn: 'ATTACK',
+            color: '#F87171', // Coral Red as in LTA chart
+            bgColor: 'rgba(239, 68, 68, 0.25)',
+            borderColor: '#EF4444',
+            description: 'Stepping inside the baseline, taking time away from the opponent, driving approach shots, and finishing at net.'
+        },
+        DEFEND: {
+            id: 'DEFEND',
+            titleEn: 'DEFEND',
+            color: '#94A3B8', // Steel Grey as in LTA chart
+            bgColor: 'rgba(148, 163, 184, 0.25)',
+            borderColor: '#94A3B8',
+            description: 'Absorbing heavy pace, buying time with height and depth, scrambling, and resetting to neutral.'
+        }
+    },
+
+    // OFFICIAL LTA TACTICAL MATRIX: TACTIC (5 Intentions)
+    tactics: {
+        CONSISTENCY: {
+            id: 'CONSISTENCY',
+            titleEn: 'Consistency',
+            description: 'High margin over the net, repeatable shapes, minimizing unforced errors.'
+        },
+        CONTROL_SPACE: {
+            id: 'CONTROL_SPACE',
+            titleEn: 'Control Space',
+            description: 'Directing the ball into open court, moving the opponent off-court with angles and depth.'
+        },
+        CONTROL_TIME: {
+            id: 'CONTROL_TIME',
+            titleEn: 'Control Time',
+            description: 'Taking the ball early on the rise to rob opponent reaction time, or floating deep to buy recovery time.'
+        },
+        STRENGTHS: {
+            id: 'STRENGTHS',
+            titleEn: 'Play to your Strengths',
+            description: 'Imposing personal weapon shots (dominant forehand, big serve, or agile net game).'
+        },
+        WEAKNESSES: {
+            id: 'WEAKNESSES',
+            titleEn: "Play to your Opponent's Weaknesses",
+            description: 'Targeting opponent limitations (high backhand balls, second serve, lateral movement).'
+        }
+    },
+
+    // OFFICIAL LTA TACTICAL MATRIX: BALL CHARACTERISTICS (5 Reception & Projection Variables)
+    ballCharacteristics: {
+        HEIGHT: {
+            id: 'HEIGHT',
+            titleEn: 'Height',
+            icon: '🎾',
+            description: 'Net clearance margin (high topspin clearance vs. dipping low skim).'
+        },
+        DEPTH: {
+            id: 'DEPTH',
+            titleEn: 'Depth',
+            icon: '🎾',
+            description: 'Landing distance between service line and baseline.'
+        },
+        DIRECTION: {
+            id: 'DIRECTION',
+            titleEn: 'Direction',
+            icon: '🎾',
+            description: 'Crosscourt, down-the-line, down-the-middle, or inside-out.'
+        },
+        SPEED: {
+            id: 'SPEED',
+            titleEn: 'Speed',
+            icon: '🎾',
+            description: 'Pace modulation (heavy drive vs. change-of-pace drop shot).'
+        },
+        SPIN: {
+            id: 'SPIN',
+            titleEn: 'Spin',
+            icon: '🎾',
+            description: 'Topspin, backspin / slice, flat drive, or kick.'
         }
     },
 
@@ -130,40 +260,6 @@ const LTA_FRAMEWORK = {
             courtSize: 'Full Regulation Court',
             badgeColor: '#ec4899',
             description: 'High-performance match strategy, Serve+1 and Return+1 patterns, weapon development, and psychological resilience.'
-        }
-    },
-
-    // LTA 5 Game Situations
-    situations: {
-        SERVE: {
-            id: 'SERVE',
-            titleEn: '1. Serving',
-            icon: 'zap',
-            tacticalGoal: 'Seize immediate offensive advantage, target service box corners (T and Wide), and vary spin.'
-        },
-        RETURN: {
-            id: 'RETURN',
-            titleEn: '2. Returning',
-            icon: 'shield',
-            tacticalGoal: 'Neutralize server advantage with deep central returns, or punish weak second serves into open space.'
-        },
-        BOTH_BACK: {
-            id: 'BOTH_BACK',
-            titleEn: '3. Both at Baseline',
-            icon: 'repeat',
-            tacticalGoal: 'Control the 5 ball reception/projection variables (Speed, Spin, Height, Depth, Direction) to dictate tempo.'
-        },
-        APPROACH_NET: {
-            id: 'APPROACH_NET',
-            titleEn: '4. Approaching & at Net',
-            icon: 'arrow-up-right',
-            tacticalGoal: 'Exploit short balls, drive aggressive approaches down the line, close the net, and finish with decisive volleys.'
-        },
-        DEFEND_NET: {
-            id: 'DEFEND_NET',
-            titleEn: '5. Defending against Net Player',
-            icon: 'crosshair',
-            tacticalGoal: 'Execute sharp passing shots, dipping balls at the opponent\'s feet, and defensive topspin lobs.'
         }
     },
 

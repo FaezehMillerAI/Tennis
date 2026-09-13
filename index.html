@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LTA Coach Studio 3D | Professional Tennis Lesson & Tactical Designer</title>
+    <title>LTA Coach Studio 3D | Official Tactical & Lesson Designer</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230B3B24'/><circle cx='50' cy='50' r='40' fill='%23CCFF00'/><path d='M25 50 Q50 25 75 50' stroke='%23ffffff' stroke-width='4' fill='none'/><path d='M25 50 Q50 75 75 50' stroke='%23ffffff' stroke-width='4' fill='none'/></svg>">
     
@@ -22,7 +22,7 @@
                     LTA Coach Studio 3D
                     <span style="font-size: 11px; background: rgba(204,255,0,0.15); color: #ccff00; padding: 2px 6px; border-radius: 4px; font-weight: 700;">PRO TACTICAL</span>
                 </div>
-                <div class="brand-subtitle">Official 4-Tier Hourglass Lesson Framework & 3D Interactive Court</div>
+                <div class="brand-subtitle">Official British LTA Tactical Matrix & 4-Tier Hourglass Lesson Designer</div>
             </div>
         </div>
 
@@ -81,7 +81,7 @@
     <!-- Main Workspace Grid -->
     <main class="main-layout">
         
-        <!-- Left: 3D Court Viewport & Tactical Controls -->
+        <!-- Left Column: 3D Court Viewport & Tactical Controls -->
         <section class="court-column">
             <div class="court-card">
                 <div class="court-card-header">
@@ -230,8 +230,121 @@
             </div>
         </section>
 
-        <!-- Right: Official LTA 4-Tier Hourglass Lesson Structure -->
+        <!-- Right Column: Official LTA Tactical Matrix & 4-Tier Hourglass -->
         <section class="lta-column">
+
+            <!-- ======================================================= -->
+            <!-- OFFICIAL LTA TACTICAL MATRIX WIDGET (From Uploaded Image) -->
+            <!-- ======================================================= -->
+            <div class="lta-matrix-card">
+                <div class="lta-matrix-header">
+                    <div class="lta-matrix-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+                        LTA Tactical Framework Matrix
+                    </div>
+                    <span class="hourglass-badge" style="background:#0284c7; color:#fff; border:none;">Official LTA Curriculum</span>
+                </div>
+
+                <div class="matrix-container-grid">
+                    
+                    <!-- Left Arrow Pillar (From Diagram) -->
+                    <div class="matrix-arrow-banner">
+                        <div class="arrow-label-top">WHERE</div>
+                        <div class="arrow-label-mid">WHAT</div>
+                        <div style="margin-top:40px;">TACTIC</div>
+                        <div style="margin-top:30px; font-size:8px;">BALL</div>
+                        <div class="arrow-bottom-head"></div>
+                    </div>
+
+                    <!-- Center Tactical Matrix Rows -->
+                    <div class="matrix-rows-wrapper">
+                        
+                        <!-- Row 1: GAME SITUATIONS ("WHERE") -->
+                        <div class="matrix-row-block">
+                            <div class="matrix-row-title">
+                                <span>Game Situations (Where)</span>
+                                <span id="matrix-active-situation" style="color:#CCFF00; font-weight:700;">Both Back</span>
+                            </div>
+                            <div class="matrix-situations-grid">
+                                <button class="matrix-pill-btn" data-situation="SERVE">Serve</button>
+                                <button class="matrix-pill-btn" data-situation="RETURN">Return</button>
+                                <button class="matrix-pill-btn active" data-situation="BOTH_BACK">Both Back</button>
+                                <button class="matrix-pill-btn" data-situation="AT_NET">At Net</button>
+                                <button class="matrix-pill-btn" data-situation="OPPONENT_AT_NET">Opp. at Net</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: PHASE OF PLAY ("WHAT") -->
+                        <div class="matrix-row-block">
+                            <div class="matrix-row-title">
+                                <span>Phase of Play (What)</span>
+                                <span id="matrix-active-phase" style="color:#10B981; font-weight:800;">RALLY</span>
+                            </div>
+                            <div class="matrix-phases-grid">
+                                <button class="matrix-phase-btn rally active" data-phase="RALLY">RALLY</button>
+                                <button class="matrix-phase-btn attack" data-phase="ATTACK">ATTACK</button>
+                                <button class="matrix-phase-btn defend" data-phase="DEFEND">DEFEND</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: TACTIC (Intention) -->
+                        <div class="matrix-row-block">
+                            <div class="matrix-row-title">
+                                <span>Tactic (Intention)</span>
+                                <span id="matrix-active-tactic" style="color:#CCFF00; font-weight:700;">Control Space</span>
+                            </div>
+                            <div class="matrix-tactics-grid">
+                                <button class="matrix-tactic-btn" data-tactic="CONSISTENCY">Consistency</button>
+                                <button class="matrix-tactic-btn active" data-tactic="CONTROL_SPACE">Control Space</button>
+                                <button class="matrix-tactic-btn" data-tactic="CONTROL_TIME">Control Time</button>
+                                <button class="matrix-tactic-btn" data-tactic="STRENGTHS">Play to Strengths</button>
+                                <button class="matrix-tactic-btn" data-tactic="WEAKNESSES">Play to Weaknesses</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: BALL CHARACTERISTICS (Reception & Projection) -->
+                        <div class="matrix-row-block">
+                            <div class="matrix-row-title">
+                                <span>Ball Characteristics (5 Variables)</span>
+                                <span style="color:#94a3b8; font-size:9px;">Click to toggle active variables</span>
+                            </div>
+                            <div class="matrix-balls-grid">
+                                <div class="matrix-ball-item active" data-ball="HEIGHT">
+                                    <svg class="ball-svg-icon" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#CCFF00"/><path d="M9 18 Q18 9 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/><path d="M9 18 Q18 27 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/></svg>
+                                    <span class="matrix-ball-label">Height</span>
+                                </div>
+                                <div class="matrix-ball-item active" data-ball="DEPTH">
+                                    <svg class="ball-svg-icon" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#CCFF00"/><path d="M9 18 Q18 9 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/><path d="M9 18 Q18 27 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/></svg>
+                                    <span class="matrix-ball-label">Depth</span>
+                                </div>
+                                <div class="matrix-ball-item active" data-ball="DIRECTION">
+                                    <svg class="ball-svg-icon" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#CCFF00"/><path d="M9 18 Q18 9 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/><path d="M9 18 Q18 27 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/></svg>
+                                    <span class="matrix-ball-label">Direction</span>
+                                </div>
+                                <div class="matrix-ball-item" data-ball="SPEED">
+                                    <svg class="ball-svg-icon" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#CCFF00"/><path d="M9 18 Q18 9 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/><path d="M9 18 Q18 27 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/></svg>
+                                    <span class="matrix-ball-label">Speed</span>
+                                </div>
+                                <div class="matrix-ball-item" data-ball="SPIN">
+                                    <svg class="ball-svg-icon" viewBox="0 0 36 36"><circle cx="18" cy="18" r="16" fill="#CCFF00"/><path d="M9 18 Q18 9 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/><path d="M9 18 Q18 27 27 18" stroke="#ffffff" stroke-width="2.5" fill="none"/></svg>
+                                    <span class="matrix-ball-label">Spin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Arrow Pillar (From Diagram) -->
+                    <div class="matrix-arrow-banner">
+                        <div class="arrow-label-top">WHERE</div>
+                        <div class="arrow-label-mid">WHAT</div>
+                        <div style="margin-top:40px;">TACTIC</div>
+                        <div style="margin-top:30px; font-size:8px;">BALL</div>
+                        <div class="arrow-bottom-head"></div>
+                    </div>
+
+                </div>
+            </div>
             
             <!-- Visual Hourglass Structure Widget matching user's uploaded diagram -->
             <div class="hourglass-visual-card">
@@ -240,12 +353,8 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2"><polygon points="22 2 2 2 10 12 10 19 14 21 14 12 22 2"/></svg>
                         LTA Lesson Structure (Hourglass Model)
                     </div>
-                    <span class="hourglass-badge">Official LTA Standard</span>
+                    <span class="hourglass-badge">4-Tier Lesson Flow</span>
                 </div>
-
-                <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">
-                    Click each tier below to view and edit its goals, tactical cues, and corresponding 3D court setup:
-                </p>
 
                 <!-- Hourglass Tiers (Matching user's uploaded diagram) -->
                 <div class="hourglass-tiers">
@@ -339,8 +448,8 @@
                 </div>
                 <div class="meta-grid">
                     <div>
-                        <span style="font-size:11px; color:#94a3b8;">Game Situation:</span>
-                        <div style="font-size:12px; font-weight:700; color:#f8fafc;" id="session-meta-situation">3. Both at Baseline</div>
+                        <span style="font-size:11px; color:#94a3b8;">Tactical Classification:</span>
+                        <div style="font-size:12px; font-weight:700; color:#f8fafc;" id="session-meta-situation">Both Back • RALLY • Control Space</div>
                     </div>
                     <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px;">
                         <button class="btn btn-secondary" id="btn-export-json" style="font-size:11px; padding:4px 8px;">
@@ -365,7 +474,7 @@
             </div>
 
             <p style="font-size:13px; color:#94a3b8;">
-                Select your student level and tactical topic. The AI generator will formulate an accredited 4-tier LTA session plan with corresponding 3D tactical court diagrams:
+                Select your student level, tactical phase, and intention. The AI generator will formulate an accredited 4-tier LTA session plan with corresponding 3D tactical court diagrams:
             </p>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -383,13 +492,33 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="gen-situation">LTA Game Situation:</label>
+                    <label class="form-label" for="gen-situation">WHERE (Game Situation):</label>
                     <select class="form-select" id="gen-situation">
-                        <option value="SERVE">1. Serving</option>
-                        <option value="RETURN">2. Returning</option>
-                        <option value="BOTH_BACK" selected>3. Both at Baseline</option>
-                        <option value="APPROACH_NET">4. Approaching & at Net</option>
-                        <option value="DEFEND_NET">5. Defending against Net Player</option>
+                        <option value="SERVE">Serve</option>
+                        <option value="RETURN">Return</option>
+                        <option value="BOTH_BACK" selected>Both Back</option>
+                        <option value="AT_NET">At Net</option>
+                        <option value="OPPONENT_AT_NET">Opponent at Net</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gen-phase">WHAT (Phase of Play):</label>
+                    <select class="form-select" id="gen-phase">
+                        <option value="RALLY" selected>🟢 RALLY (Neutral & Depth)</option>
+                        <option value="ATTACK">🔴 ATTACK (Approach & Net Rush)</option>
+                        <option value="DEFEND">⚪ DEFEND (Absorb & Buy Time)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="gen-tactic">TACTIC (Intention):</label>
+                    <select class="form-select" id="gen-tactic">
+                        <option value="CONSISTENCY">Consistency (High Margin)</option>
+                        <option value="CONTROL_SPACE" selected>Control Space (Displace Opponent)</option>
+                        <option value="CONTROL_TIME">Control Time (Take on the Rise)</option>
+                        <option value="STRENGTHS">Play to Strengths (Impose Weapon)</option>
+                        <option value="WEAKNESSES">Play to Weaknesses (Target Limiting Wing)</option>
                     </select>
                 </div>
 

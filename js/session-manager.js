@@ -1,6 +1,7 @@
 /**
  * LTA Session Manager (100% English)
  * Handles session state, stage transitions (Hourglass 4-Tier Model),
+ * Tactical Matrix state (Where, What, Tactic, Ball Characteristics),
  * localStorage persistence, JSON import/export, and print-to-PDF formatting.
  */
 
@@ -37,6 +38,11 @@ class LTASessionManager {
 
     loadSession(sessionData) {
         this.activeSession = JSON.parse(JSON.stringify(sessionData));
+
+        // Ensure Tactical Matrix defaults
+        if (!this.activeSession.phaseOfPlay) this.activeSession.phaseOfPlay = 'RALLY';
+        if (!this.activeSession.tactic) this.activeSession.tactic = 'CONTROL_SPACE';
+        if (!this.activeSession.ballCharacteristics) this.activeSession.ballCharacteristics = ['DEPTH', 'DIRECTION'];
 
         if (this.activeSession.surface && this.court) {
             this.court.setSurface(this.activeSession.surface);
@@ -93,12 +99,15 @@ class LTASessionManager {
             title: 'New LTA Coaching Session',
             level: 'YELLOW_INT',
             situation: 'BOTH_BACK',
+            phaseOfPlay: 'RALLY',
+            tactic: 'CONTROL_SPACE',
+            ballCharacteristics: ['DEPTH', 'DIRECTION'],
             capacity: 'TECHNICAL',
             surface: this.court ? this.court.surface : 'hard_blue',
             duration: 60,
             playersCount: '2 Players',
             equipment: 'Standard Yellow Balls, 4 Cones, Target Markers',
-            overview: 'Custom training scenario designed according to the official British LTA 4-tier Hourglass structure.',
+            overview: 'Custom training scenario designed according to the official British LTA 4-tier Hourglass structure & Tactical Matrix.',
             stages: {
                 GAME_ASSESSMENT: {
                     goal: 'Diagnose baseline tendencies and technical/tactical priorities under real game conditions.',
@@ -127,7 +136,7 @@ class LTASessionManager {
                 GAME: {
                     goal: 'Evaluate skill transfer in competitive match play with thematic bonus scoring, followed by debrief.',
                     drillDescription: 'Tiebreak or match play. Points won using the session\'s primary skill earn double points.',
-                    debriefQuestions: ['When did you feel most in control of the point?', 'What is your main takeaway for future matches?'],
+                    debriefQuestions: ['When did you feel most in control of the rally?', 'What is your main takeaway for future matches?'],
                     timeMinutes: 10,
                     elements: [],
                     drawings: []
@@ -182,7 +191,6 @@ class LTASessionManager {
             this.activeSession.stages[this.activeStageKey].drawings = currentData.drawings;
         }
 
-        // Render 3D scene and grab data URL
         let courtDataUrl = '';
         if (this.court && this.court.renderer) {
             this.court.renderer.render(this.court.scene, this.court.camera);
@@ -191,10 +199,13 @@ class LTASessionManager {
 
         const levelInfo = LTA_FRAMEWORK.levels[this.activeSession.level] || {};
         const situationInfo = LTA_FRAMEWORK.situations[this.activeSession.situation] || {};
+        const phaseInfo = LTA_FRAMEWORK.phasesOfPlay[this.activeSession.phaseOfPlay || 'RALLY'] || {};
+        const tacticInfo = LTA_FRAMEWORK.tactics[this.activeSession.tactic || 'CONTROL_SPACE'] || {};
         const capacityInfo = LTA_FRAMEWORK.capacities[this.activeSession.capacity] || {};
         const surfaceInfo = LTA_FRAMEWORK.surfaces[this.activeSession.surface || 'hard_blue'] || {};
 
         const stages = this.activeSession.stages;
+        const ballVars = (this.activeSession.ballCharacteristics || ['DEPTH', 'DIRECTION']).join(' • ');
 
         const printContainer = document.getElementById('print-container');
         if (!printContainer) return;
@@ -209,9 +220,17 @@ class LTASessionManager {
                         </div>
                         <h1 class="print-title">${this.activeSession.title}</h1>
                     </div>
+
+                    <!-- LTA Tactical Framework Matrix Ribbon in Print -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#0F2552; color:#fff; padding:8px 12px; border-radius:6px; margin:8px 0; font-size:11px;">
+                        <div><strong>WHERE (Situation):</strong> ${situationInfo.titleEn || this.activeSession.situation}</div>
+                        <div><strong>WHAT (Phase):</strong> <span style="background:${phaseInfo.color || '#10b981'}; color:#fff; padding:2px 8px; border-radius:4px; font-weight:800;">${phaseInfo.titleEn || 'RALLY'}</span></div>
+                        <div><strong>TACTIC:</strong> ${tacticInfo.titleEn || 'Control Space'}</div>
+                        <div><strong>BALL VARIABLES:</strong> ${ballVars}</div>
+                    </div>
+
                     <div class="print-meta-grid">
                         <div><strong>Stage / Age:</strong> ${levelInfo.nameEn || this.activeSession.level}</div>
-                        <div><strong>Game Situation:</strong> ${situationInfo.titleEn || this.activeSession.situation}</div>
                         <div><strong>Focus Capacity:</strong> ${capacityInfo.titleEn || this.activeSession.capacity}</div>
                         <div><strong>Surface:</strong> ${surfaceInfo.nameEn || 'Hard Court'}</div>
                         <div><strong>Duration:</strong> ${this.activeSession.duration} mins</div>

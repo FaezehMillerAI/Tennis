@@ -1,7 +1,7 @@
 /* 
  * LTA Coach Studio 3D Stylesheet (100% English & LTR)
  * Grand Slam Tennis Theme: Wimbledon Greens, Optic Yellow, Clay Terracotta, Hard Court Blues
- * Responsive Grid, Glassmorphism, 3D Viewport Overlays, Print-Ready A4
+ * Responsive Grid, Glassmorphism, 3D Viewport Overlays, Official LTA Tactical Matrix Widget, Print-Ready A4
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
@@ -239,7 +239,7 @@ h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
     grid-template-columns: 1.25fr 0.85fr;
     gap: 20px;
     padding: 20px 24px;
-    max-width: 1720px;
+    max-width: 1740px;
     margin: 0 auto;
 }
 
@@ -366,16 +366,6 @@ h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
     color: #38bdf8;
 }
 
-.viewport-overlay-right {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    z-index: 10;
-}
-
 /* Court Drawing Toolbar */
 .court-toolbar {
     display: flex;
@@ -477,14 +467,284 @@ h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* LTA Hourglass Lesson Structure Column */
+/* LTA Column */
 .lta-column {
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
 
-/* Visual Hourglass Widget matching user's uploaded diagram */
+/* ========================================================== */
+/* OFFICIAL LTA TACTICAL MATRIX WIDGET (From Uploaded Diagram) */
+/* ========================================================== */
+.lta-matrix-card {
+    background: linear-gradient(135deg, #0b224d, #123472);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+.lta-matrix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 8px;
+}
+
+.lta-matrix-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Matrix Outer Grid with Left & Right Vertical Arrow Banners */
+.matrix-container-grid {
+    display: grid;
+    grid-template-columns: 52px 1fr 52px;
+    gap: 10px;
+    align-items: stretch;
+}
+
+@media (max-width: 680px) {
+    .matrix-container-grid {
+        grid-template-columns: 1fr;
+    }
+    .matrix-arrow-banner {
+        display: none !important;
+    }
+}
+
+/* Left & Right White Vertical Pillars from user's uploaded diagram */
+.matrix-arrow-banner {
+    background: #FFFFFF;
+    color: #0b224d;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 0 4px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 10px;
+    text-transform: uppercase;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.arrow-label-top {
+    writing-mode: horizontal-tb;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+}
+
+.arrow-label-mid {
+    writing-mode: horizontal-tb;
+    margin-top: 40px;
+    letter-spacing: 0.5px;
+}
+
+.arrow-bottom-head {
+    width: 0;
+    height: 0;
+    border-left: 26px solid transparent;
+    border-right: 26px solid transparent;
+    border-top: 24px solid #FFFFFF;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+}
+
+/* Middle Rows Container */
+.matrix-rows-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.matrix-row-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(8, 24, 56, 0.6);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.matrix-row-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #93c5fd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 1. WHERE: 5 Situations */
+.matrix-situations-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.matrix-pill-btn {
+    background: #0070ba;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.matrix-pill-btn:hover {
+    background: #0088e0;
+    transform: translateY(-1px);
+}
+
+.matrix-pill-btn.active {
+    background: #0088e0;
+    border-color: #CCFF00;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.6);
+}
+
+/* 2. WHAT: 3 Large Phases (Rally, Attack, Defend) */
+.matrix-phases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.matrix-phase-btn {
+    padding: 12px 6px;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 2px solid transparent;
+    color: #FFFFFF;
+}
+
+.matrix-phase-btn.rally {
+    background: #73ba52;
+}
+
+.matrix-phase-btn.attack {
+    background: #ee6f57;
+}
+
+.matrix-phase-btn.defend {
+    background: #7e9bb5;
+}
+
+.matrix-phase-btn:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+
+.matrix-phase-btn.active {
+    border-color: #FFFFFF;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.7);
+    filter: brightness(1.2);
+}
+
+/* 3. TACTIC: 5 Objectives */
+.matrix-tactics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.matrix-tactic-btn {
+    background: #0070ba;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.matrix-tactic-btn:hover {
+    background: #0088e0;
+}
+
+.matrix-tactic-btn.active {
+    background: #0088e0;
+    border-color: #CCFF00;
+    box-shadow: 0 0 8px rgba(204, 255, 0, 0.6);
+}
+
+/* 4. BALL CHARACTERISTICS: 5 Tennis Balls */
+.matrix-balls-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.matrix-ball-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 6px 2px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.matrix-ball-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.matrix-ball-item.active {
+    background: rgba(204, 255, 0, 0.15);
+    border-color: rgba(204, 255, 0, 0.4);
+}
+
+.ball-svg-icon {
+    width: 28px;
+    height: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.matrix-ball-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+/* ========================================================== */
+/* Visual Hourglass Widget matching user's uploaded diagram   */
+/* ========================================================== */
 .hourglass-visual-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);

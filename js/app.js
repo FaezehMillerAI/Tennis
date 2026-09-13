@@ -1,6 +1,7 @@
 /**
  * LTA Coach Studio 3D - Main Application Controller (100% English)
- * Coordinates 3D WebGL Court Engine, Hourglass 4-Tier UI, Camera Presets & Modals
+ * Coordinates 3D WebGL Court Engine, LTA Tactical Matrix Widget,
+ * 4-Tier Hourglass Lesson Structure, Camera Presets & Modals
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const ballStyleSelect = document.getElementById('ball-path-style');
     const paletteButtons = document.querySelectorAll('.palette-item-btn');
     
+    // Matrix Elements
+    const matrixSituationButtons = document.querySelectorAll('.matrix-pill-btn[data-situation]');
+    const matrixPhaseButtons = document.querySelectorAll('.matrix-phase-btn[data-phase]');
+    const matrixTacticButtons = document.querySelectorAll('.matrix-tactic-btn[data-tactic]');
+    const matrixBallItems = document.querySelectorAll('.matrix-ball-item[data-ball]');
+    
+    const matrixActiveSituation = document.getElementById('matrix-active-situation');
+    const matrixActivePhase = document.getElementById('matrix-active-phase');
+    const matrixActiveTactic = document.getElementById('matrix-active-tactic');
+
+    // Hourglass Elements
     const hourglassTiers = document.querySelectorAll('.hourglass-tier');
     const stageTitleEn = document.getElementById('stage-title-en');
     const stageDescription = document.getElementById('stage-description');
@@ -43,6 +55,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentStageKey = sessionMgr.activeStageKey;
         const stageDef = LTA_FRAMEWORK.stages[currentStageKey];
         const stageData = session.stages[currentStageKey] || {};
+
+        // Update Tactical Matrix State
+        const sitDef = LTA_FRAMEWORK.situations[session.situation] || LTA_FRAMEWORK.situations.BOTH_BACK;
+        const phaseDef = LTA_FRAMEWORK.phasesOfPlay[session.phaseOfPlay] || LTA_FRAMEWORK.phasesOfPlay.RALLY;
+        const tacticDef = LTA_FRAMEWORK.tactics[session.tactic] || LTA_FRAMEWORK.tactics.CONTROL_SPACE;
+
+        if (matrixActiveSituation) matrixActiveSituation.textContent = sitDef.titleEn;
+        if (matrixActivePhase) {
+            matrixActivePhase.textContent = phaseDef.titleEn;
+            matrixActivePhase.style.color = phaseDef.color;
+        }
+        if (matrixActiveTactic) matrixActiveTactic.textContent = tacticDef.titleEn;
+
+        // Highlight Matrix Buttons
+        matrixSituationButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.situation === session.situation);
+        });
+
+        matrixPhaseButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.phase === session.phaseOfPlay);
+        });
+
+        matrixTacticButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tactic === session.tactic);
+        });
+
+        matrixBallItems.forEach(item => {
+            const ballKey = item.dataset.ball;
+            const isActive = (session.ballCharacteristics || []).includes(ballKey);
+            item.classList.toggle('active', isActive);
+        });
 
         // Update Hourglass Visual Highlight
         hourglassTiers.forEach(tier => {
@@ -103,8 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sessionMetaSituation = document.getElementById('session-meta-situation');
         if (sessionMetaSituation) {
-            const sit = LTA_FRAMEWORK.situations[session.situation];
-            sessionMetaSituation.textContent = sit ? sit.titleEn : session.situation;
+            sessionMetaSituation.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${tacticDef.titleEn}`;
         }
 
         // Highlight active surface button
@@ -147,7 +189,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     bindFormInputs();
 
-    // 5. Hourglass Tier Switch
+    // 5. Tactical Matrix Interactive Handlers
+    matrixSituationButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!sessionMgr.activeSession) return;
+            sessionMgr.activeSession.situation = btn.dataset.situation;
+            updateUIForCurrentStage();
+            window.tennisAudio?.playHit();
+        });
+    });
+
+    matrixPhaseButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!sessionMgr.activeSession) return;
+            sessionMgr.activeSession.phaseOfPlay = btn.dataset.phase;
+            updateUIForCurrentStage();
+            window.tennisAudio?.playBounce();
+        });
+    });
+
+    matrixTacticButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!sessionMgr.activeSession) return;
+            sessionMgr.activeSession.tactic = btn.dataset.tactic;
+            updateUIForCurrentStage();
+            window.tennisAudio?.playClick();
+        });
+    });
+
+    matrixBallItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (!sessionMgr.activeSession) return;
+            const ballKey = item.dataset.ball;
+            let list = sessionMgr.activeSession.ballCharacteristics || [];
+            if (list.includes(ballKey)) {
+                list = list.filter(b => b !== ballKey);
+            } else {
+                list.push(ballKey);
+            }
+            sessionMgr.activeSession.ballCharacteristics = list;
+            updateUIForCurrentStage();
+            window.tennisAudio?.playHit();
+        });
+    });
+
+    // 6. Hourglass Tier Switch
     hourglassTiers.forEach(tier => {
         tier.addEventListener('click', () => {
             const stageKey = tier.dataset.stage;
@@ -156,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Surface Selector Buttons
+    // 7. Surface Selector Buttons
     surfaceButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const surfaceKey = btn.dataset.surface;
@@ -170,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. Court Format Tabs (Full, Red 36ft, Orange 60ft)
+    // 8. Court Format Tabs (Full, Red 36ft, Orange 60ft)
     formatTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const format = tab.dataset.format;
@@ -181,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 8. 3D Camera Preset Buttons
+    // 9. 3D Camera Preset Buttons
     cameraButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const preset = btn.dataset.camera;
@@ -200,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(mode === 'night' ? 'Night Session stadium floodlights activated' : 'Daylight sun lighting activated', 'info');
     });
 
-    // 9. Court Drawing Tools
+    // 10. Court Drawing Tools
     toolButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const tool = btn.dataset.tool;
@@ -231,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('High-resolution 3D diagram saved as PNG', 'success');
     });
 
-    // 10. Element Palette (3D Items)
+    // 11. Element Palette (3D Items)
     paletteButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const type = btn.dataset.type;
@@ -245,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 11. Header Actions
+    // 12. Header Actions
     document.getElementById('btn-new-session')?.addEventListener('click', () => {
         if (confirm('Create a new blank LTA coaching session?')) {
             sessionMgr.createNewSession();
@@ -276,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(enabled ? 'Tennis sounds enabled' : 'Sounds muted', 'info');
     });
 
-    // 12. Modal Handlers
+    // 13. Modal Handlers
     function openModal(modal) {
         if (!modal) return;
         modal.classList.add('active');
@@ -309,6 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-generate-ai')?.addEventListener('click', () => {
         const level = document.getElementById('gen-level').value;
         const situation = document.getElementById('gen-situation').value;
+        const phaseOfPlay = document.getElementById('gen-phase').value;
+        const tactic = document.getElementById('gen-tactic').value;
         const capacity = document.getElementById('gen-capacity').value;
         const surface = document.getElementById('gen-surface').value;
         const topic = document.getElementById('gen-topic').value;
@@ -317,6 +405,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const generatedSession = window.smartLTAGenerator.generate({
             level,
             situation,
+            phaseOfPlay,
+            tactic,
             capacity,
             surface,
             customTopic: topic,
@@ -343,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.LTA_PRESETS.forEach(preset => {
             const lvl = LTA_FRAMEWORK.levels[preset.level] || {};
             const sit = LTA_FRAMEWORK.situations[preset.situation] || {};
+            const phase = LTA_FRAMEWORK.phasesOfPlay[preset.phaseOfPlay] || {};
 
             const card = document.createElement('div');
             card.className = 'preset-card';
@@ -350,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                         <span class="preset-badge" style="background:${lvl.badgeColor || '#3b82f6'}">${lvl.nameEn || preset.level}</span>
+                        <span style="font-size:11px; background:${phase.color || '#10b981'}; color:#fff; padding:2px 6px; border-radius:4px; font-weight:800;">${phase.titleEn || 'RALLY'}</span>
                         <span style="font-size:12px; color:#94a3b8; font-weight:600;">${sit.titleEn}</span>
                     </div>
                     <strong style="font-size:14px; color:#f8fafc;">${preset.title}</strong>
