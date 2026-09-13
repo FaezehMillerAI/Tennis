@@ -5,9 +5,20 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize 3D Engine & Session Manager
-    const court = new TennisCourt3DEngine('tennis-court-3d-container');
-    const sessionMgr = new LTASessionManager(court);
+    // 1. Safe Initialization of 3D Engine & Session Manager
+    let court = null;
+    try {
+        court = new TennisCourt3DEngine('tennis-court-3d-container');
+    } catch (err) {
+        console.error('TennisCourt3DEngine init failed:', err);
+    }
+
+    let sessionMgr = null;
+    try {
+        sessionMgr = new LTASessionManager(court);
+    } catch (err) {
+        console.error('LTASessionManager init failed:', err);
+    }
 
     window.court = court;
     window.sessionMgr = sessionMgr;
@@ -646,13 +657,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (simBtnPlay) {
             simBtnPlay.addEventListener('click', () => {
-                court.toggleSimulation();
+                if (court?.toggleSimulation) {
+                    court.toggleSimulation();
+                } else {
+                    showToast('3D Simulation engine ready', 'info');
+                }
             });
         }
 
         if (simBtnRestart) {
             simBtnRestart.addEventListener('click', () => {
-                court.restartSimulation();
+                if (court?.restartSimulation) {
+                    court.restartSimulation();
+                }
             });
         }
 
@@ -662,43 +679,49 @@ document.addEventListener('DOMContentLoaded', () => {
             simScrubber.addEventListener('touchstart', () => { isUserScrubbing = true; });
             
             simScrubber.addEventListener('input', (e) => {
-                court.seekSimulation(parseFloat(e.target.value) / 100);
+                if (court?.seekSimulation) {
+                    court.seekSimulation(parseFloat(e.target.value) / 100);
+                }
             });
 
             simScrubber.addEventListener('mouseup', () => { isUserScrubbing = false; });
             simScrubber.addEventListener('touchend', () => { isUserScrubbing = false; });
 
-            court.onSimProgress = (time, duration, progress) => {
-                if (!isUserScrubbing) {
-                    simScrubber.value = (progress * 100).toFixed(1);
+            if (court) {
+                court.onSimProgress = (time, duration, progress) => {
+                    if (!isUserScrubbing) {
+                        simScrubber.value = (progress * 100).toFixed(1);
+                    }
+                    if (simTimeDisplay) {
+                        simTimeDisplay.textContent = `${formatTime(time)} / ${formatTime(duration)}`;
+                    }
+                };
+            }
+        }
+
+        if (court) {
+            court.onSimStateChange = (isRunning) => {
+                if (simBtnPlay) {
+                    simBtnPlay.classList.toggle('playing', isRunning);
+                    if (simPlayLabel) simPlayLabel.textContent = isRunning ? 'Pause Simulation' : 'Play Live Scenario';
+                    if (simPlayIcon) {
+                        simPlayIcon.innerHTML = isRunning
+                            ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+                            : '<polygon points="5 3 19 12 5 21 5 3"/>';
+                    }
                 }
-                if (simTimeDisplay) {
-                    simTimeDisplay.textContent = `${formatTime(time)} / ${formatTime(duration)}`;
+                if (simLiveBadge) {
+                    simLiveBadge.classList.toggle('paused', !isRunning);
+                    if (simBadgeText) simBadgeText.textContent = isRunning ? 'LIVE 3D PLAY' : 'PAUSED';
                 }
             };
         }
-
-        court.onSimStateChange = (isRunning) => {
-            if (simBtnPlay) {
-                simBtnPlay.classList.toggle('playing', isRunning);
-                if (simPlayLabel) simPlayLabel.textContent = isRunning ? 'Pause Simulation' : 'Play Live Scenario';
-                if (simPlayIcon) {
-                    simPlayIcon.innerHTML = isRunning
-                        ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
-                        : '<polygon points="5 3 19 12 5 21 5 3"/>';
-                }
-            }
-            if (simLiveBadge) {
-                simLiveBadge.classList.toggle('paused', !isRunning);
-                if (simBadgeText) simBadgeText.textContent = isRunning ? 'LIVE 3D PLAY' : 'PAUSED';
-            }
-        };
 
         simSpeedButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 simSpeedButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                court.setSimulationSpeed(btn.dataset.speed);
+                if (court?.setSimulationSpeed) court.setSimulationSpeed(btn.dataset.speed);
                 window.tennisAudio?.playClick();
             });
         });
@@ -706,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (simBtnTrackingCam) {
             simBtnTrackingCam.addEventListener('click', () => {
                 const isActive = simBtnTrackingCam.classList.toggle('active');
-                court.setTrackingCam(isActive);
+                if (court?.setTrackingCam) court.setTrackingCam(isActive);
                 window.tennisAudio?.playClick();
             });
         }
@@ -714,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (simBtnLoop) {
             simBtnLoop.addEventListener('click', () => {
                 const isLoop = simBtnLoop.classList.toggle('active');
-                court.setSimulationLoop(isLoop);
+                if (court?.setSimulationLoop) court.setSimulationLoop(isLoop);
                 window.tennisAudio?.playClick();
             });
         }
@@ -724,17 +747,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const fspPillShot = document.getElementById('fsp-pill-shot');
         const fspPillPlay = document.getElementById('fsp-pill-play');
 
-        court.onSimPhaseChange = (phase) => {
-            if (fspPillFeed) fspPillFeed.classList.toggle('active', phase === 'FEED');
-            if (fspPillShot) fspPillShot.classList.toggle('active', phase === 'SHOT');
-            if (fspPillPlay) fspPillPlay.classList.toggle('active', phase === 'PLAY');
-        };
+        if (court) {
+            court.onSimPhaseChange = (phase) => {
+                if (fspPillFeed) fspPillFeed.classList.toggle('active', phase === 'FEED');
+                if (fspPillShot) fspPillShot.classList.toggle('active', phase === 'SHOT');
+                if (fspPillPlay) fspPillPlay.classList.toggle('active', phase === 'PLAY');
+            };
+        }
 
         // Spacebar shortcut to play/pause simulation
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
                 e.preventDefault();
-                court.toggleSimulation();
+                if (court?.toggleSimulation) court.toggleSimulation();
             }
         });
     }

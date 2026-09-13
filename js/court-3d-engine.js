@@ -14,6 +14,11 @@ class TennisCourt3DEngine {
         this.container = document.getElementById(containerId);
         if (!this.container) return;
 
+        if (typeof THREE === 'undefined') {
+            console.warn('Three.js is not loaded yet or unavailable.');
+            return;
+        }
+
         // Configuration
         this.surface = 'hard_blue';
         this.courtFormat = 'full'; // full, red_stage, orange_stage
@@ -71,13 +76,17 @@ class TennisCourt3DEngine {
         this.onSimProgress = null;
         this.onSimStateChange = null;
 
-        this.initThree();
-        this.buildCourt();
-        this.setupLighting();
-        this.setupRaycasting();
-        this.initSimulation();
-        this.saveState();
-        this.animate();
+        try {
+            this.initThree();
+            this.buildCourt();
+            this.setupLighting();
+            this.setupRaycasting();
+            this.initSimulation();
+            this.saveState();
+            this.animate();
+        } catch (err) {
+            console.error('TennisCourt3DEngine setup error:', err);
+        }
 
         window.addEventListener('resize', () => this.onWindowResize());
     }
@@ -96,11 +105,21 @@ class TennisCourt3DEngine {
         this.setCameraPreset('broadcast', false);
 
         // Renderer
-        this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            preserveDrawingBuffer: true,
-            powerPreference: 'high-performance'
-        });
+        try {
+            this.renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                preserveDrawingBuffer: true,
+                powerPreference: 'high-performance'
+            });
+        } catch (e) {
+            console.warn('Standard WebGLRenderer failed, trying basic fallback:', e);
+            try {
+                this.renderer = new THREE.WebGLRenderer({ antialias: false });
+            } catch (e2) {
+                console.error('WebGL not available:', e2);
+                return;
+            }
+        }
         this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
