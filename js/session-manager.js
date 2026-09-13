@@ -88,6 +88,14 @@ class LTASessionManager {
 
         if (stageData && this.court) {
             this.court.loadPhase(stageData);
+            this.court.setScenarioMetadata({
+                situation: this.activeSession.situation,
+                phaseOfPlay: this.activeSession.phaseOfPlay,
+                tactic: this.activeSession.tactic,
+                ballCharacteristics: this.activeSession.ballCharacteristics,
+                stageKey: stageKey,
+                level: this.activeSession.level
+            });
         }
 
         window.tennisAudio?.playBounce();
@@ -120,6 +128,14 @@ class LTASessionManager {
 
             if (this.court) {
                 this.court.loadPhase(session.stages[currentStageKey]);
+                this.court.setScenarioMetadata({
+                    situation: session.situation,
+                    phaseOfPlay: session.phaseOfPlay,
+                    tactic: session.tactic,
+                    ballCharacteristics: session.ballCharacteristics,
+                    stageKey: currentStageKey,
+                    level: session.level
+                });
             }
         }
     }

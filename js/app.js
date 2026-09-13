@@ -162,6 +162,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.remove('active');
             }
         });
+
+        // Update LTA Feed - Shot - Play methodology breakdown
+        if (window.LTA_FRAMEWORK?.getFSPDescription) {
+            const fspText = LTA_FRAMEWORK.getFSPDescription(
+                session.situation || 'BOTH_BACK',
+                session.phaseOfPlay || 'RALLY',
+                session.tactic || 'CONTROL_SPACE',
+                session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
+                currentStageKey
+            );
+            const fspTextFeed = document.getElementById('fsp-text-feed');
+            const fspTextShot = document.getElementById('fsp-text-shot');
+            const fspTextPlay = document.getElementById('fsp-text-play');
+            if (fspTextFeed) fspTextFeed.textContent = fspText.feed;
+            if (fspTextShot) fspTextShot.textContent = fspText.shot;
+            if (fspTextPlay) fspTextPlay.textContent = fspText.play;
+        }
+
+        // Ensure court 3D engine has full scenario metadata for live simulation
+        if (court?.setScenarioMetadata) {
+            court.setScenarioMetadata({
+                situation: session.situation || 'BOTH_BACK',
+                phaseOfPlay: session.phaseOfPlay || 'RALLY',
+                tactic: session.tactic || 'CONTROL_SPACE',
+                ballCharacteristics: session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
+                stageKey: currentStageKey,
+                level: session.level || 'RED'
+            });
+        }
     }
 
     // 4. Save form changes back to stage
@@ -661,6 +690,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.tennisAudio?.playClick();
             });
         }
+
+        // Real-time LTA Feed - Shot - Play Phase Highlight
+        const fspPillFeed = document.getElementById('fsp-pill-feed');
+        const fspPillShot = document.getElementById('fsp-pill-shot');
+        const fspPillPlay = document.getElementById('fsp-pill-play');
+
+        court.onSimPhaseChange = (phase) => {
+            if (fspPillFeed) fspPillFeed.classList.toggle('active', phase === 'FEED');
+            if (fspPillShot) fspPillShot.classList.toggle('active', phase === 'SHOT');
+            if (fspPillPlay) fspPillPlay.classList.toggle('active', phase === 'PLAY');
+        };
 
         // Spacebar shortcut to play/pause simulation
         window.addEventListener('keydown', (e) => {

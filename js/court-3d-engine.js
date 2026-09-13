@@ -1285,6 +1285,11 @@ class TennisCourt3DEngine {
         this.rippleStartTime = 0;
     }
 
+    setScenarioMetadata(meta) {
+        this.scenarioMetadata = Object.assign(this.scenarioMetadata || {}, meta || {});
+        this.rebuildSimulationScript();
+    }
+
     rebuildSimulationScript() {
         const players = this.itemsGroup.children.filter(c => c.userData?.itemData?.type === 'player');
         const coach = this.itemsGroup.children.find(c => c.userData?.itemData?.type === 'coach');
@@ -1293,70 +1298,207 @@ class TennisCourt3DEngine {
         this.simP2 = players.find(p => p !== this.simP1);
         this.simCoach = coach;
 
-        // Reset player positions to base coordinates
-        players.forEach(p => {
-            if (p.userData?.basePos) {
-                p.position.copy(p.userData.basePos);
-                if (p.userData.body) p.userData.body.rotation.y = 0;
-                if (p.userData.racketGroup) p.userData.racketGroup.rotation.set(0, 0, 0);
+        // Reset player positions to base coordinates, strictly clamped to their half
+        if (this.simP1 && this.simP1.userData?.basePos) {
+            this.simP1.position.copy(this.simP1.userData.basePos);
+            this.simP1.position.z = Math.max(1.5, Math.min(11.0, this.simP1.position.z));
+            if (this.simP1.userData.body) this.simP1.userData.body.rotation.y = 0;
+            if (this.simP1.userData.racketGroup) this.simP1.userData.racketGroup.rotation.set(0, 0, 0);
+        }
+        if (this.simP2 && this.simP2.userData?.basePos) {
+            this.simP2.position.copy(this.simP2.userData.basePos);
+            this.simP2.position.z = Math.min(-1.5, Math.max(-11.0, this.simP2.position.z));
+            if (this.simP2.userData.body) this.simP2.userData.body.rotation.y = 0;
+            if (this.simP2.userData.racketGroup) this.simP2.userData.racketGroup.rotation.set(0, 0, 0);
+        }
+        if (this.simCoach && this.simCoach.userData?.basePos) {
+            this.simCoach.position.copy(this.simCoach.userData.basePos);
+            this.simCoach.position.z = Math.min(-1.2, Math.max(-6.0, this.simCoach.position.z));
+            if (this.simCoach.userData.body) this.simCoach.userData.body.rotation.y = 0;
+        }
+
+        const meta = this.scenarioMetadata || {};
+        const situation = meta.situation || 'BOTH_BACK';
+        const phase = meta.phaseOfPlay || 'RALLY';
+        const stageKey = meta.stageKey || 'GAME_ASSESSMENT';
+        const ballChars = meta.ballCharacteristics || ['DEPTH', 'DIRECTION'];
+        const isClosed = (stageKey === 'DEMO_CLOSED' || !!coach);
+
+        const hasHeight = ballChars.includes('HEIGHT') || phase === 'DEFEND';
+        const apexHigh = hasHeight ? 3.2 : 1.9;
+
+        // Build Choreography Script based on exact Tactical Matrix options
+        if (isClosed) {
+            // =========================================================
+            // MODE 1: DEMO CLOSED / COACH FEED - SHOT - PLAY
+            // =========================================================
+            const coachPos = this.simCoach?.position || new THREE.Vector3(-1.2, 0, -2.0);
+            const p1Pos = this.simP1?.position || new THREE.Vector3(1.5, 0, 8.5);
+
+            let targetPos = new THREE.Vector3(2.5, 0.08, -8.2);
+            if (situation === 'SERVE') targetPos.set(-1.8, 0.08, -4.2);
+            else if (situation === 'AT_NET') targetPos.set(2.8, 0.08, -6.5);
+
+            this.simScript = {
+                mode: 'COACH_FEED',
+                situation: situation,
+                duration: 4.4,
+                // FEED PHASE (0.0s - 1.3s): Coach feeds from far net across to Player 1 on near court
+                coachPos: coachPos.clone(),
+                feedStart: new THREE.Vector3(coachPos.x + 0.3, 1.1, coachPos.z),
+                feedBounce: new THREE.Vector3(p1Pos.x + 0.5, 0.08, p1Pos.z - 1.0),
+                feedApex: 1.5,
+                // SHOT PHASE (1.3s - 2.8s): Player 1 strikes from near court across net to far target
+                shotStart: new THREE.Vector3(p1Pos.x + 0.5, 0.9, p1Pos.z - 1.0),
+                shotBounce: targetPos.clone(),
+                shotApex: apexHigh,
+                // PLAY PHASE (2.8s - 4.4s): Player 1 dynamic recovery around center mark
+                p1Start: p1Pos.clone(),
+                p1Recovery: new THREE.Vector3(0, 0, 8.5),
+                p2Stationary: this.simP2?.position ? this.simP2.position.clone() : new THREE.Vector3(-3.5, 0, -9.0)
+            };
+        } else if (situation === 'SERVE') {
+            // =========================================================
+            // MODE 2: SERVE & RETURN (1st Serve -> Return -> Plus One)
+            // =========================================================
+            const p1Srv = new THREE.Vector3(1.8, 0, 8.8);
+            const p2Ret = new THREE.Vector3(-1.8, 0, -8.8);
+            const srvBounce = new THREE.Vector3(-1.6, 0.08, -4.2);
+            const retBounce = new THREE.Vector3(2.0, 0.08, 8.2);
+
+            this.simScript = {
+                mode: 'SERVE_RETURN',
+                situation: 'SERVE',
+                duration: 4.5,
+                // FEED: Serve from near deuce to far service box
+                feedStart: new THREE.Vector3(p1Srv.x, 2.2, p1Srv.z - 0.2),
+                feedBounce: srvBounce,
+                feedApex: 2.2,
+                // SHOT: Return from far ad court to near baseline
+                shotStart: new THREE.Vector3(-2.0, 0.85, -5.2),
+                shotBounce: retBounce,
+                shotApex: 1.85,
+                // Positions & Recoveries (Strictly clamped to respective sides)
+                p1Start: p1Srv,
+                p1Recovery: new THREE.Vector3(0.5, 0, 8.6),
+                p2Start: p2Ret,
+                p2Recovery: new THREE.Vector3(0, 0, -8.8)
+            };
+        } else if (situation === 'RETURN') {
+            // =========================================================
+            // MODE 3: RETURN (Opponent Serves -> P1 Aggressive Return)
+            // =========================================================
+            const p2Srv = new THREE.Vector3(-1.8, 0, -8.8);
+            const p1Ret = new THREE.Vector3(1.8, 0, 8.8);
+            const srvBounce = new THREE.Vector3(1.5, 0.08, 4.2);
+            const retBounce = new THREE.Vector3(-3.0, 0.08, -8.8);
+
+            this.simScript = {
+                mode: 'RETURN_ATTACK',
+                situation: 'RETURN',
+                duration: 4.4,
+                feedStart: new THREE.Vector3(p2Srv.x, 2.2, p2Srv.z + 0.2),
+                feedBounce: srvBounce,
+                feedApex: 2.2,
+                shotStart: new THREE.Vector3(1.6, 0.85, 7.6),
+                shotBounce: retBounce,
+                shotApex: apexHigh,
+                p1Start: p1Ret,
+                p1Recovery: new THREE.Vector3(0, 0, 8.5),
+                p2Start: p2Srv,
+                p2Recovery: new THREE.Vector3(-1.0, 0, -8.8)
+            };
+        } else if (situation === 'AT_NET') {
+            // =========================================================
+            // MODE 4: AT NET (Player 1 at Net Volley -> Opponent Deep)
+            // =========================================================
+            const p1Volley = new THREE.Vector3(0.8, 0, 2.0); // Strictly in near court (z >= 1.4)
+            const p2Def = new THREE.Vector3(-1.8, 0, -8.8);
+
+            this.simScript = {
+                mode: 'NET_PLAY',
+                situation: 'AT_NET',
+                duration: 4.4,
+                feedStart: new THREE.Vector3(p2Def.x, 0.9, p2Def.z),
+                feedBounce: new THREE.Vector3(p1Volley.x + 0.3, 0.95, p1Volley.z + 0.5),
+                feedApex: 1.45,
+                shotStart: new THREE.Vector3(p1Volley.x + 0.3, 0.95, p1Volley.z + 0.5),
+                shotBounce: new THREE.Vector3(-3.0, 0.08, -6.5),
+                shotApex: 1.35,
+                p1Start: p1Volley,
+                p1Recovery: new THREE.Vector3(0.5, 0, 2.0),
+                p2Start: p2Def,
+                p2Recovery: new THREE.Vector3(-2.5, 0, -8.8)
+            };
+        } else if (situation === 'OPPONENT_AT_NET') {
+            // =========================================================
+            // MODE 5: OPPONENT AT NET (Pass / Lob)
+            // =========================================================
+            const p1Base = new THREE.Vector3(2.2, 0, 8.8);
+            const p2Net = new THREE.Vector3(-0.8, 0, -2.0); // Strictly in far court (z <= -1.4)
+            const isLob = phase === 'DEFEND';
+
+            this.simScript = {
+                mode: 'OPP_AT_NET',
+                situation: 'OPPONENT_AT_NET',
+                duration: 4.4,
+                feedStart: new THREE.Vector3(p2Net.x, 0.95, p2Net.z),
+                feedBounce: new THREE.Vector3(p1Base.x - 0.4, 0.08, p1Base.z - 1.0),
+                feedApex: 1.45,
+                shotStart: new THREE.Vector3(p1Base.x - 0.4, 0.85, p1Base.z - 1.0),
+                shotBounce: isLob ? new THREE.Vector3(-1.0, 0.08, -9.5) : new THREE.Vector3(3.8, 0.08, -7.5),
+                shotApex: isLob ? 3.4 : 1.35,
+                p1Start: p1Base,
+                p1Recovery: new THREE.Vector3(0, 0, 8.5),
+                p2Start: p2Net,
+                p2Recovery: new THREE.Vector3(-1.2, 0, -2.5)
+            };
+        } else {
+            // =========================================================
+            // MODE 6: BOTH BACK (Rally / Attack / Defend)
+            // =========================================================
+            let p1Start = new THREE.Vector3(1.5, 0, 8.5);
+            let p2Start = new THREE.Vector3(-2.2, 0, -8.5);
+            let bounce1 = new THREE.Vector3(-2.5, 0.08, -8.5);
+            let bounce2 = new THREE.Vector3(2.5, 0.08, 8.5);
+            let p1Rec = new THREE.Vector3(0, 0, 8.8);
+            let p2Rec = new THREE.Vector3(0, 0, -8.8);
+
+            if (phase === 'ATTACK') {
+                p1Start.set(0.8, 0, 6.5); // Stepped inside court
+                bounce1.set(-3.5, 0.08, -8.8); // Laser drive into corner
+                p1Rec.set(1.2, 0, 2.2); // Approaching net (z >= 1.4)
+                p2Rec.set(-3.8, 0, -8.8); // Opponent stretched wide
+            } else if (phase === 'DEFEND') {
+                p1Start.set(-3.5, 0, 10.2); // Pushed deep
+                bounce1.set(0, 0.08, -9.0); // High moonball to center
+                p1Rec.set(0, 0, 8.8); // Long recovery sprint
             }
-        });
 
-        // Determine Shot 1 and Shot 2 coordinates from drawings or elements
-        const ballPaths = this.drawings.filter(d => d.type === 'ball_path');
-        const feedPaths = this.drawings.filter(d => d.type === 'feed_path');
-        
-        let start1, bounce1, start2, bounce2;
-        const isCoachFeed = (feedPaths.length > 0 && this.simCoach);
-
-        if (isCoachFeed) {
-            start1 = this.relTo3D(feedPaths[0].from);
-            bounce1 = this.relTo3D(feedPaths[0].to);
-        } else if (ballPaths.length > 0) {
-            start1 = this.relTo3D(ballPaths[0].from);
-            bounce1 = this.relTo3D(ballPaths[0].to);
-        } else {
-            start1 = this.simP1?.userData?.basePos 
-                ? { x: this.simP1.userData.basePos.x, z: this.simP1.userData.basePos.z }
-                : { x: 0.5, z: 8.5 };
-            bounce1 = this.simP2?.userData?.basePos
-                ? { x: this.simP2.userData.basePos.x, z: this.simP2.userData.basePos.z + 1.2 }
-                : { x: 1.5, z: -8.0 };
+            this.simScript = {
+                mode: 'BOTH_BACK',
+                situation: 'BOTH_BACK',
+                duration: 4.4,
+                feedStart: new THREE.Vector3(p1Start.x + 0.4, 0.9, p1Start.z),
+                feedBounce: bounce1,
+                feedApex: apexHigh,
+                shotStart: new THREE.Vector3(bounce1.x + 0.3, 0.85, bounce1.z),
+                shotBounce: bounce2,
+                shotApex: 1.85,
+                p1Start: p1Start,
+                p1Recovery: p1Rec,
+                p2Start: p2Start,
+                p2Recovery: p2Rec
+            };
         }
-
-        if (ballPaths.length > 1) {
-            bounce2 = this.relTo3D(ballPaths[1].to);
-        } else {
-            bounce2 = { x: -start1.x * 0.7 + (Math.random() - 0.5), z: 8.0 };
-        }
-
-        start2 = { x: bounce1.x, z: bounce1.z };
-
-        const isHighLoop = (ballPaths[0]?.style === 'loop');
-        const apex1 = isHighLoop ? 3.0 : 1.9;
-        const apex2 = 1.85;
-
-        this.simScript = {
-            duration: 4.4,
-            isCoachFeed: isCoachFeed,
-            start1: new THREE.Vector3(start1.x, 0.9, start1.z),
-            bounce1: new THREE.Vector3(bounce1.x, 0.08, bounce1.z),
-            start2: new THREE.Vector3(start2.x, 0.85, start2.z),
-            bounce2: new THREE.Vector3(bounce2.x, 0.08, bounce2.z),
-            apex1: apex1,
-            apex2: apex2,
-            p1Start: this.simP1 ? this.simP1.userData.basePos.clone() : new THREE.Vector3(0, 0, 8.5),
-            p2Start: this.simP2 ? this.simP2.userData.basePos.clone() : new THREE.Vector3(0, 0, -8.5),
-            p1Rec: this.simP1 ? new THREE.Vector3(0, 0, Math.min(this.simP1.userData.basePos.z, 8.8)) : new THREE.Vector3(0, 0, 8.5),
-            p2Rec: this.simP2 ? new THREE.Vector3(0, 0, Math.max(this.simP2.userData.basePos.z, -8.8)) : new THREE.Vector3(0, 0, -8.5)
-        };
 
         this.simDuration = this.simScript.duration;
         this.simTime = 0.0;
         this.lastAudioTriggerTime = -1;
+        this.currentSimPhase = 'FEED';
 
         if (this.liveBallMesh) {
-            this.liveBallMesh.position.copy(this.simScript.start1);
+            this.liveBallMesh.position.copy(this.simScript.feedStart);
             this.liveBallMesh.visible = this.simRunning;
             this.liveBallShadowMesh.visible = this.simRunning;
         }
@@ -1388,135 +1530,204 @@ class TennisCourt3DEngine {
         ball.visible = true;
         shadow.visible = true;
 
-        // --- PHASE 1: Shot 1 Windup & Flight (0.0s to 1.8s) ---
-        if (t < 0.4) {
-            const prepU = t / 0.4;
-            ball.position.copy(s.start1);
-            ball.position.y = 0.9 + Math.sin(prepU * Math.PI) * 0.1;
-            shadow.position.set(ball.position.x, 0.012, ball.position.z);
-            shadow.scale.setScalar(1);
+        // Determine active FSP Phase
+        let currentPhase = 'FEED';
+        if (t >= 1.3 && t < 2.8) currentPhase = 'SHOT';
+        else if (t >= 2.8) currentPhase = 'PLAY';
 
-            if (s.isCoachFeed && coach?.userData?.body) {
-                coach.userData.body.rotation.y = -Math.PI / 6 * prepU;
-            } else if (p1?.userData?.body) {
-                p1.userData.body.rotation.y = -Math.PI / 4 * prepU;
-                if (p1.userData.racketGroup) {
-                    p1.userData.racketGroup.rotation.z = Math.PI / 5 * prepU;
+        if (this.currentSimPhase !== currentPhase) {
+            this.currentSimPhase = currentPhase;
+            if (this.onSimPhaseChange) this.onSimPhaseChange(currentPhase);
+        }
+
+        if (s.mode === 'COACH_FEED') {
+            // =================================================================
+            // COACH FEED - SHOT - PLAY (DEMO CLOSED)
+            // =================================================================
+            if (t < 0.3) {
+                // Coach Windup
+                const u = t / 0.3;
+                ball.position.copy(s.feedStart);
+                shadow.position.set(ball.position.x, 0.012, ball.position.z);
+                if (coach?.userData?.body) coach.userData.body.rotation.y = -Math.PI / 6 * u;
+            } else if (t >= 0.3 && t < 1.3) {
+                // Ball feeds across net from Coach to Player 1 on Near Court
+                if (this.lastAudioTriggerTime < 0.3) {
+                    window.tennisAudio?.playHit();
+                    this.lastAudioTriggerTime = 0.3;
                 }
+                const u = (t - 0.3) / 1.0;
+                const x = THREE.MathUtils.lerp(s.feedStart.x, s.feedBounce.x, u);
+                const z = THREE.MathUtils.lerp(s.feedStart.z, s.feedBounce.z, u);
+                const midY = (s.feedStart.y + s.feedBounce.y) / 2;
+                const y = THREE.MathUtils.lerp(s.feedStart.y, s.feedBounce.y, u) + 4 * u * (1 - u) * (s.feedApex - midY);
+
+                ball.position.set(x, y, z);
+                ball.rotation.x += 0.2;
+                shadow.position.set(x, 0.012, z);
+                shadow.scale.setScalar(Math.max(0.4, 1.2 - y * 0.25));
+
+                // Player 1 unit turn
+                if (p1?.userData?.body) {
+                    p1.userData.body.rotation.y = -Math.PI / 4 * u;
+                    if (p1.userData.racketGroup) p1.userData.racketGroup.rotation.z = Math.PI / 4 * u;
+                }
+            } else if (t >= 1.3 && t < 2.7) {
+                // SHOT: Player 1 strikes ball to far target
+                if (this.lastAudioTriggerTime < 1.3) {
+                    window.tennisAudio?.playHit();
+                    this.triggerRipple(s.feedBounce.x, s.feedBounce.z);
+                    this.lastAudioTriggerTime = 1.3;
+                }
+                const u = (t - 1.3) / 1.4;
+                const x = THREE.MathUtils.lerp(s.shotStart.x, s.shotBounce.x, u);
+                const z = THREE.MathUtils.lerp(s.shotStart.z, s.shotBounce.z, u);
+                const midY = (s.shotStart.y + s.shotBounce.y) / 2;
+                const y = THREE.MathUtils.lerp(s.shotStart.y, s.shotBounce.y, u) + 4 * u * (1 - u) * (s.shotApex - midY);
+
+                ball.position.set(x, y, z);
+                ball.rotation.x -= 0.25;
+                shadow.position.set(x, 0.012, z);
+                shadow.scale.setScalar(Math.max(0.4, 1.2 - y * 0.25));
+
+                // Player 1 starts recovery
+                if (p1) {
+                    const recU = Math.min(1, Math.max(0, (t - 1.8) / 0.9));
+                    p1.position.x = THREE.MathUtils.lerp(s.p1Start.x, s.p1Recovery.x, recU);
+                    p1.position.z = THREE.MathUtils.lerp(s.p1Start.z, s.p1Recovery.z, recU);
+                    p1.position.y = Math.abs(Math.sin(recU * Math.PI * 4)) * 0.06;
+                    if (p1.userData.body) p1.userData.body.rotation.y = THREE.MathUtils.lerp(-Math.PI / 4, 0, recU);
+                }
+            } else {
+                // PLAY: Ball impacts far target disc & Player resets
+                if (this.lastAudioTriggerTime < 2.7) {
+                    window.tennisAudio?.playBounce();
+                    this.triggerRipple(s.shotBounce.x, s.shotBounce.z);
+                    this.lastAudioTriggerTime = 2.7;
+                }
+                const rebU = Math.min(1, (t - 2.7) / 1.7);
+                ball.position.y = 0.08 + Math.sin(rebU * Math.PI) * 0.7;
+                shadow.position.set(ball.position.x, 0.012, ball.position.z);
             }
-        } else if (t >= 0.4 && t < 1.8) {
-            if (this.lastAudioTriggerTime < 0.4) {
-                window.tennisAudio?.playHit();
-                this.lastAudioTriggerTime = 0.4;
+
+            // Keep P2 strictly stationary on far baseline (NEVER runs across net)
+            if (p2 && s.p2Stationary) {
+                p2.position.copy(s.p2Stationary);
             }
+        } else {
+            // =================================================================
+            // 2-PLAYER SCENARIOS (SERVE, RETURN, BOTH_BACK, AT_NET)
+            // =================================================================
+            if (t < 0.4) {
+                // Windup phase
+                const u = t / 0.4;
+                ball.position.copy(s.feedStart);
+                shadow.position.set(ball.position.x, 0.012, ball.position.z);
+                if (p1?.userData?.body) p1.userData.body.rotation.y = -Math.PI / 4 * u;
+            } else if (t >= 0.4 && t < 1.6) {
+                // Shot 1 Flight across net (from Near to Far)
+                if (this.lastAudioTriggerTime < 0.4) {
+                    window.tennisAudio?.playHit();
+                    this.lastAudioTriggerTime = 0.4;
+                }
+                const u = (t - 0.4) / 1.2;
+                const x = THREE.MathUtils.lerp(s.feedStart.x, s.feedBounce.x, u);
+                const z = THREE.MathUtils.lerp(s.feedStart.z, s.feedBounce.z, u);
+                const midY = (s.feedStart.y + s.feedBounce.y) / 2;
+                const y = THREE.MathUtils.lerp(s.feedStart.y, s.feedBounce.y, u) + 4 * u * (1 - u) * (s.feedApex - midY);
 
-            const flightU = (t - 0.4) / 1.4;
-            const x = THREE.MathUtils.lerp(s.start1.x, s.bounce1.x, flightU);
-            const z = THREE.MathUtils.lerp(s.start1.z, s.bounce1.z, flightU);
-            const midY = (s.start1.y + s.bounce1.y) / 2;
-            const y = THREE.MathUtils.lerp(s.start1.y, s.bounce1.y, flightU) + 4 * flightU * (1 - flightU) * (s.apex1 - midY);
+                ball.position.set(x, y, z);
+                ball.rotation.x += 0.25;
+                shadow.position.set(x, 0.012, z);
+                shadow.scale.setScalar(Math.max(0.4, 1.2 - y * 0.25));
 
-            ball.position.set(x, y, z);
-            ball.rotation.x += 0.25;
-            ball.rotation.z += 0.1;
+                // P1 recovers on NEAR COURT
+                if (p1) {
+                    const recU = Math.min(1, Math.max(0, (t - 0.7) / 0.9));
+                    p1.position.x = THREE.MathUtils.lerp(s.p1Start.x, s.p1Recovery.x, recU);
+                    p1.position.z = THREE.MathUtils.lerp(s.p1Start.z, s.p1Recovery.z, recU);
+                    p1.position.y = Math.abs(Math.sin(recU * Math.PI * 4)) * 0.05;
+                }
 
-            shadow.position.set(x, 0.012, z);
-            const shadowScale = Math.max(0.4, 1.2 - y * 0.25);
-            shadow.scale.setScalar(shadowScale);
-            shadow.material.opacity = Math.max(0.15, 0.5 - y * 0.1);
+                // P2 adjusts footwork ON FAR COURT ONLY (strictly z <= -1.4)
+                if (p2) {
+                    const runU = Math.min(1, Math.max(0, (t - 0.6) / 1.0));
+                    const targetZ = Math.min(-1.5, Math.max(-10.5, s.feedBounce.z - 0.5));
+                    p2.position.x = THREE.MathUtils.lerp(s.p2Start.x, s.feedBounce.x - 0.3, runU);
+                    p2.position.z = THREE.MathUtils.lerp(s.p2Start.z, targetZ, runU);
+                    p2.position.y = Math.abs(Math.sin(runU * Math.PI * 4)) * 0.05;
+                }
+            } else if (t >= 1.6 && t < 2.0) {
+                // Bounce on far court
+                if (this.lastAudioTriggerTime < 1.6) {
+                    window.tennisAudio?.playBounce();
+                    this.triggerRipple(s.feedBounce.x, s.feedBounce.z);
+                    this.lastAudioTriggerTime = 1.6;
+                }
+                const rebU = (t - 1.6) / 0.4;
+                ball.position.set(s.feedBounce.x, 0.08 + Math.sin(rebU * Math.PI) * 0.8, s.feedBounce.z);
+                shadow.position.set(s.feedBounce.x, 0.012, s.feedBounce.z);
+            } else if (t >= 2.0 && t < 3.4) {
+                // Shot 2 Flight across net (from Far to Near)
+                if (this.lastAudioTriggerTime < 2.0) {
+                    window.tennisAudio?.playHit();
+                    this.lastAudioTriggerTime = 2.0;
+                }
+                const u = (t - 2.0) / 1.4;
+                const x = THREE.MathUtils.lerp(s.shotStart.x, s.shotBounce.x, u);
+                const z = THREE.MathUtils.lerp(s.shotStart.z, s.shotBounce.z, u);
+                const midY = (s.shotStart.y + s.shotBounce.y) / 2;
+                const y = THREE.MathUtils.lerp(s.shotStart.y, s.shotBounce.y, u) + 4 * u * (1 - u) * (s.shotApex - midY);
 
-            // Hitter recovery shuffle
-            if (p1) {
-                const recU = Math.min(1, Math.max(0, (t - 0.7) / 1.0));
-                p1.position.x = THREE.MathUtils.lerp(s.p1Start.x, s.p1Rec.x, recU);
-                p1.position.z = THREE.MathUtils.lerp(s.p1Start.z, s.p1Rec.z, recU);
-                p1.position.y = Math.abs(Math.sin(recU * Math.PI * 4)) * 0.06;
-                if (p1.userData.body) p1.userData.body.rotation.y = THREE.MathUtils.lerp(-Math.PI / 4, 0, recU);
-            }
+                ball.position.set(x, y, z);
+                ball.rotation.x -= 0.25;
+                shadow.position.set(x, 0.012, z);
+                shadow.scale.setScalar(Math.max(0.4, 1.2 - y * 0.25));
 
-            // Receiver runs toward bounce1
-            if (p2) {
-                const runU = Math.min(1, Math.max(0, (t - 0.6) / 1.1));
-                p2.position.x = THREE.MathUtils.lerp(s.p2Start.x, s.bounce1.x - 0.35, runU);
-                p2.position.z = THREE.MathUtils.lerp(s.p2Start.z, s.bounce1.z - 0.75, runU);
-                p2.position.y = Math.abs(Math.sin(runU * Math.PI * 4)) * 0.06;
-                if (p2.userData.body) p2.userData.body.rotation.y = Math.PI / 4 * runU;
+                // P2 recovers on FAR COURT ONLY
+                if (p2) {
+                    const recU2 = Math.min(1, Math.max(0, (t - 2.3) / 1.1));
+                    p2.position.x = THREE.MathUtils.lerp(p2.position.x, s.p2Recovery.x, recU2 * 0.2);
+                    p2.position.z = THREE.MathUtils.lerp(p2.position.z, s.p2Recovery.z, recU2 * 0.2);
+                }
+
+                // P1 moves to intercept on NEAR COURT ONLY (strictly z >= 1.4)
+                if (p1) {
+                    const moveU2 = Math.min(1, Math.max(0, (t - 2.3) / 1.1));
+                    const targetZ = Math.max(1.5, Math.min(10.5, s.shotBounce.z + 0.5));
+                    p1.position.x = THREE.MathUtils.lerp(p1.position.x, s.shotBounce.x + 0.3, moveU2 * 0.15);
+                    p1.position.z = THREE.MathUtils.lerp(p1.position.z, targetZ, moveU2 * 0.15);
+                }
+            } else {
+                // Bounce 2 on near court
+                if (this.lastAudioTriggerTime < 3.4) {
+                    window.tennisAudio?.playBounce();
+                    this.triggerRipple(s.shotBounce.x, s.shotBounce.z);
+                    this.lastAudioTriggerTime = 3.4;
+                }
+                const rebU = Math.min(1, (t - 3.4) / 1.0);
+                ball.position.y = 0.08 + Math.sin(rebU * Math.PI) * 0.8;
+                shadow.position.set(ball.position.x, 0.012, ball.position.z);
             }
         }
-        // --- PHASE 2: Bounce 1, Strike 2 & Return Flight (1.8s to 3.4s) ---
-        else if (t >= 1.8 && t < 2.2) {
-            if (this.lastAudioTriggerTime < 1.8) {
-                window.tennisAudio?.playBounce();
-                this.triggerRipple(s.bounce1.x, s.bounce1.z);
-                this.lastAudioTriggerTime = 1.8;
-            }
 
-            const rebU = (t - 1.8) / 0.4;
-            const x = THREE.MathUtils.lerp(s.bounce1.x, s.start2.x, rebU);
-            const z = THREE.MathUtils.lerp(s.bounce1.z, s.start2.z, rebU);
-            const y = 0.08 + Math.sin(rebU * Math.PI) * 0.85;
-
-            ball.position.set(x, y, z);
-            shadow.position.set(x, 0.012, z);
-            shadow.scale.setScalar(1);
-
-            if (p2?.userData?.racketGroup) {
-                p2.userData.racketGroup.rotation.z = Math.PI / 4 * rebU;
-            }
-        } else if (t >= 2.2 && t < 3.6) {
-            if (this.lastAudioTriggerTime < 2.2) {
-                window.tennisAudio?.playHit();
-                this.lastAudioTriggerTime = 2.2;
-            }
-
-            const flightU2 = (t - 2.2) / 1.4;
-            const x = THREE.MathUtils.lerp(s.start2.x, s.bounce2.x, flightU2);
-            const z = THREE.MathUtils.lerp(s.start2.z, s.bounce2.z, flightU2);
-            const midY = (s.start2.y + s.bounce2.y) / 2;
-            const y = THREE.MathUtils.lerp(s.start2.y, s.bounce2.y, flightU2) + 4 * flightU2 * (1 - flightU2) * (s.apex2 - midY);
-
-            ball.position.set(x, y, z);
-            ball.rotation.x -= 0.25;
-            shadow.position.set(x, 0.012, z);
-            const shadowScale = Math.max(0.4, 1.2 - y * 0.25);
-            shadow.scale.setScalar(shadowScale);
-            shadow.material.opacity = Math.max(0.15, 0.5 - y * 0.1);
-
-            if (p2) {
-                const recU2 = Math.min(1, Math.max(0, (t - 2.4) / 1.0));
-                p2.position.x = THREE.MathUtils.lerp(s.bounce1.x - 0.35, s.p2Rec.x, recU2);
-                p2.position.z = THREE.MathUtils.lerp(s.bounce1.z - 0.75, s.p2Rec.z, recU2);
-                p2.position.y = Math.abs(Math.sin(recU2 * Math.PI * 4)) * 0.06;
-                if (p2.userData.body) p2.userData.body.rotation.y = THREE.MathUtils.lerp(Math.PI / 4, 0, recU2);
-            }
-
-            if (p1) {
-                const moveU2 = Math.min(1, Math.max(0, (t - 2.5) / 1.0));
-                p1.position.x = THREE.MathUtils.lerp(s.p1Rec.x, s.bounce2.x + 0.35, moveU2);
-                p1.position.z = THREE.MathUtils.lerp(s.p1Rec.z, s.bounce2.z + 0.75, moveU2);
-                p1.position.y = Math.abs(Math.sin(moveU2 * Math.PI * 4)) * 0.06;
-            }
+        // =====================================================================
+        // ABSOLUTE SAFETY CLAMPING (GUARANTEES NO PLAYER EVER CROSSES THE NET)
+        // =====================================================================
+        if (p1) {
+            p1.position.z = Math.max(1.4, Math.min(11.2, p1.position.z));
+            p1.position.x = Math.max(-4.8, Math.min(4.8, p1.position.x));
         }
-        // --- PHASE 3: Bounce 2 & Loop Reset (3.6s to 4.4s) ---
-        else {
-            if (this.lastAudioTriggerTime < 3.6) {
-                window.tennisAudio?.playBounce();
-                this.triggerRipple(s.bounce2.x, s.bounce2.z);
-                this.lastAudioTriggerTime = 3.6;
-            }
-
-            const rebU2 = Math.min(1, (t - 3.6) / 0.8);
-            const y = 0.08 + Math.sin(rebU2 * Math.PI) * 0.8;
-            ball.position.y = y;
-            shadow.position.set(ball.position.x, 0.012, ball.position.z);
-
-            if (p1) {
-                p1.position.x = THREE.MathUtils.lerp(p1.position.x, s.p1Start.x, rebU2 * 0.15);
-                p1.position.z = THREE.MathUtils.lerp(p1.position.z, s.p1Start.z, rebU2 * 0.15);
-            }
+        if (p2) {
+            p2.position.z = Math.min(-1.4, Math.max(-11.2, p2.position.z));
+            p2.position.x = Math.max(-4.8, Math.min(4.8, p2.position.x));
+        }
+        if (coach) {
+            coach.position.z = Math.min(-1.2, Math.max(-6.0, coach.position.z));
+            coach.position.x = Math.max(-4.8, Math.min(4.8, coach.position.x));
         }
 
-        // Animate contact ripple ring
+        // Contact Ripple Animation
         if (this.rippleActive) {
             const ripAge = t - this.rippleStartTime;
             if (ripAge >= 0 && ripAge <= 0.45) {
@@ -1530,7 +1741,7 @@ class TennisCourt3DEngine {
             }
         }
 
-        // Broadcast Tracking Camera (Cinematic video feel following the rally)
+        // Broadcast Tracking Camera
         if (this.trackingCam && this.controls) {
             const targetX = ball.position.x * 0.35;
             const targetZ = ball.position.z * 0.15;

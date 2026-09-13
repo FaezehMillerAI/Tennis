@@ -502,6 +502,88 @@ const LTA_FRAMEWORK = {
         }
 
         return { elements, drawings };
+    },
+
+    /**
+     * Official British LTA Drill Methodology: FEED - SHOT - PLAY Framework
+     * Generates structured 3-phase drill definitions for every tactical scenario.
+     */
+    getFSPDescription: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT') {
+        const isClosed = (stageKey === 'DEMO_CLOSED');
+        const heightTag = ballChars.includes('HEIGHT') ? 'with high net clearance' : 'with penetrating flat shape';
+        const depthTag = ballChars.includes('DEPTH') ? 'landing beyond the service line' : 'into short/medium depth';
+
+        if (isClosed) {
+            if (situation === 'SERVE') {
+                return {
+                    feed: 'Coach sets target cones in the service box (T and Wide). Ball begins in server\'s hand at deuce baseline.',
+                    shot: 'Player executes fluid service motion, focusing on high contact point and pronation into target.',
+                    play: 'Player lands cleanly on front foot inside baseline, resets behind recovery cone for next serve.'
+                };
+            } else if (situation === 'AT_NET') {
+                return {
+                    feed: 'Coach feeds steady underhand ball from basket at net post into player\'s forward volley strike zone.',
+                    shot: `Player executes punch volley out front ${heightTag}, aiming at the +10 target disc in open court.`,
+                    play: 'Player maintains low athletic base, splits forward, and resets for next feed.'
+                };
+            } else {
+                return {
+                    feed: 'Coach delivers controlled basket feed from net/service line with predictable bounce to player\'s wing.',
+                    shot: `Player executes early unit turn, strikes crosscourt drive ${heightTag} ${depthTag} to target zone.`,
+                    play: 'Player immediately pushes off outside leg, executes 3 rapid side-shuffles around center cone.'
+                };
+            }
+        }
+
+        // Open & Game scenarios
+        if (situation === 'SERVE') {
+            return {
+                feed: 'Server (P1) delivers first serve out wide or down the T into opponent\'s diagonal service box.',
+                shot: 'Receiver (P2) executes split-step, returns deep down the middle or crosscourt.',
+                play: 'Server steps around to hit aggressive "Plus-One" groundstroke; players play out the point to conclusion.'
+            };
+        } else if (situation === 'RETURN') {
+            return {
+                feed: 'Opponent (P2) delivers serve from far baseline into player\'s service box.',
+                shot: 'Player 1 steps forward inside baseline, takes return early on the rise into the open corner.',
+                play: 'Opponent scrambles to recover; live baseline rally commences until winner or error.'
+            };
+        } else if (situation === 'AT_NET') {
+            return {
+                feed: 'Opponent drives a low dipping passing attempt from the far baseline.',
+                shot: 'Player 1 punches a crisp angled volley into the open corner (+10 bonus target).',
+                play: 'Player 1 covers the passing line; players play out the point at the net.'
+            };
+        } else if (situation === 'OPPONENT_AT_NET') {
+            return {
+                feed: 'Opponent approaches net behind an aggressive drive.',
+                shot: phase === 'DEFEND' 
+                    ? 'Player 1 executes high topspin lob clearing opponent\'s overhead reach.'
+                    : 'Player 1 drives a sharp down-the-line passing shot past opponent.',
+                play: 'Opponent scrambles back or stretches; point is completed live.'
+            };
+        } else {
+            // BOTH_BACK
+            if (phase === 'ATTACK') {
+                return {
+                    feed: 'Opponent hits short or neutral ball landing before the service line.',
+                    shot: 'Player 1 steps inside baseline, executes aggressive penetrating drive into the open corner.',
+                    play: 'Player 1 charges forward to transition/net position; finishes point on the next ball.'
+                };
+            } else if (phase === 'DEFEND') {
+                return {
+                    feed: 'Opponent hits heavy deep drive pushing Player 1 wide into the doubles alley.',
+                    shot: 'Player 1 absorbs pace with open-stance defensive high topspin lob/moonball to buy court reset time.',
+                    play: 'Player 1 sprints back to center mark behind baseline; resets point back to neutral.'
+                };
+            } else {
+                return {
+                    feed: 'Crosscourt groundstroke feed initiating live rally exchange from baseline.',
+                    shot: `Player strikes continuous crosscourt groundstrokes maintaining ${depthTag} and margin.`,
+                    play: 'Players maintain rally tolerance until an opening appears to transition or force an error.'
+                };
+            }
+        }
     }
 };
 
