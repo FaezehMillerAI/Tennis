@@ -1041,6 +1041,53 @@ h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
     color: #FFFFFF;
 }
 
+/* 5. SHOT DIRECTION: Crosscourt / Down the Line / Down the Middle */
+.matrix-direction-block {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.matrix-direction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.matrix-dir-btn {
+    background: rgba(15, 23, 42, 0.7);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    padding: 7px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.matrix-dir-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.matrix-dir-btn.active {
+    background: linear-gradient(135deg, rgba(204, 255, 0, 0.25), rgba(163, 230, 53, 0.2));
+    color: #CCFF00;
+    border-color: #CCFF00;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.35);
+    font-weight: 800;
+}
+
 /* ========================================================== */
 /* Visual Hourglass Widget matching user's uploaded diagram   */
 /* ========================================================== */

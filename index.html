@@ -386,6 +386,28 @@
                                     <span class="matrix-ball-label">Spin</span>
                                 </div>
                             </div>
+
+                            <!-- Shot Direction: Crosscourt / Down the Line / Down the Middle -->
+                            <div class="matrix-direction-block" id="matrix-direction-block">
+                                <div class="matrix-row-title" style="margin-bottom:4px;">
+                                    <span>Shot Direction (Trajectory)</span>
+                                    <span id="matrix-active-direction" style="color:#CCFF00; font-weight:700;">Crosscourt</span>
+                                </div>
+                                <div class="matrix-direction-grid">
+                                    <button class="matrix-dir-btn active" data-direction="CROSSCOURT" title="Diagonal crosscourt angle over lowest net band">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                                        Crosscourt
+                                    </button>
+                                    <button class="matrix-dir-btn" data-direction="DOWN_THE_LINE" title="Straight down the singles sideline">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+                                        Down the Line
+                                    </button>
+                                    <button class="matrix-dir-btn" data-direction="DOWN_THE_MIDDLE" title="Deep penetrating through center hash mark">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20"/><path d="m8 6 4-4 4 4"/><path d="m8 18 4 4 4-4"/></svg>
+                                        Down the Middle
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -618,6 +640,15 @@
                         <option value="grass">Wimbledon Grass</option>
                         <option value="hard_aus">Australian Open Blue</option>
                         <option value="carpet">Indoor Graphite</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label" for="gen-direction">Shot Direction Trajectory:</label>
+                    <select class="form-select" id="gen-direction">
+                        <option value="CROSSCOURT" selected>Crosscourt (Diagonal Angle & Safe Margin)</option>
+                        <option value="DOWN_THE_LINE">Down the Line (Aggressive Line Drive / Change of Direction)</option>
+                        <option value="DOWN_THE_MIDDLE">Down the Middle (Deep Center Penetration & Jamming)</option>
                     </select>
                 </div>
             </div>

@@ -19,6 +19,7 @@ class SmartLTAGenerator {
             phaseOfPlay = 'RALLY',
             tactic = 'CONTROL_SPACE',
             ballCharacteristics = ['DEPTH', 'DIRECTION'],
+            shotDirection = 'CROSSCOURT',
             capacity = 'TACTICAL',
             surface = 'hard_blue',
             customTopic = '',
@@ -37,16 +38,16 @@ class SmartLTAGenerator {
             : this.generateTitle(level, situation, phaseOfPlay, tactic);
 
         // Build Stage 1: Game Assessment
-        const assessment = this.buildAssessment(level, situation, phaseOfPlay, tactic, title);
+        const assessment = this.buildAssessment(level, situation, phaseOfPlay, tactic, title, shotDirection);
 
         // Build Stage 2: Demo / Teaching Closed
-        const closed = this.buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title);
+        const closed = this.buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title, shotDirection);
 
         // Build Stage 3: Progressing Open
-        const open = this.buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title);
+        const open = this.buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title, shotDirection);
 
         // Build Stage 4: Game
-        const game = this.buildGame(level, situation, phaseOfPlay, tactic, title);
+        const game = this.buildGame(level, situation, phaseOfPlay, tactic, title, shotDirection);
 
         return {
             id: 'generated_' + Date.now(),
@@ -55,13 +56,14 @@ class SmartLTAGenerator {
             situation: situation,
             phaseOfPlay: phaseOfPlay,
             tactic: tactic,
+            shotDirection: shotDirection,
             ballCharacteristics: Array.isArray(ballCharacteristics) && ballCharacteristics.length > 0 ? ballCharacteristics : ['DEPTH', 'DIRECTION'],
             capacity: capacity,
             surface: surface,
             duration: parseInt(duration, 10),
             playersCount: playersCount,
             equipment: this.generateEquipment(level),
-            overview: `Official LTA Tactical Framework session. Phase: ${phaseInfo.titleEn} during ${situationInfo.titleEn}. Tactic: ${tacticInfo.titleEn}. Ball Variables: ${ballCharacteristics.join(', ')}.`,
+            overview: `Official LTA Tactical Framework session. Phase: ${phaseInfo.titleEn} during ${situationInfo.titleEn}. Tactic: ${tacticInfo.titleEn}. Direction: ${shotDirection}. Ball Variables: ${ballCharacteristics.join(', ')}.`,
             stages: {
                 GAME_ASSESSMENT: assessment,
                 DEMO_CLOSED: closed,
@@ -114,14 +116,14 @@ class SmartLTAGenerator {
         }
     }
 
-    buildAssessment(level, situation, phaseOfPlay, tactic, title) {
+    buildAssessment(level, situation, phaseOfPlay, tactic, title, shotDirection = 'CROSSCOURT') {
         const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
-            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME_ASSESSMENT', level)
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME_ASSESSMENT', level, shotDirection)
             : { elements: [], drawings: [] };
 
         return {
-            goal: `Diagnose current subconscious habits in the ${phaseOfPlay} phase (${situation}) before coaching intervention.`,
-            drillDescription: `Begin with live competitive points focusing on ${situation}. Coach positions at the umpire/side area to observe player decisions, shot selection, and spatial control during the ${phaseOfPlay} phase.`,
+            goal: `Diagnose current subconscious habits in the ${phaseOfPlay} phase (${situation}) focusing on ${shotDirection.replace(/_/g, ' ')} trajectory before coaching intervention.`,
+            drillDescription: `Begin with live competitive points focusing on ${situation} (${shotDirection.replace(/_/g, ' ')}). Coach positions at the umpire/side area to observe player decisions, shot selection, and spatial control during the ${phaseOfPlay} phase.`,
             coachObservations: `Observe: Does the player recognize when to ${phaseOfPlay.toLowerCase()}? Is shot selection proactive or panicked? Check balance and footwork reset.`,
             timeMinutes: 10,
             elements: layout.elements,
@@ -129,19 +131,19 @@ class SmartLTAGenerator {
         };
     }
 
-    buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
+    buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title, shotDirection = 'CROSSCOURT') {
         const ballFocus = (ballCharacteristics || []).join(' & ');
         const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
-            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'DEMO_CLOSED', level)
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'DEMO_CLOSED', level, shotDirection)
             : { elements: [], drawings: [] };
 
         return {
-            goal: `Isolate the biomechanical cues and ball control variables (${ballFocus}) with predictable closed feeds.`,
-            drillDescription: `Coach feeds from a basket with steady rhythm. Players focus on 3 action cues to manipulate ${ballFocus} into designated target zones with an 80%+ success rate.`,
+            goal: `Isolate the biomechanical cues and ball control variables (${ballFocus} - ${shotDirection.replace(/_/g, ' ')}) with predictable closed feeds.`,
+            drillDescription: `Coach feeds from a basket with steady rhythm focusing on ${shotDirection.replace(/_/g, ' ')} patterns. Players focus on 3 action cues to manipulate ${ballFocus} into designated target zones with an 80%+ success rate.`,
             coachingCues: [
                 `Early Preparation: Unit turn coordinated with incoming ball flight.`,
                 `Solid Contact Out Front: Clean contact ahead of the front hip to regulate ${ballFocus.toLowerCase()}.`,
-                `Targeted Follow-Through: Complete stroke trajectory toward the intended target zone.`
+                `Targeted Follow-Through: Complete stroke trajectory toward the ${shotDirection.replace(/_/g, ' ').toLowerCase()} target zone.`
             ],
             timeMinutes: 20,
             elements: layout.elements,
@@ -149,14 +151,14 @@ class SmartLTAGenerator {
         };
     }
 
-    buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
+    buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title, shotDirection = 'CROSSCOURT') {
         const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
-            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'PROGRESSING_OPEN', level)
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'PROGRESSING_OPEN', level, shotDirection)
             : { elements: [], drawings: [] };
 
         return {
-            goal: `Transfer the ${phaseOfPlay} skill into dynamic rallies by introducing decision-making variables and court movement.`,
-            drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises to execute "${tactic}" and manipulate ball flight accordingly.`,
+            goal: `Transfer the ${phaseOfPlay} skill (${shotDirection.replace(/_/g, ' ')}) into dynamic rallies by introducing decision-making variables and court movement.`,
+            drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises to execute "${tactic}" and direct the ball ${shotDirection.replace(/_/g, ' ').toLowerCase()}.`,
             coachingCues: [
                 'Read visual cues from opponent’s preparation angle.',
                 'Anticipate bounce depth and adjust footwork cadence.'
@@ -167,14 +169,14 @@ class SmartLTAGenerator {
         };
     }
 
-    buildGame(level, situation, phaseOfPlay, tactic, title) {
+    buildGame(level, situation, phaseOfPlay, tactic, title, shotDirection = 'CROSSCOURT') {
         const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
-            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME', level)
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME', level, shotDirection)
             : { elements: [], drawings: [] };
 
         return {
-            goal: `Evaluate skill transfer in competitive match play with thematic bonus point rules, followed by player debrief.`,
-            drillDescription: `Match play games with rotating serve. Any player who wins a point by successfully executing the ${phaseOfPlay} objective receives 2 bonus points.`,
+            goal: `Evaluate skill transfer in competitive match play with thematic bonus point rules (${shotDirection.replace(/_/g, ' ')}), followed by player debrief.`,
+            drillDescription: `Match play games with rotating serve. Any player who wins a point by successfully executing the ${phaseOfPlay} objective with accurate ${shotDirection.replace(/_/g, ' ').toLowerCase()} placement receives 2 bonus points.`,
             debriefQuestions: [
                 `How did executing "${tactic}" give you the advantage in crucial points?`,
                 `Which ball characteristic (Height, Depth, Direction, Speed, Spin) felt most natural to control?`,

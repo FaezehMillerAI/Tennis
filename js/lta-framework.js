@@ -196,6 +196,31 @@ const LTA_FRAMEWORK = {
         }
     },
 
+    // 3 Distinct Tactical Shot Directions
+    directions: {
+        CROSSCOURT: {
+            id: 'CROSSCOURT',
+            titleEn: 'Crosscourt',
+            shortEn: 'Crosscourt',
+            icon: '↗️',
+            description: 'Diagonal trajectory crossing over the lowest net center strap into wide open angles.'
+        },
+        DOWN_THE_LINE: {
+            id: 'DOWN_THE_LINE',
+            titleEn: 'Down the Line',
+            shortEn: 'Down the Line',
+            icon: '⬆️',
+            description: 'Straight trajectory parallel to the singles sideline over the higher net cord to change direction.'
+        },
+        DOWN_THE_MIDDLE: {
+            id: 'DOWN_THE_MIDDLE',
+            titleEn: 'Down the Middle',
+            shortEn: 'Down the Middle',
+            icon: '↕️',
+            description: 'Deep penetrating ball straight down the center line to eliminate opponent angles and jam their footwork.'
+        }
+    },
+
     // LTA Youth & Adult Player Stages
     levels: {
         BLUE: {
@@ -354,7 +379,7 @@ const LTA_FRAMEWORK = {
      * Synthesize 3D Court Elements & Trajectories for ANY Tactical Matrix Selection
      * Instantly updates the 3D court when coaches change options on the right panel.
      */
-    buildTacticalLayout: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT', level = 'RED') {
+    buildTacticalLayout: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT', level = 'RED', shotDirection = 'CROSSCOURT') {
         const isClosed = (stageKey === 'DEMO_CLOSED');
         const hasHeight = ballChars.includes('HEIGHT');
         const hasDepth = ballChars.includes('DEPTH');
@@ -362,50 +387,95 @@ const LTA_FRAMEWORK = {
         const hasSpeed = ballChars.includes('SPEED');
         const hasSpin = ballChars.includes('SPIN');
         const arcStyle = hasHeight || phase === 'DEFEND' ? 'loop' : 'solid';
+        const dir = shotDirection || 'CROSSCOURT';
 
         let elements = [];
         let drawings = [];
 
         if (isClosed) {
             // Tier 2: Demo Teaching Closed (Coach feeding with Ball Hopper)
-            elements.push(
-                { type: 'coach', id: 'coach', x: 0.38, y: 0.46, label: 'LTA Coach' },
-                { type: 'hopper', id: 'hop', x: 0.33, y: 0.45 }
-            );
+            let coachPos = { x: 0.38, y: 0.46 };
+            let p1Pos = { x: 0.65, y: 0.84 };
+            let targetPos = { x: 0.26, y: 0.16 };
+            let targetLabel = 'Crosscourt Drive';
+            let recConePos = { x: 0.50, y: 0.84 };
 
             if (situation === 'SERVE') {
+                p1Pos = { x: 0.58, y: 0.88 };
+                if (dir === 'DOWN_THE_LINE') {
+                    targetPos = { x: 0.48, y: 0.28 };
+                    targetLabel = 'Serve Down the T';
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    targetPos = { x: 0.35, y: 0.30 };
+                    targetLabel = 'Body Serve';
+                } else {
+                    targetPos = { x: 0.22, y: 0.32 };
+                    targetLabel = 'Serve Out Wide';
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.58, y: 0.88, label: 'Server (P1)', color: '#2563EB' },
-                    { type: 'cone', id: 'c_lead', x: 0.58, y: 0.82, color: '#f59e0b' },
-                    { type: 'target', id: 't1', x: 0.38, y: 0.32, points: 10, color: '#10b981' },
-                    { type: 'cone', id: 'c_t', x: 0.48, y: 0.32, color: '#ef4444' }
+                    { type: 'coach', id: 'coach', x: 0.22, y: 0.48, label: 'LTA Coach' },
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Server (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_lead', x: p1Pos.x, y: p1Pos.y - 0.06, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: targetPos.x, y: targetPos.y, points: 10, color: '#10b981' }
                 );
                 drawings.push(
-                    { type: 'ball_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.38, y: 0.32 }, style: arcStyle, color: '#CCFF00', label: 'Serve Trajectory' },
-                    { type: 'move_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.56, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'Landing Step' }
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: arcStyle, color: '#CCFF00', label: targetLabel },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: p1Pos.x - 0.02, y: p1Pos.y - 0.06 }, style: 'dashed', color: '#38bdf8', label: 'Landing Step' }
                 );
             } else if (situation === 'AT_NET') {
+                p1Pos = { x: 0.55, y: 0.60 };
+                coachPos = { x: 0.38, y: 0.44 };
+                if (dir === 'DOWN_THE_LINE') {
+                    targetPos = { x: 0.76, y: 0.20 };
+                    targetLabel = 'Down-the-Line Volley';
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    targetPos = { x: 0.50, y: 0.22 };
+                    targetLabel = 'Deep Center Volley';
+                } else {
+                    targetPos = { x: 0.24, y: 0.26 };
+                    targetLabel = 'Angled Crosscourt Volley';
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.52, y: 0.60, label: 'Volleyer (P1)', color: '#2563EB' },
-                    { type: 'cone', id: 'c_split', x: 0.52, y: 0.64, color: '#f59e0b' },
-                    { type: 'target', id: 't1', x: 0.75, y: 0.24, points: 10, color: '#10b981' }
+                    { type: 'coach', id: 'coach', x: coachPos.x, y: coachPos.y, label: 'LTA Coach' },
+                    { type: 'hopper', id: 'hop', x: coachPos.x - 0.05, y: coachPos.y },
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Volleyer (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_split', x: p1Pos.x, y: p1Pos.y + 0.05, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: targetPos.x, y: targetPos.y, points: 10, color: '#10b981' }
                 );
                 drawings.push(
-                    { type: 'feed_path', from: { x: 0.38, y: 0.46 }, to: { x: 0.52, y: 0.60 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
-                    { type: 'ball_path', from: { x: 0.52, y: 0.60 }, to: { x: 0.75, y: 0.24 }, style: 'solid', color: '#CCFF00', label: 'Punch Volley' },
-                    { type: 'move_path', from: { x: 0.52, y: 0.65 }, to: { x: 0.52, y: 0.60 }, style: 'dashed', color: '#38bdf8', label: 'Forward Split' }
+                    { type: 'feed_path', from: { x: coachPos.x, y: coachPos.y }, to: { x: p1Pos.x, y: p1Pos.y }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'solid', color: '#CCFF00', label: targetLabel },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y + 0.06 }, to: { x: p1Pos.x, y: p1Pos.y }, style: 'dashed', color: '#38bdf8', label: 'Forward Split' }
                 );
             } else {
                 // Baseline Groundstroke Closed Practice
+                if (dir === 'DOWN_THE_LINE') {
+                    coachPos = { x: 0.65, y: 0.46 };
+                    targetPos = { x: 0.74, y: 0.16 };
+                    targetLabel = 'Down-the-Line Laser';
+                    recConePos = { x: 0.58, y: 0.84 };
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    coachPos = { x: 0.48, y: 0.46 };
+                    targetPos = { x: 0.50, y: 0.14 };
+                    targetLabel = 'Down-the-Middle Depth';
+                    recConePos = { x: 0.50, y: 0.84 };
+                } else {
+                    coachPos = { x: 0.38, y: 0.46 };
+                    targetPos = { x: 0.26, y: 0.16 };
+                    targetLabel = 'Crosscourt Drive';
+                    recConePos = { x: 0.52, y: 0.84 };
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.35, y: 0.84, label: 'Player (P1)', color: '#2563EB' },
-                    { type: 'cone', id: 'c_reset', x: 0.50, y: 0.84, color: '#f59e0b' },
-                    { type: 'target', id: 't1', x: hasDepth ? 0.70 : 0.65, y: hasDepth ? 0.16 : 0.26, points: 5, color: '#10b981' }
+                    { type: 'coach', id: 'coach', x: coachPos.x, y: coachPos.y, label: 'LTA Coach' },
+                    { type: 'hopper', id: 'hop', x: coachPos.x - 0.05, y: coachPos.y },
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Player (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_reset', x: recConePos.x, y: recConePos.y, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: targetPos.x, y: targetPos.y, points: 10, color: '#10b981' }
                 );
                 drawings.push(
-                    { type: 'feed_path', from: { x: 0.38, y: 0.46 }, to: { x: 0.35, y: 0.82 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
-                    { type: 'ball_path', from: { x: 0.35, y: 0.82 }, to: { x: hasDepth ? 0.70 : 0.65, y: hasDepth ? 0.16 : 0.26 }, style: arcStyle, color: '#CCFF00', label: 'Crosscourt Drive' },
-                    { type: 'move_path', from: { x: 0.35, y: 0.84 }, to: { x: 0.50, y: 0.84 }, style: 'dashed', color: '#38bdf8', label: 'Shuffle to Centre' }
+                    { type: 'feed_path', from: { x: coachPos.x, y: coachPos.y }, to: { x: p1Pos.x, y: p1Pos.y - 0.02 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y - 0.02 }, to: { x: targetPos.x, y: targetPos.y }, style: arcStyle, color: '#CCFF00', label: targetLabel },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: recConePos.x, y: recConePos.y }, style: 'dashed', color: '#38bdf8', label: 'Shuffle to Recovery' }
                 );
             }
 
@@ -414,84 +484,187 @@ const LTA_FRAMEWORK = {
 
         // Open / Assessment / Game Scenarios (Dynamic 2-Player Tactical Setup)
         if (situation === 'SERVE') {
+            let srvTarget = { x: 0.22, y: 0.32 };
+            let srvLabel = '1st Serve Out Wide';
+            let retTarget = { x: 0.68, y: 0.85 };
+            let p2Pos = { x: 0.24, y: 0.12 };
+
+            if (dir === 'DOWN_THE_LINE') {
+                srvTarget = { x: 0.48, y: 0.28 };
+                srvLabel = '1st Serve Down the T';
+                retTarget = { x: 0.30, y: 0.85 };
+                p2Pos = { x: 0.42, y: 0.12 };
+            } else if (dir === 'DOWN_THE_MIDDLE') {
+                srvTarget = { x: 0.35, y: 0.30 };
+                srvLabel = '1st Serve Body Jam';
+                retTarget = { x: 0.50, y: 0.85 };
+                p2Pos = { x: 0.34, y: 0.12 };
+            }
+
             elements.push(
                 { type: 'player', id: 'p1', x: 0.58, y: 0.88, label: 'Server (P1)', color: '#2563EB' },
-                { type: 'player', id: 'p2', x: 0.32, y: 0.12, label: 'Receiver (P2)', color: '#DC2626' },
-                { type: 'target', id: 't_srv', x: 0.38, y: 0.32, points: 10, color: '#10b981' },
-                { type: 'target', id: 't_ret', x: 0.65, y: 0.85, points: 5, color: '#38bdf8' }
+                { type: 'player', id: 'p2', x: p2Pos.x, y: p2Pos.y, label: 'Receiver (P2)', color: '#DC2626' },
+                { type: 'target', id: 't_srv', x: srvTarget.x, y: srvTarget.y, points: 10, color: '#10b981' },
+                { type: 'target', id: 't_ret', x: retTarget.x, y: retTarget.y, points: 5, color: '#38bdf8' }
             );
             drawings.push(
-                { type: 'ball_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.38, y: 0.32 }, style: arcStyle, color: '#CCFF00', label: '1st Serve' },
-                { type: 'ball_path', from: { x: 0.38, y: 0.32 }, to: { x: 0.65, y: 0.85 }, style: 'solid', color: '#38bdf8', label: 'Deep Return' },
+                { type: 'ball_path', from: { x: 0.58, y: 0.88 }, to: { x: srvTarget.x, y: srvTarget.y }, style: arcStyle, color: '#CCFF00', label: srvLabel },
+                { type: 'ball_path', from: { x: srvTarget.x, y: srvTarget.y }, to: { x: retTarget.x, y: retTarget.y }, style: 'solid', color: '#38bdf8', label: 'Return Reply' },
                 { type: 'move_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.50, y: 0.88 }, style: 'dashed', color: '#38bdf8', label: 'Centre Reset' }
             );
         } else if (situation === 'RETURN') {
+            let retTarget = { x: 0.25, y: 0.16 };
+            let retLabel = 'Crosscourt Return';
+
+            if (dir === 'DOWN_THE_LINE') {
+                retTarget = { x: 0.74, y: 0.16 };
+                retLabel = 'Down-the-Line Return';
+            } else if (dir === 'DOWN_THE_MIDDLE') {
+                retTarget = { x: 0.50, y: 0.14 };
+                retLabel = 'Down-the-Middle Return';
+            }
+
             elements.push(
                 { type: 'player', id: 'p1', x: 0.66, y: 0.88, label: 'Receiver (P1)', color: '#2563EB' },
                 { type: 'player', id: 'p2', x: 0.42, y: 0.10, label: 'Server (P2)', color: '#DC2626' },
                 { type: 'cone', id: 'c_split', x: 0.66, y: 0.82, color: '#f59e0b' },
-                { type: 'target', id: 't_deep', x: 0.25, y: 0.16, points: 10, color: '#10b981' }
+                { type: 'target', id: 't_deep', x: retTarget.x, y: retTarget.y, points: 10, color: '#10b981' }
             );
             drawings.push(
                 { type: 'ball_path', from: { x: 0.42, y: 0.10 }, to: { x: 0.64, y: 0.68 }, style: 'solid', color: '#facc15', label: 'Opponent Serve' },
-                { type: 'ball_path', from: { x: 0.66, y: 0.88 }, to: { x: 0.25, y: 0.16 }, style: arcStyle, color: '#CCFF00', label: 'Aggressive Return' },
+                { type: 'ball_path', from: { x: 0.66, y: 0.88 }, to: { x: retTarget.x, y: retTarget.y }, style: arcStyle, color: '#CCFF00', label: retLabel },
                 { type: 'move_path', from: { x: 0.66, y: 0.92 }, to: { x: 0.66, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Step Forward' }
             );
         } else if (situation === 'AT_NET') {
+            let volTarget = { x: 0.22, y: 0.28 };
+            let volLabel = 'Angled Crosscourt Volley';
+
+            if (dir === 'DOWN_THE_LINE') {
+                volTarget = { x: 0.76, y: 0.18 };
+                volLabel = 'Down-the-Line Volley';
+            } else if (dir === 'DOWN_THE_MIDDLE') {
+                volTarget = { x: 0.50, y: 0.20 };
+                volLabel = 'Down-the-Middle Volley';
+            }
+
             elements.push(
-                { type: 'player', id: 'p1', x: 0.52, y: 0.58, label: 'Net Player (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p1', x: 0.55, y: 0.58, label: 'Net Player (P1)', color: '#2563EB' },
                 { type: 'player', id: 'p2', x: 0.30, y: 0.12, label: 'Defender (P2)', color: '#DC2626' },
-                { type: 'target', id: 't_vol', x: 0.75, y: 0.24, points: 10, color: '#10b981' }
+                { type: 'target', id: 't_vol', x: volTarget.x, y: volTarget.y, points: 10, color: '#10b981' }
             );
             drawings.push(
-                { type: 'ball_path', from: { x: 0.30, y: 0.12 }, to: { x: 0.52, y: 0.58 }, style: 'solid', color: '#facc15', label: 'Dipping Drive' },
-                { type: 'ball_path', from: { x: 0.52, y: 0.58 }, to: { x: 0.75, y: 0.24 }, style: 'solid', color: '#CCFF00', label: 'Punch Volley' },
-                { type: 'move_path', from: { x: 0.52, y: 0.66 }, to: { x: 0.52, y: 0.58 }, style: 'dashed', color: '#38bdf8', label: 'Close the Net' }
+                { type: 'ball_path', from: { x: 0.30, y: 0.12 }, to: { x: 0.55, y: 0.58 }, style: 'solid', color: '#facc15', label: 'Dipping Drive' },
+                { type: 'ball_path', from: { x: 0.55, y: 0.58 }, to: { x: volTarget.x, y: volTarget.y }, style: 'solid', color: '#CCFF00', label: volLabel },
+                { type: 'move_path', from: { x: 0.55, y: 0.66 }, to: { x: 0.55, y: 0.58 }, style: 'dashed', color: '#38bdf8', label: 'Close the Net' }
             );
         } else if (situation === 'OPPONENT_AT_NET') {
+            let passTarget = { x: 0.22, y: 0.28 };
+            let passLabel = 'Crosscourt Pass';
+
+            if (dir === 'DOWN_THE_LINE') {
+                passTarget = { x: 0.76, y: 0.16 };
+                passLabel = 'Down-the-Line Pass';
+            } else if (dir === 'DOWN_THE_MIDDLE') {
+                passTarget = { x: 0.50, y: 0.14 };
+                passLabel = phase === 'DEFEND' ? 'Topspin Center Lob' : 'Body Jam Drive';
+            }
+
             elements.push(
-                { type: 'player', id: 'p1', x: 0.26, y: 0.88, label: 'Passer (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p1', x: 0.65, y: 0.88, label: 'Passer (P1)', color: '#2563EB' },
                 { type: 'player', id: 'p2', x: 0.48, y: 0.42, label: 'Net Rusher (P2)', color: '#DC2626' },
-                { type: 'target', id: 't_pass', x: 0.18, y: 0.14, points: 10, color: '#10b981' }
+                { type: 'target', id: 't_pass', x: passTarget.x, y: passTarget.y, points: 10, color: '#10b981' }
             );
             drawings.push(
-                { type: 'ball_path', from: { x: 0.26, y: 0.88 }, to: { x: 0.18, y: 0.14 }, style: phase === 'DEFEND' ? 'loop' : 'solid', color: '#CCFF00', label: phase === 'DEFEND' ? 'Topspin Lob' : 'Down-the-Line Pass' },
-                { type: 'move_path', from: { x: 0.26, y: 0.88 }, to: { x: 0.42, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
+                { type: 'ball_path', from: { x: 0.65, y: 0.88 }, to: { x: passTarget.x, y: passTarget.y }, style: phase === 'DEFEND' ? 'loop' : 'solid', color: '#CCFF00', label: passLabel },
+                { type: 'move_path', from: { x: 0.65, y: 0.88 }, to: { x: 0.52, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
             );
         } else {
             // BOTH_BACK (Most common tactical scenario)
+            let p1Pos = { x: 0.65, y: 0.86 };
+            let p2Pos = { x: 0.32, y: 0.14 };
+            let targetPos = { x: 0.26, y: 0.16 };
+            let shotLabel = 'Crosscourt Drive';
+            let recConePos = { x: 0.54, y: 0.86 };
+
             if (phase === 'ATTACK') {
+                p1Pos = { x: 0.62, y: 0.76 };
+                if (dir === 'DOWN_THE_LINE') {
+                    targetPos = { x: 0.76, y: 0.16 };
+                    shotLabel = 'Down-the-Line Attack';
+                    p2Pos = { x: 0.35, y: 0.14 };
+                    recConePos = { x: 0.60, y: 0.86 };
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    targetPos = { x: 0.50, y: 0.14 };
+                    shotLabel = 'Down-the-Middle Laser';
+                    p2Pos = { x: 0.50, y: 0.12 };
+                    recConePos = { x: 0.50, y: 0.86 };
+                } else {
+                    targetPos = { x: 0.25, y: 0.16 };
+                    shotLabel = 'Crosscourt Penetration';
+                    p2Pos = { x: 0.28, y: 0.14 };
+                    recConePos = { x: 0.54, y: 0.86 };
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.38, y: 0.76, label: 'Attacker (P1)', color: '#2563EB' },
-                    { type: 'player', id: 'p2', x: 0.80, y: 0.16, label: 'Opponent (P2)', color: '#DC2626' },
-                    { type: 'target', id: 't_att', x: 0.80, y: 0.18, points: 10, color: '#10b981' }
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Attacker (P1)', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: p2Pos.x, y: p2Pos.y, label: 'Opponent (P2)', color: '#DC2626' },
+                    { type: 'target', id: 't_att', x: targetPos.x, y: targetPos.y, points: 10, color: '#10b981' }
                 );
                 drawings.push(
-                    { type: 'ball_path', from: { x: 0.38, y: 0.76 }, to: { x: 0.80, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Penetrating Drive' },
-                    { type: 'move_path', from: { x: 0.38, y: 0.76 }, to: { x: 0.48, y: 0.65 }, style: 'dashed', color: '#38bdf8', label: 'Approach to Net' }
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'solid', color: '#CCFF00', label: shotLabel },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: 0.52, y: 0.65 }, style: 'dashed', color: '#38bdf8', label: 'Approach to Net' }
                 );
             } else if (phase === 'DEFEND') {
+                p1Pos = { x: 0.82, y: 0.94 };
+                if (dir === 'DOWN_THE_LINE') {
+                    targetPos = { x: 0.74, y: 0.14 };
+                    shotLabel = 'Down-the-Line High Moonball';
+                    recConePos = { x: 0.58, y: 0.88 };
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    targetPos = { x: 0.50, y: 0.12 };
+                    shotLabel = 'Defensive Moonball to Center';
+                    recConePos = { x: 0.50, y: 0.88 };
+                } else {
+                    targetPos = { x: 0.28, y: 0.14 };
+                    shotLabel = 'Crosscourt High Margin Reset';
+                    recConePos = { x: 0.52, y: 0.88 };
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.16, y: 0.94, label: 'Defender (P1)', color: '#2563EB' },
-                    { type: 'player', id: 'p2', x: 0.55, y: 0.20, label: 'Opponent (P2)', color: '#DC2626' },
-                    { type: 'target', id: 't_def', x: 0.50, y: 0.12, points: 5, color: '#38bdf8' }
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Defender (P1)', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: 0.50, y: 0.18, label: 'Opponent (P2)', color: '#DC2626' },
+                    { type: 'target', id: 't_def', x: targetPos.x, y: targetPos.y, points: 5, color: '#38bdf8' }
                 );
                 drawings.push(
-                    { type: 'ball_path', from: { x: 0.16, y: 0.94 }, to: { x: 0.50, y: 0.12 }, style: 'loop', color: '#CCFF00', label: 'Defensive High Lob / Moonball' },
-                    { type: 'move_path', from: { x: 0.16, y: 0.94 }, to: { x: 0.50, y: 0.88 }, style: 'dashed', color: '#38bdf8', label: 'Sprint Recovery to Centre' }
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: 'loop', color: '#CCFF00', label: shotLabel },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: recConePos.x, y: recConePos.y }, style: 'dashed', color: '#38bdf8', label: 'Sprint Recovery to Centre' }
                 );
             } else {
                 // RALLY (Neutral)
+                if (dir === 'DOWN_THE_LINE') {
+                    targetPos = { x: 0.74, y: 0.16 };
+                    shotLabel = 'Down-the-Line Drive';
+                    p2Pos = { x: 0.35, y: 0.14 };
+                    recConePos = { x: 0.58, y: 0.86 };
+                } else if (dir === 'DOWN_THE_MIDDLE') {
+                    targetPos = { x: 0.50, y: 0.14 };
+                    shotLabel = 'Down-the-Middle Depth';
+                    p2Pos = { x: 0.50, y: 0.14 };
+                    recConePos = { x: 0.50, y: 0.86 };
+                } else {
+                    targetPos = { x: 0.26, y: 0.16 };
+                    shotLabel = 'Crosscourt Rally';
+                    p2Pos = { x: 0.28, y: 0.14 };
+                    recConePos = { x: 0.54, y: 0.86 };
+                }
                 elements.push(
-                    { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'Player 1', color: '#2563EB' },
-                    { type: 'player', id: 'p2', x: 0.55, y: 0.14, label: 'Player 2', color: '#DC2626' },
-                    { type: 'cone', id: 'c_rec1', x: 0.50, y: 0.86, color: '#f59e0b' },
-                    { type: 'target', id: 't_deep', x: 0.70, y: 0.18, points: 5, color: '#10b981' }
+                    { type: 'player', id: 'p1', x: p1Pos.x, y: p1Pos.y, label: 'Player 1', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: p2Pos.x, y: p2Pos.y, label: 'Player 2', color: '#DC2626' },
+                    { type: 'cone', id: 'c_rec1', x: recConePos.x, y: recConePos.y, color: '#f59e0b' },
+                    { type: 'target', id: 't_deep', x: targetPos.x, y: targetPos.y, points: 5, color: '#10b981' }
                 );
                 drawings.push(
-                    { type: 'ball_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.70, y: 0.18 }, style: arcStyle, color: '#CCFF00', label: 'Crosscourt Rally' },
-                    { type: 'ball_path', from: { x: 0.70, y: 0.18 }, to: { x: 0.35, y: 0.84 }, style: arcStyle, color: '#38bdf8', label: 'Deep Reply' },
-                    { type: 'move_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.50, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Centre Recovery' }
+                    { type: 'ball_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: targetPos.x, y: targetPos.y }, style: arcStyle, color: '#CCFF00', label: shotLabel },
+                    { type: 'ball_path', from: { x: targetPos.x, y: targetPos.y }, to: { x: p1Pos.x - 0.1, y: p1Pos.y }, style: arcStyle, color: '#38bdf8', label: 'Rally Reply' },
+                    { type: 'move_path', from: { x: p1Pos.x, y: p1Pos.y }, to: { x: recConePos.x, y: recConePos.y }, style: 'dashed', color: '#38bdf8', label: 'Recovery Reset' }
                 );
             }
         }
@@ -508,58 +681,76 @@ const LTA_FRAMEWORK = {
      * Official British LTA Drill Methodology: FEED - SHOT - PLAY Framework
      * Generates structured 3-phase drill definitions for every tactical scenario.
      */
-    getFSPDescription: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT') {
+    getFSPDescription: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT', shotDirection = 'CROSSCOURT') {
         const isClosed = (stageKey === 'DEMO_CLOSED');
         const heightTag = ballChars.includes('HEIGHT') ? 'with high net clearance' : 'with penetrating flat shape';
         const depthTag = ballChars.includes('DEPTH') ? 'landing beyond the service line' : 'into short/medium depth';
+        const dir = shotDirection || 'CROSSCOURT';
+
+        const dirPhrases = {
+            CROSSCOURT: 'diagonal crosscourt drive across the lowest center net band',
+            DOWN_THE_LINE: 'aggressive drive straight down the singles sideline over the higher net cord',
+            DOWN_THE_MIDDLE: 'penetrating ball directly down the center line jamming the opponent'
+        };
+        const activeDirPhrase = dirPhrases[dir] || dirPhrases.CROSSCOURT;
 
         if (isClosed) {
             if (situation === 'SERVE') {
+                const srvTargetText = dir === 'DOWN_THE_LINE' 
+                    ? 'flat down the center T line' 
+                    : dir === 'DOWN_THE_MIDDLE' 
+                        ? 'into the receiver\'s body' 
+                        : 'out wide pulling the returner off-court';
                 return {
-                    feed: 'Coach sets target cones in the service box (T and Wide). Ball begins in server\'s hand at deuce baseline.',
-                    shot: 'Player executes fluid service motion, focusing on high contact point and pronation into target.',
+                    feed: `Coach sets target cones in the service box (${dir.replace(/_/g, ' ')}). Ball begins in server's hand at baseline.`,
+                    shot: `Player executes fluid service motion, focusing on high contact point and pronating ${srvTargetText}.`,
                     play: 'Player lands cleanly on front foot inside baseline, resets behind recovery cone for next serve.'
                 };
             } else if (situation === 'AT_NET') {
                 return {
                     feed: 'Coach feeds steady underhand ball from basket at net post into player\'s forward volley strike zone.',
-                    shot: `Player executes punch volley out front ${heightTag}, aiming at the +10 target disc in open court.`,
+                    shot: `Player executes punch volley out front ${heightTag}, aiming ${activeDirPhrase} at the +10 target disc.`,
                     play: 'Player maintains low athletic base, splits forward, and resets for next feed.'
                 };
             } else {
                 return {
-                    feed: 'Coach delivers controlled basket feed from net/service line with predictable bounce to player\'s wing.',
-                    shot: `Player executes early unit turn, strikes crosscourt drive ${heightTag} ${depthTag} to target zone.`,
-                    play: 'Player immediately pushes off outside leg, executes 3 rapid side-shuffles around center cone.'
+                    feed: 'Coach delivers controlled basket feed from net/service line with predictable bounce to player\'s strike zone.',
+                    shot: `Player executes early unit turn, strikes ${activeDirPhrase} ${heightTag} ${depthTag} to target zone.`,
+                    play: 'Player immediately pushes off outside leg, executes dynamic recovery shuffles around recovery cone.'
                 };
             }
         }
 
         // Open & Game scenarios
         if (situation === 'SERVE') {
+            const srvDirDesc = dir === 'DOWN_THE_LINE' 
+                ? 'flat down the center T' 
+                : dir === 'DOWN_THE_MIDDLE' 
+                    ? 'directly into the receiver\'s body' 
+                    : 'out wide slicing into the doubles alley';
             return {
-                feed: 'Server (P1) delivers first serve out wide or down the T into opponent\'s diagonal service box.',
-                shot: 'Receiver (P2) executes split-step, returns deep down the middle or crosscourt.',
+                feed: `Server (P1) delivers first serve ${srvDirDesc} into opponent's service box.`,
+                shot: `Receiver (P2) executes split-step, returns deep ${dir === 'DOWN_THE_LINE' ? 'down the line' : 'crosscourt'}.`,
                 play: 'Server steps around to hit aggressive "Plus-One" groundstroke; players play out the point to conclusion.'
             };
         } else if (situation === 'RETURN') {
             return {
                 feed: 'Opponent (P2) delivers serve from far baseline into player\'s service box.',
-                shot: 'Player 1 steps forward inside baseline, takes return early on the rise into the open corner.',
+                shot: `Player 1 steps forward inside baseline, takes return early on the rise ${activeDirPhrase}.`,
                 play: 'Opponent scrambles to recover; live baseline rally commences until winner or error.'
             };
         } else if (situation === 'AT_NET') {
             return {
                 feed: 'Opponent drives a low dipping passing attempt from the far baseline.',
-                shot: 'Player 1 punches a crisp angled volley into the open corner (+10 bonus target).',
+                shot: `Player 1 punches a crisp volley ${activeDirPhrase} into the open target (+10 bonus points).`,
                 play: 'Player 1 covers the passing line; players play out the point at the net.'
             };
         } else if (situation === 'OPPONENT_AT_NET') {
             return {
                 feed: 'Opponent approaches net behind an aggressive drive.',
                 shot: phase === 'DEFEND' 
-                    ? 'Player 1 executes high topspin lob clearing opponent\'s overhead reach.'
-                    : 'Player 1 drives a sharp down-the-line passing shot past opponent.',
+                    ? `Player 1 executes high topspin lob ${dir === 'DOWN_THE_MIDDLE' ? 'down the center' : 'over the backhand'} clearing opponent\'s overhead reach.`
+                    : `Player 1 fires a lethal passing shot ${activeDirPhrase} past the outstretched volleyer.`,
                 play: 'Opponent scrambles back or stretches; point is completed live.'
             };
         } else {
@@ -567,19 +758,19 @@ const LTA_FRAMEWORK = {
             if (phase === 'ATTACK') {
                 return {
                     feed: 'Opponent hits short or neutral ball landing before the service line.',
-                    shot: 'Player 1 steps inside baseline, executes aggressive penetrating drive into the open corner.',
-                    play: 'Player 1 charges forward to transition/net position; finishes point on the next ball.'
+                    shot: `Player 1 steps inside baseline, executes aggressive penetrating drive ${activeDirPhrase}.`,
+                    play: 'Player 1 charges forward into transition/net position; finishes point on the next ball.'
                 };
             } else if (phase === 'DEFEND') {
                 return {
                     feed: 'Opponent hits heavy deep drive pushing Player 1 wide into the doubles alley.',
-                    shot: 'Player 1 absorbs pace with open-stance defensive high topspin lob/moonball to buy court reset time.',
-                    play: 'Player 1 sprints back to center mark behind baseline; resets point back to neutral.'
+                    shot: `Player 1 absorbs pace with open-stance defensive high topspin moonball ${activeDirPhrase} to buy court reset time.`,
+                    play: 'Player 1 sprints back to recovery mark behind baseline; resets point back to neutral.'
                 };
             } else {
                 return {
-                    feed: 'Crosscourt groundstroke feed initiating live rally exchange from baseline.',
-                    shot: `Player strikes continuous crosscourt groundstrokes maintaining ${depthTag} and margin.`,
+                    feed: 'Groundstroke feed initiating live rally exchange from baseline.',
+                    shot: `Player strikes continuous groundstrokes ${activeDirPhrase} maintaining ${depthTag} and margin.`,
                     play: 'Players maintain rally tolerance until an opening appears to transition or force an error.'
                 };
             }

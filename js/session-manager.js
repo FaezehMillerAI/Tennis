@@ -43,6 +43,7 @@ class LTASessionManager {
         if (!this.activeSession.phaseOfPlay) this.activeSession.phaseOfPlay = 'RALLY';
         if (!this.activeSession.tactic) this.activeSession.tactic = 'CONTROL_SPACE';
         if (!this.activeSession.ballCharacteristics) this.activeSession.ballCharacteristics = ['DEPTH', 'DIRECTION'];
+        if (!this.activeSession.shotDirection) this.activeSession.shotDirection = 'CROSSCOURT';
 
         if (this.activeSession.surface && this.court) {
             this.court.setSurface(this.activeSession.surface);
@@ -71,7 +72,8 @@ class LTASessionManager {
                     this.activeSession.tactic || 'CONTROL_SPACE',
                     this.activeSession.ballCharacteristics || ['DEPTH', 'DIRECTION'],
                     stageKey,
-                    this.activeSession.level || 'RED'
+                    this.activeSession.level || 'RED',
+                    this.activeSession.shotDirection || 'CROSSCOURT'
                 );
                 if (!stageData) {
                     stageData = {
@@ -93,6 +95,7 @@ class LTASessionManager {
                 phaseOfPlay: this.activeSession.phaseOfPlay,
                 tactic: this.activeSession.tactic,
                 ballCharacteristics: this.activeSession.ballCharacteristics,
+                shotDirection: this.activeSession.shotDirection || 'CROSSCOURT',
                 stageKey: stageKey,
                 level: this.activeSession.level
             });
@@ -113,7 +116,8 @@ class LTASessionManager {
                 session.tactic || 'CONTROL_SPACE',
                 session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
                 currentStageKey,
-                session.level || 'RED'
+                session.level || 'RED',
+                session.shotDirection || 'CROSSCOURT'
             );
 
             if (!session.stages[currentStageKey]) {
@@ -133,6 +137,7 @@ class LTASessionManager {
                     phaseOfPlay: session.phaseOfPlay,
                     tactic: session.tactic,
                     ballCharacteristics: session.ballCharacteristics,
+                    shotDirection: session.shotDirection || 'CROSSCOURT',
                     stageKey: currentStageKey,
                     level: session.level
                 });

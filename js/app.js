@@ -24,11 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const matrixSituationButtons = document.querySelectorAll('.matrix-pill-btn[data-situation]');
     const matrixPhaseButtons = document.querySelectorAll('.matrix-phase-btn[data-phase]');
     const matrixTacticButtons = document.querySelectorAll('.matrix-tactic-btn[data-tactic]');
+    const matrixDirectionButtons = document.querySelectorAll('.matrix-dir-btn[data-direction]');
     const matrixBallItems = document.querySelectorAll('.matrix-ball-item[data-ball]');
     
     const matrixActiveSituation = document.getElementById('matrix-active-situation');
     const matrixActivePhase = document.getElementById('matrix-active-phase');
     const matrixActiveTactic = document.getElementById('matrix-active-tactic');
+    const matrixActiveDirection = document.getElementById('matrix-active-direction');
 
     // Hourglass Elements
     const hourglassTiers = document.querySelectorAll('.hourglass-tier');
@@ -60,6 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const sitDef = LTA_FRAMEWORK.situations[session.situation] || LTA_FRAMEWORK.situations.BOTH_BACK;
         const phaseDef = LTA_FRAMEWORK.phasesOfPlay[session.phaseOfPlay] || LTA_FRAMEWORK.phasesOfPlay.RALLY;
         const tacticDef = LTA_FRAMEWORK.tactics[session.tactic] || LTA_FRAMEWORK.tactics.CONTROL_SPACE;
+        const activeDir = session.shotDirection || 'CROSSCOURT';
+        const dirDef = LTA_FRAMEWORK.directions?.[activeDir] || LTA_FRAMEWORK.directions?.CROSSCOURT || { titleEn: 'Crosscourt' };
 
         if (matrixActiveSituation) matrixActiveSituation.textContent = sitDef.titleEn;
         if (matrixActivePhase) {
@@ -67,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             matrixActivePhase.style.color = phaseDef.color;
         }
         if (matrixActiveTactic) matrixActiveTactic.textContent = tacticDef.titleEn;
+        if (matrixActiveDirection) matrixActiveDirection.textContent = dirDef.titleEn;
 
         // Highlight Matrix Buttons
         matrixSituationButtons.forEach(btn => {
@@ -79,6 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         matrixTacticButtons.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.tactic === session.tactic);
+        });
+
+        matrixDirectionButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.direction === activeDir);
         });
 
         matrixBallItems.forEach(item => {
@@ -146,12 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sessionMetaSituation = document.getElementById('session-meta-situation');
         if (sessionMetaSituation) {
-            sessionMetaSituation.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${tacticDef.titleEn}`;
+            sessionMetaSituation.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${dirDef.titleEn}`;
         }
 
         const simScenarioTitle = document.getElementById('sim-scenario-title');
         if (simScenarioTitle) {
-            simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${tacticDef.titleEn}`;
+            simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${dirDef.titleEn}`;
         }
 
         // Highlight active surface button
@@ -170,7 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 session.phaseOfPlay || 'RALLY',
                 session.tactic || 'CONTROL_SPACE',
                 session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
-                currentStageKey
+                currentStageKey,
+                activeDir
             );
             const fspTextFeed = document.getElementById('fsp-text-feed');
             const fspTextShot = document.getElementById('fsp-text-shot');
@@ -188,7 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 tactic: session.tactic || 'CONTROL_SPACE',
                 ballCharacteristics: session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
                 stageKey: currentStageKey,
-                level: session.level || 'RED'
+                level: session.level || 'RED',
+                shotDirection: activeDir
             });
         }
     }
@@ -251,6 +262,21 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionMgr.applyTacticalMatrixUpdate(true);
             updateUIForCurrentStage();
             window.tennisAudio?.playClick();
+        });
+    });
+
+    matrixDirectionButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!sessionMgr.activeSession) return;
+            sessionMgr.activeSession.shotDirection = btn.dataset.direction;
+            let list = sessionMgr.activeSession.ballCharacteristics || [];
+            if (!list.includes('DIRECTION')) {
+                list.push('DIRECTION');
+                sessionMgr.activeSession.ballCharacteristics = list;
+            }
+            sessionMgr.applyTacticalMatrixUpdate(true);
+            updateUIForCurrentStage();
+            window.tennisAudio?.playHit();
         });
     });
 
@@ -435,6 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const situation = document.getElementById('gen-situation').value;
         const phaseOfPlay = document.getElementById('gen-phase').value;
         const tactic = document.getElementById('gen-tactic').value;
+        const shotDirection = document.getElementById('gen-direction')?.value || 'CROSSCOURT';
         const capacity = document.getElementById('gen-capacity').value;
         const surface = document.getElementById('gen-surface').value;
         const topic = document.getElementById('gen-topic').value;
@@ -445,6 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
             situation,
             phaseOfPlay,
             tactic,
+            shotDirection,
             capacity,
             surface,
             customTopic: topic,
