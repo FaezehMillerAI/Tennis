@@ -55,10 +55,27 @@ class TennisCourt3DEngine {
         this.targetCameraPos = null;
         this.targetCameraLookAt = null;
 
+        // 3D Live Play Simulation & Video Replay Engine
+        this.simRunning = false;
+        this.simTime = 0.0;
+        this.simDuration = 4.4;
+        this.simSpeed = 1.0;
+        this.simLoop = true;
+        this.trackingCam = true;
+        this.lastAudioTriggerTime = -1;
+        this.simScript = null;
+        this.lastTimestamp = performance.now();
+        this.simP1 = null;
+        this.simP2 = null;
+        this.simCoach = null;
+        this.onSimProgress = null;
+        this.onSimStateChange = null;
+
         this.initThree();
         this.buildCourt();
         this.setupLighting();
         this.setupRaycasting();
+        this.initSimulation();
         this.saveState();
         this.animate();
 
@@ -553,6 +570,7 @@ class TennisCourt3DEngine {
         this.drawings = JSON.parse(JSON.stringify(phaseData.drawings || []));
         this.rebuildItems();
         this.rebuildDrawings();
+        this.rebuildSimulationScript();
         this.saveState();
     }
 
@@ -646,6 +664,12 @@ class TennisCourt3DEngine {
             labelSprite.position.set(0, 1.95, 0);
             group.add(labelSprite);
 
+            // References for simulation animations
+            group.userData.racketGroup = racketGroup;
+            group.userData.body = body;
+            group.userData.shadow = shadowMesh;
+            group.userData.basePos = new THREE.Vector3(pos.x, 0, pos.z);
+
         } else if (el.type === 'coach') {
             // 3D LTA Coach (Teal / Gold jacket)
             const shadowGeo = new THREE.CircleGeometry(0.6, 24);
@@ -679,6 +703,11 @@ class TennisCourt3DEngine {
             const labelSprite = this.createTextSprite(el.label || 'Coach', '#000000', '#facc15');
             labelSprite.position.set(0, 2.05, 0);
             group.add(labelSprite);
+
+            // References for simulation animations
+            group.userData.body = body;
+            group.userData.shadow = shadowMesh;
+            group.userData.basePos = new THREE.Vector3(pos.x, 0, pos.z);
 
         } else if (el.type === 'ball') {
             // 3D Tennis Ball (Optic Yellow with Seam)
@@ -1204,9 +1233,382 @@ class TennisCourt3DEngine {
         this.renderer.setSize(width, height);
     }
 
+    // =========================================================================
+    // 3D LIVE PLAY SIMULATION & VIDEO REPLAY ENGINE
+    // =========================================================================
+
+    initSimulation() {
+        this.simGroup = new THREE.Group();
+        this.scene.add(this.simGroup);
+
+        // Active 3D Tennis Ball in Live Simulation (Optic Yellow Felt)
+        const ballGeo = new THREE.SphereGeometry(0.12, 32, 32);
+        const ballMat = new THREE.MeshStandardMaterial({
+            color: 0xCCFF00,
+            emissive: 0x446600,
+            roughness: 0.35,
+            metalness: 0.1
+        });
+        this.liveBallMesh = new THREE.Mesh(ballGeo, ballMat);
+        this.liveBallMesh.castShadow = true;
+        this.liveBallMesh.visible = false;
+        this.simGroup.add(this.liveBallMesh);
+
+        // Ground shadow beneath live ball
+        const shadowGeo = new THREE.CircleGeometry(0.35, 24);
+        const shadowMat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            transparent: true,
+            opacity: 0.4
+        });
+        this.liveBallShadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+        this.liveBallShadowMesh.rotation.x = -Math.PI / 2;
+        this.liveBallShadowMesh.position.y = 0.012;
+        this.liveBallShadowMesh.visible = false;
+        this.simGroup.add(this.liveBallShadowMesh);
+
+        // Bounce impact contact ripple ring on court
+        const ripGeo = new THREE.RingGeometry(0.06, 0.28, 32);
+        const ripMat = new THREE.MeshBasicMaterial({
+            color: 0xCCFF00,
+            transparent: true,
+            opacity: 0.0,
+            side: THREE.DoubleSide
+        });
+        this.rippleMesh = new THREE.Mesh(ripGeo, ripMat);
+        this.rippleMesh.rotation.x = -Math.PI / 2;
+        this.rippleMesh.position.y = 0.015;
+        this.rippleMesh.visible = false;
+        this.simGroup.add(this.rippleMesh);
+
+        this.rippleActive = false;
+        this.rippleStartTime = 0;
+    }
+
+    rebuildSimulationScript() {
+        const players = this.itemsGroup.children.filter(c => c.userData?.itemData?.type === 'player');
+        const coach = this.itemsGroup.children.find(c => c.userData?.itemData?.type === 'coach');
+
+        this.simP1 = players.find(p => p.userData?.itemData?.id === 'p1' || (p.userData?.itemData?.label && p.userData.itemData.label.includes('1'))) || players[0];
+        this.simP2 = players.find(p => p !== this.simP1);
+        this.simCoach = coach;
+
+        // Reset player positions to base coordinates
+        players.forEach(p => {
+            if (p.userData?.basePos) {
+                p.position.copy(p.userData.basePos);
+                if (p.userData.body) p.userData.body.rotation.y = 0;
+                if (p.userData.racketGroup) p.userData.racketGroup.rotation.set(0, 0, 0);
+            }
+        });
+
+        // Determine Shot 1 and Shot 2 coordinates from drawings or elements
+        const ballPaths = this.drawings.filter(d => d.type === 'ball_path');
+        const feedPaths = this.drawings.filter(d => d.type === 'feed_path');
+        
+        let start1, bounce1, start2, bounce2;
+        const isCoachFeed = (feedPaths.length > 0 && this.simCoach);
+
+        if (isCoachFeed) {
+            start1 = this.relTo3D(feedPaths[0].from);
+            bounce1 = this.relTo3D(feedPaths[0].to);
+        } else if (ballPaths.length > 0) {
+            start1 = this.relTo3D(ballPaths[0].from);
+            bounce1 = this.relTo3D(ballPaths[0].to);
+        } else {
+            start1 = this.simP1?.userData?.basePos 
+                ? { x: this.simP1.userData.basePos.x, z: this.simP1.userData.basePos.z }
+                : { x: 0.5, z: 8.5 };
+            bounce1 = this.simP2?.userData?.basePos
+                ? { x: this.simP2.userData.basePos.x, z: this.simP2.userData.basePos.z + 1.2 }
+                : { x: 1.5, z: -8.0 };
+        }
+
+        if (ballPaths.length > 1) {
+            bounce2 = this.relTo3D(ballPaths[1].to);
+        } else {
+            bounce2 = { x: -start1.x * 0.7 + (Math.random() - 0.5), z: 8.0 };
+        }
+
+        start2 = { x: bounce1.x, z: bounce1.z };
+
+        const isHighLoop = (ballPaths[0]?.style === 'loop');
+        const apex1 = isHighLoop ? 3.0 : 1.9;
+        const apex2 = 1.85;
+
+        this.simScript = {
+            duration: 4.4,
+            isCoachFeed: isCoachFeed,
+            start1: new THREE.Vector3(start1.x, 0.9, start1.z),
+            bounce1: new THREE.Vector3(bounce1.x, 0.08, bounce1.z),
+            start2: new THREE.Vector3(start2.x, 0.85, start2.z),
+            bounce2: new THREE.Vector3(bounce2.x, 0.08, bounce2.z),
+            apex1: apex1,
+            apex2: apex2,
+            p1Start: this.simP1 ? this.simP1.userData.basePos.clone() : new THREE.Vector3(0, 0, 8.5),
+            p2Start: this.simP2 ? this.simP2.userData.basePos.clone() : new THREE.Vector3(0, 0, -8.5),
+            p1Rec: this.simP1 ? new THREE.Vector3(0, 0, Math.min(this.simP1.userData.basePos.z, 8.8)) : new THREE.Vector3(0, 0, 8.5),
+            p2Rec: this.simP2 ? new THREE.Vector3(0, 0, Math.max(this.simP2.userData.basePos.z, -8.8)) : new THREE.Vector3(0, 0, -8.5)
+        };
+
+        this.simDuration = this.simScript.duration;
+        this.simTime = 0.0;
+        this.lastAudioTriggerTime = -1;
+
+        if (this.liveBallMesh) {
+            this.liveBallMesh.position.copy(this.simScript.start1);
+            this.liveBallMesh.visible = this.simRunning;
+            this.liveBallShadowMesh.visible = this.simRunning;
+        }
+    }
+
+    updateSimulation(dt) {
+        if (!this.simRunning || !this.simScript) return;
+
+        this.simTime += dt * this.simSpeed;
+        if (this.simTime >= this.simDuration) {
+            if (this.simLoop) {
+                this.simTime = 0.0;
+                this.lastAudioTriggerTime = -1;
+            } else {
+                this.simTime = this.simDuration;
+                this.pauseSimulation();
+                return;
+            }
+        }
+
+        const t = this.simTime;
+        const s = this.simScript;
+        const p1 = this.simP1;
+        const p2 = this.simP2;
+        const coach = this.simCoach;
+        const ball = this.liveBallMesh;
+        const shadow = this.liveBallShadowMesh;
+
+        ball.visible = true;
+        shadow.visible = true;
+
+        // --- PHASE 1: Shot 1 Windup & Flight (0.0s to 1.8s) ---
+        if (t < 0.4) {
+            const prepU = t / 0.4;
+            ball.position.copy(s.start1);
+            ball.position.y = 0.9 + Math.sin(prepU * Math.PI) * 0.1;
+            shadow.position.set(ball.position.x, 0.012, ball.position.z);
+            shadow.scale.setScalar(1);
+
+            if (s.isCoachFeed && coach?.userData?.body) {
+                coach.userData.body.rotation.y = -Math.PI / 6 * prepU;
+            } else if (p1?.userData?.body) {
+                p1.userData.body.rotation.y = -Math.PI / 4 * prepU;
+                if (p1.userData.racketGroup) {
+                    p1.userData.racketGroup.rotation.z = Math.PI / 5 * prepU;
+                }
+            }
+        } else if (t >= 0.4 && t < 1.8) {
+            if (this.lastAudioTriggerTime < 0.4) {
+                window.tennisAudio?.playHit();
+                this.lastAudioTriggerTime = 0.4;
+            }
+
+            const flightU = (t - 0.4) / 1.4;
+            const x = THREE.MathUtils.lerp(s.start1.x, s.bounce1.x, flightU);
+            const z = THREE.MathUtils.lerp(s.start1.z, s.bounce1.z, flightU);
+            const midY = (s.start1.y + s.bounce1.y) / 2;
+            const y = THREE.MathUtils.lerp(s.start1.y, s.bounce1.y, flightU) + 4 * flightU * (1 - flightU) * (s.apex1 - midY);
+
+            ball.position.set(x, y, z);
+            ball.rotation.x += 0.25;
+            ball.rotation.z += 0.1;
+
+            shadow.position.set(x, 0.012, z);
+            const shadowScale = Math.max(0.4, 1.2 - y * 0.25);
+            shadow.scale.setScalar(shadowScale);
+            shadow.material.opacity = Math.max(0.15, 0.5 - y * 0.1);
+
+            // Hitter recovery shuffle
+            if (p1) {
+                const recU = Math.min(1, Math.max(0, (t - 0.7) / 1.0));
+                p1.position.x = THREE.MathUtils.lerp(s.p1Start.x, s.p1Rec.x, recU);
+                p1.position.z = THREE.MathUtils.lerp(s.p1Start.z, s.p1Rec.z, recU);
+                p1.position.y = Math.abs(Math.sin(recU * Math.PI * 4)) * 0.06;
+                if (p1.userData.body) p1.userData.body.rotation.y = THREE.MathUtils.lerp(-Math.PI / 4, 0, recU);
+            }
+
+            // Receiver runs toward bounce1
+            if (p2) {
+                const runU = Math.min(1, Math.max(0, (t - 0.6) / 1.1));
+                p2.position.x = THREE.MathUtils.lerp(s.p2Start.x, s.bounce1.x - 0.35, runU);
+                p2.position.z = THREE.MathUtils.lerp(s.p2Start.z, s.bounce1.z - 0.75, runU);
+                p2.position.y = Math.abs(Math.sin(runU * Math.PI * 4)) * 0.06;
+                if (p2.userData.body) p2.userData.body.rotation.y = Math.PI / 4 * runU;
+            }
+        }
+        // --- PHASE 2: Bounce 1, Strike 2 & Return Flight (1.8s to 3.4s) ---
+        else if (t >= 1.8 && t < 2.2) {
+            if (this.lastAudioTriggerTime < 1.8) {
+                window.tennisAudio?.playBounce();
+                this.triggerRipple(s.bounce1.x, s.bounce1.z);
+                this.lastAudioTriggerTime = 1.8;
+            }
+
+            const rebU = (t - 1.8) / 0.4;
+            const x = THREE.MathUtils.lerp(s.bounce1.x, s.start2.x, rebU);
+            const z = THREE.MathUtils.lerp(s.bounce1.z, s.start2.z, rebU);
+            const y = 0.08 + Math.sin(rebU * Math.PI) * 0.85;
+
+            ball.position.set(x, y, z);
+            shadow.position.set(x, 0.012, z);
+            shadow.scale.setScalar(1);
+
+            if (p2?.userData?.racketGroup) {
+                p2.userData.racketGroup.rotation.z = Math.PI / 4 * rebU;
+            }
+        } else if (t >= 2.2 && t < 3.6) {
+            if (this.lastAudioTriggerTime < 2.2) {
+                window.tennisAudio?.playHit();
+                this.lastAudioTriggerTime = 2.2;
+            }
+
+            const flightU2 = (t - 2.2) / 1.4;
+            const x = THREE.MathUtils.lerp(s.start2.x, s.bounce2.x, flightU2);
+            const z = THREE.MathUtils.lerp(s.start2.z, s.bounce2.z, flightU2);
+            const midY = (s.start2.y + s.bounce2.y) / 2;
+            const y = THREE.MathUtils.lerp(s.start2.y, s.bounce2.y, flightU2) + 4 * flightU2 * (1 - flightU2) * (s.apex2 - midY);
+
+            ball.position.set(x, y, z);
+            ball.rotation.x -= 0.25;
+            shadow.position.set(x, 0.012, z);
+            const shadowScale = Math.max(0.4, 1.2 - y * 0.25);
+            shadow.scale.setScalar(shadowScale);
+            shadow.material.opacity = Math.max(0.15, 0.5 - y * 0.1);
+
+            if (p2) {
+                const recU2 = Math.min(1, Math.max(0, (t - 2.4) / 1.0));
+                p2.position.x = THREE.MathUtils.lerp(s.bounce1.x - 0.35, s.p2Rec.x, recU2);
+                p2.position.z = THREE.MathUtils.lerp(s.bounce1.z - 0.75, s.p2Rec.z, recU2);
+                p2.position.y = Math.abs(Math.sin(recU2 * Math.PI * 4)) * 0.06;
+                if (p2.userData.body) p2.userData.body.rotation.y = THREE.MathUtils.lerp(Math.PI / 4, 0, recU2);
+            }
+
+            if (p1) {
+                const moveU2 = Math.min(1, Math.max(0, (t - 2.5) / 1.0));
+                p1.position.x = THREE.MathUtils.lerp(s.p1Rec.x, s.bounce2.x + 0.35, moveU2);
+                p1.position.z = THREE.MathUtils.lerp(s.p1Rec.z, s.bounce2.z + 0.75, moveU2);
+                p1.position.y = Math.abs(Math.sin(moveU2 * Math.PI * 4)) * 0.06;
+            }
+        }
+        // --- PHASE 3: Bounce 2 & Loop Reset (3.6s to 4.4s) ---
+        else {
+            if (this.lastAudioTriggerTime < 3.6) {
+                window.tennisAudio?.playBounce();
+                this.triggerRipple(s.bounce2.x, s.bounce2.z);
+                this.lastAudioTriggerTime = 3.6;
+            }
+
+            const rebU2 = Math.min(1, (t - 3.6) / 0.8);
+            const y = 0.08 + Math.sin(rebU2 * Math.PI) * 0.8;
+            ball.position.y = y;
+            shadow.position.set(ball.position.x, 0.012, ball.position.z);
+
+            if (p1) {
+                p1.position.x = THREE.MathUtils.lerp(p1.position.x, s.p1Start.x, rebU2 * 0.15);
+                p1.position.z = THREE.MathUtils.lerp(p1.position.z, s.p1Start.z, rebU2 * 0.15);
+            }
+        }
+
+        // Animate contact ripple ring
+        if (this.rippleActive) {
+            const ripAge = t - this.rippleStartTime;
+            if (ripAge >= 0 && ripAge <= 0.45) {
+                this.rippleMesh.visible = true;
+                const ripScale = 1 + ripAge * 5;
+                this.rippleMesh.scale.setScalar(ripScale);
+                this.rippleMesh.material.opacity = (1 - ripAge / 0.45) * 0.75;
+            } else {
+                this.rippleMesh.visible = false;
+                this.rippleActive = false;
+            }
+        }
+
+        // Broadcast Tracking Camera (Cinematic video feel following the rally)
+        if (this.trackingCam && this.controls) {
+            const targetX = ball.position.x * 0.35;
+            const targetZ = ball.position.z * 0.15;
+            this.controls.target.x = THREE.MathUtils.lerp(this.controls.target.x, targetX, 0.05);
+            this.controls.target.z = THREE.MathUtils.lerp(this.controls.target.z, targetZ, 0.05);
+            this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, targetX * 0.3, 0.04);
+            this.controls.update();
+        }
+
+        if (this.onSimProgress) {
+            this.onSimProgress(this.simTime, this.simDuration, this.simTime / this.simDuration);
+        }
+    }
+
+    triggerRipple(x, z) {
+        if (!this.rippleMesh) return;
+        this.rippleMesh.position.set(x, 0.015, z);
+        this.rippleMesh.scale.setScalar(1);
+        this.rippleMesh.material.opacity = 0.75;
+        this.rippleMesh.visible = true;
+        this.rippleActive = true;
+        this.rippleStartTime = this.simTime;
+    }
+
+    playSimulation() {
+        this.simRunning = true;
+        if (this.liveBallMesh) this.liveBallMesh.visible = true;
+        if (this.liveBallShadowMesh) this.liveBallShadowMesh.visible = true;
+        if (this.onSimStateChange) this.onSimStateChange(true);
+    }
+
+    pauseSimulation() {
+        this.simRunning = false;
+        if (this.onSimStateChange) this.onSimStateChange(false);
+    }
+
+    toggleSimulation() {
+        if (this.simRunning) this.pauseSimulation();
+        else this.playSimulation();
+    }
+
+    restartSimulation() {
+        this.simTime = 0.0;
+        this.lastAudioTriggerTime = -1;
+        this.rebuildSimulationScript();
+        this.playSimulation();
+    }
+
+    seekSimulation(fraction) {
+        this.simTime = Math.max(0, Math.min(this.simDuration, fraction * this.simDuration));
+        this.lastAudioTriggerTime = this.simTime - 0.05;
+        if (this.simScript) {
+            this.updateSimulation(0);
+        }
+    }
+
+    setSimulationSpeed(speed) {
+        this.simSpeed = parseFloat(speed) || 1.0;
+    }
+
+    setTrackingCam(enabled) {
+        this.trackingCam = !!enabled;
+    }
+
+    setSimulationLoop(enabled) {
+        this.simLoop = !!enabled;
+    }
+
     // Animation Loop
     animate() {
         requestAnimationFrame(() => this.animate());
+
+        const now = performance.now();
+        const delta = Math.min((now - this.lastTimestamp) / 1000, 0.1);
+        this.lastTimestamp = now;
+
+        // Advance 3D Live Simulation
+        this.updateSimulation(delta);
 
         // Smooth camera movement towards preset
         if (this.targetCameraPos && this.targetCameraLookAt) {
@@ -1222,7 +1624,7 @@ class TennisCourt3DEngine {
                 this.targetCameraPos = null;
                 this.targetCameraLookAt = null;
             }
-        } else if (this.controls) {
+        } else if (this.controls && !this.simRunning) {
             this.controls.update();
         }
 

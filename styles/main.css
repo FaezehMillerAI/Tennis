@@ -366,6 +366,251 @@ h1, h2, h3, h4, .brand-title, .tier-title-en, .btn, .surface-btn {
     color: #38bdf8;
 }
 
+/* ======================================================== */
+/* 3D LIVE SIMULATION & VIDEO REPLAY BAR OVERLAY           */
+/* ======================================================== */
+.simulation-video-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(10, 15, 29, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 8px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    z-index: 20;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+}
+
+.sim-timeline-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.sim-status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sim-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(204, 255, 0, 0.16);
+    color: #CCFF00;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(204, 255, 0, 0.35);
+}
+
+.sim-live-badge.paused {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.sim-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #CCFF00;
+    box-shadow: 0 0 6px #CCFF00;
+    animation: simPulse 1.4s ease-in-out infinite;
+}
+
+.sim-live-badge.paused .sim-pulse-dot {
+    background: #94a3b8;
+    box-shadow: none;
+    animation: none;
+}
+
+@keyframes simPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.sim-scenario-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f8fafc;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sim-time-wrapper {
+    font-size: 11px;
+    font-weight: 700;
+    color: #cbd5e1;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    white-space: nowrap;
+}
+
+/* Scrubber Range Input */
+.sim-scrubber-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.sim-scrubber-wrapper input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sim-scrubber-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #CCFF00;
+    box-shadow: 0 0 8px #CCFF00;
+    cursor: pointer;
+    border: 2px solid #000;
+    transition: transform 0.1s;
+}
+
+.sim-scrubber-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.sim-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sim-btn-group-left, .sim-btn-group-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sim-btn-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #CCFF00, #a3e635);
+    color: #022c22;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(204, 255, 0, 0.3);
+}
+
+.sim-btn-play:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(204, 255, 0, 0.45);
+}
+
+.sim-btn-play.playing {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+}
+
+.sim-icon-btn {
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sim-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.sim-speed-pills {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    padding: 2px;
+}
+
+.sim-speed-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.sim-speed-btn:hover {
+    color: #fff;
+}
+
+.sim-speed-btn.active {
+    background: rgba(56, 189, 248, 0.3);
+    color: #38bdf8;
+}
+
+.sim-pill-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sim-pill-toggle:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+.sim-pill-toggle.active {
+    background: rgba(204, 255, 0, 0.18);
+    border-color: #CCFF00;
+    color: #CCFF00;
+}
+
 /* Court Drawing Toolbar */
 .court-toolbar {
     display: flex;

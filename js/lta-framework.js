@@ -348,6 +348,160 @@ const LTA_FRAMEWORK = {
             specular: '#334155',
             roughness: 0.6
         }
+    },
+
+    /**
+     * Synthesize 3D Court Elements & Trajectories for ANY Tactical Matrix Selection
+     * Instantly updates the 3D court when coaches change options on the right panel.
+     */
+    buildTacticalLayout: function(situation = 'BOTH_BACK', phase = 'RALLY', tactic = 'CONTROL_SPACE', ballChars = ['DEPTH', 'DIRECTION'], stageKey = 'GAME_ASSESSMENT', level = 'RED') {
+        const isClosed = (stageKey === 'DEMO_CLOSED');
+        const hasHeight = ballChars.includes('HEIGHT');
+        const hasDepth = ballChars.includes('DEPTH');
+        const hasDirection = ballChars.includes('DIRECTION');
+        const hasSpeed = ballChars.includes('SPEED');
+        const hasSpin = ballChars.includes('SPIN');
+        const arcStyle = hasHeight || phase === 'DEFEND' ? 'loop' : 'solid';
+
+        let elements = [];
+        let drawings = [];
+
+        if (isClosed) {
+            // Tier 2: Demo Teaching Closed (Coach feeding with Ball Hopper)
+            elements.push(
+                { type: 'coach', id: 'coach', x: 0.38, y: 0.46, label: 'LTA Coach' },
+                { type: 'hopper', id: 'hop', x: 0.33, y: 0.45 }
+            );
+
+            if (situation === 'SERVE') {
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.58, y: 0.88, label: 'Server (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_lead', x: 0.58, y: 0.82, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: 0.38, y: 0.32, points: 10, color: '#10b981' },
+                    { type: 'cone', id: 'c_t', x: 0.48, y: 0.32, color: '#ef4444' }
+                );
+                drawings.push(
+                    { type: 'ball_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.38, y: 0.32 }, style: arcStyle, color: '#CCFF00', label: 'Serve Trajectory' },
+                    { type: 'move_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.56, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'Landing Step' }
+                );
+            } else if (situation === 'AT_NET') {
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.52, y: 0.60, label: 'Volleyer (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_split', x: 0.52, y: 0.64, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: 0.75, y: 0.24, points: 10, color: '#10b981' }
+                );
+                drawings.push(
+                    { type: 'feed_path', from: { x: 0.38, y: 0.46 }, to: { x: 0.52, y: 0.60 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                    { type: 'ball_path', from: { x: 0.52, y: 0.60 }, to: { x: 0.75, y: 0.24 }, style: 'solid', color: '#CCFF00', label: 'Punch Volley' },
+                    { type: 'move_path', from: { x: 0.52, y: 0.65 }, to: { x: 0.52, y: 0.60 }, style: 'dashed', color: '#38bdf8', label: 'Forward Split' }
+                );
+            } else {
+                // Baseline Groundstroke Closed Practice
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.35, y: 0.84, label: 'Player (P1)', color: '#2563EB' },
+                    { type: 'cone', id: 'c_reset', x: 0.50, y: 0.84, color: '#f59e0b' },
+                    { type: 'target', id: 't1', x: hasDepth ? 0.70 : 0.65, y: hasDepth ? 0.16 : 0.26, points: 5, color: '#10b981' }
+                );
+                drawings.push(
+                    { type: 'feed_path', from: { x: 0.38, y: 0.46 }, to: { x: 0.35, y: 0.82 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
+                    { type: 'ball_path', from: { x: 0.35, y: 0.82 }, to: { x: hasDepth ? 0.70 : 0.65, y: hasDepth ? 0.16 : 0.26 }, style: arcStyle, color: '#CCFF00', label: 'Crosscourt Drive' },
+                    { type: 'move_path', from: { x: 0.35, y: 0.84 }, to: { x: 0.50, y: 0.84 }, style: 'dashed', color: '#38bdf8', label: 'Shuffle to Centre' }
+                );
+            }
+
+            return { elements, drawings };
+        }
+
+        // Open / Assessment / Game Scenarios (Dynamic 2-Player Tactical Setup)
+        if (situation === 'SERVE') {
+            elements.push(
+                { type: 'player', id: 'p1', x: 0.58, y: 0.88, label: 'Server (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p2', x: 0.32, y: 0.12, label: 'Receiver (P2)', color: '#DC2626' },
+                { type: 'target', id: 't_srv', x: 0.38, y: 0.32, points: 10, color: '#10b981' },
+                { type: 'target', id: 't_ret', x: 0.65, y: 0.85, points: 5, color: '#38bdf8' }
+            );
+            drawings.push(
+                { type: 'ball_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.38, y: 0.32 }, style: arcStyle, color: '#CCFF00', label: '1st Serve' },
+                { type: 'ball_path', from: { x: 0.38, y: 0.32 }, to: { x: 0.65, y: 0.85 }, style: 'solid', color: '#38bdf8', label: 'Deep Return' },
+                { type: 'move_path', from: { x: 0.58, y: 0.88 }, to: { x: 0.50, y: 0.88 }, style: 'dashed', color: '#38bdf8', label: 'Centre Reset' }
+            );
+        } else if (situation === 'RETURN') {
+            elements.push(
+                { type: 'player', id: 'p1', x: 0.66, y: 0.88, label: 'Receiver (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p2', x: 0.42, y: 0.10, label: 'Server (P2)', color: '#DC2626' },
+                { type: 'cone', id: 'c_split', x: 0.66, y: 0.82, color: '#f59e0b' },
+                { type: 'target', id: 't_deep', x: 0.25, y: 0.16, points: 10, color: '#10b981' }
+            );
+            drawings.push(
+                { type: 'ball_path', from: { x: 0.42, y: 0.10 }, to: { x: 0.64, y: 0.68 }, style: 'solid', color: '#facc15', label: 'Opponent Serve' },
+                { type: 'ball_path', from: { x: 0.66, y: 0.88 }, to: { x: 0.25, y: 0.16 }, style: arcStyle, color: '#CCFF00', label: 'Aggressive Return' },
+                { type: 'move_path', from: { x: 0.66, y: 0.92 }, to: { x: 0.66, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Step Forward' }
+            );
+        } else if (situation === 'AT_NET') {
+            elements.push(
+                { type: 'player', id: 'p1', x: 0.52, y: 0.58, label: 'Net Player (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p2', x: 0.30, y: 0.12, label: 'Defender (P2)', color: '#DC2626' },
+                { type: 'target', id: 't_vol', x: 0.75, y: 0.24, points: 10, color: '#10b981' }
+            );
+            drawings.push(
+                { type: 'ball_path', from: { x: 0.30, y: 0.12 }, to: { x: 0.52, y: 0.58 }, style: 'solid', color: '#facc15', label: 'Dipping Drive' },
+                { type: 'ball_path', from: { x: 0.52, y: 0.58 }, to: { x: 0.75, y: 0.24 }, style: 'solid', color: '#CCFF00', label: 'Punch Volley' },
+                { type: 'move_path', from: { x: 0.52, y: 0.66 }, to: { x: 0.52, y: 0.58 }, style: 'dashed', color: '#38bdf8', label: 'Close the Net' }
+            );
+        } else if (situation === 'OPPONENT_AT_NET') {
+            elements.push(
+                { type: 'player', id: 'p1', x: 0.26, y: 0.88, label: 'Passer (P1)', color: '#2563EB' },
+                { type: 'player', id: 'p2', x: 0.48, y: 0.42, label: 'Net Rusher (P2)', color: '#DC2626' },
+                { type: 'target', id: 't_pass', x: 0.18, y: 0.14, points: 10, color: '#10b981' }
+            );
+            drawings.push(
+                { type: 'ball_path', from: { x: 0.26, y: 0.88 }, to: { x: 0.18, y: 0.14 }, style: phase === 'DEFEND' ? 'loop' : 'solid', color: '#CCFF00', label: phase === 'DEFEND' ? 'Topspin Lob' : 'Down-the-Line Pass' },
+                { type: 'move_path', from: { x: 0.26, y: 0.88 }, to: { x: 0.42, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
+            );
+        } else {
+            // BOTH_BACK (Most common tactical scenario)
+            if (phase === 'ATTACK') {
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.38, y: 0.76, label: 'Attacker (P1)', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: 0.80, y: 0.16, label: 'Opponent (P2)', color: '#DC2626' },
+                    { type: 'target', id: 't_att', x: 0.80, y: 0.18, points: 10, color: '#10b981' }
+                );
+                drawings.push(
+                    { type: 'ball_path', from: { x: 0.38, y: 0.76 }, to: { x: 0.80, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Penetrating Drive' },
+                    { type: 'move_path', from: { x: 0.38, y: 0.76 }, to: { x: 0.48, y: 0.65 }, style: 'dashed', color: '#38bdf8', label: 'Approach to Net' }
+                );
+            } else if (phase === 'DEFEND') {
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.16, y: 0.94, label: 'Defender (P1)', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: 0.55, y: 0.20, label: 'Opponent (P2)', color: '#DC2626' },
+                    { type: 'target', id: 't_def', x: 0.50, y: 0.12, points: 5, color: '#38bdf8' }
+                );
+                drawings.push(
+                    { type: 'ball_path', from: { x: 0.16, y: 0.94 }, to: { x: 0.50, y: 0.12 }, style: 'loop', color: '#CCFF00', label: 'Defensive High Lob / Moonball' },
+                    { type: 'move_path', from: { x: 0.16, y: 0.94 }, to: { x: 0.50, y: 0.88 }, style: 'dashed', color: '#38bdf8', label: 'Sprint Recovery to Centre' }
+                );
+            } else {
+                // RALLY (Neutral)
+                elements.push(
+                    { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'Player 1', color: '#2563EB' },
+                    { type: 'player', id: 'p2', x: 0.55, y: 0.14, label: 'Player 2', color: '#DC2626' },
+                    { type: 'cone', id: 'c_rec1', x: 0.50, y: 0.86, color: '#f59e0b' },
+                    { type: 'target', id: 't_deep', x: 0.70, y: 0.18, points: 5, color: '#10b981' }
+                );
+                drawings.push(
+                    { type: 'ball_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.70, y: 0.18 }, style: arcStyle, color: '#CCFF00', label: 'Crosscourt Rally' },
+                    { type: 'ball_path', from: { x: 0.70, y: 0.18 }, to: { x: 0.35, y: 0.84 }, style: arcStyle, color: '#38bdf8', label: 'Deep Reply' },
+                    { type: 'move_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.50, y: 0.86 }, style: 'dashed', color: '#38bdf8', label: 'Centre Recovery' }
+                );
+            }
+        }
+
+        // Add Coach observer in Assessment or Game stages
+        if (stageKey === 'GAME_ASSESSMENT' || stageKey === 'GAME') {
+            elements.push({ type: 'coach', id: 'coach_obs', x: 0.12, y: 0.50, label: 'Coach' });
+        }
+
+        return { elements, drawings };
     }
 };
 

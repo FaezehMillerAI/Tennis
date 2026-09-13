@@ -115,24 +115,26 @@ class SmartLTAGenerator {
     }
 
     buildAssessment(level, situation, phaseOfPlay, tactic, title) {
+        const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME_ASSESSMENT', level)
+            : { elements: [], drawings: [] };
+
         return {
             goal: `Diagnose current subconscious habits in the ${phaseOfPlay} phase (${situation}) before coaching intervention.`,
             drillDescription: `Begin with live competitive points focusing on ${situation}. Coach positions at the umpire/side area to observe player decisions, shot selection, and spatial control during the ${phaseOfPlay} phase.`,
             coachObservations: `Observe: Does the player recognize when to ${phaseOfPlay.toLowerCase()}? Is shot selection proactive or panicked? Check balance and footwork reset.`,
             timeMinutes: 10,
-            elements: [
-                { type: 'player', id: 'p1', x: 0.45, y: 0.86, label: 'Player A' },
-                { type: 'player', id: 'p2', x: 0.55, y: 0.14, label: 'Player B' },
-                { type: 'coach', id: 'coach', x: 0.15, y: 0.50, label: 'Coach' }
-            ],
-            drawings: [
-                { type: 'ball_path', from: { x: 0.45, y: 0.86 }, to: { x: 0.55, y: 0.14 }, style: 'solid', color: '#CCFF00', label: 'Live Play' }
-            ]
+            elements: layout.elements,
+            drawings: layout.drawings
         };
     }
 
     buildClosed(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
-        const ballFocus = ballCharacteristics.join(' & ');
+        const ballFocus = (ballCharacteristics || []).join(' & ');
+        const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'DEMO_CLOSED', level)
+            : { elements: [], drawings: [] };
+
         return {
             goal: `Isolate the biomechanical cues and ball control variables (${ballFocus}) with predictable closed feeds.`,
             drillDescription: `Coach feeds from a basket with steady rhythm. Players focus on 3 action cues to manipulate ${ballFocus} into designated target zones with an 80%+ success rate.`,
@@ -142,22 +144,16 @@ class SmartLTAGenerator {
                 `Targeted Follow-Through: Complete stroke trajectory toward the intended target zone.`
             ],
             timeMinutes: 20,
-            elements: [
-                { type: 'coach', id: 'coach', x: 0.35, y: 0.42, label: 'Coach' },
-                { type: 'hopper', id: 'hop', x: 0.30, y: 0.41 },
-                { type: 'player', id: 'p1', x: 0.45, y: 0.82, label: 'Player' },
-                { type: 'target', id: 't1', x: 0.70, y: 0.18, points: 5, color: '#10b981' },
-                { type: 'cone', id: 'c1', x: 0.50, y: 0.82, color: '#f59e0b' }
-            ],
-            drawings: [
-                { type: 'feed_path', from: { x: 0.35, y: 0.42 }, to: { x: 0.45, y: 0.80 }, style: 'dotted', color: '#facc15', label: 'Coach Feed' },
-                { type: 'ball_path', from: { x: 0.45, y: 0.80 }, to: { x: 0.70, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Target Drive' },
-                { type: 'move_path', from: { x: 0.45, y: 0.82 }, to: { x: 0.50, y: 0.82 }, style: 'dashed', color: '#38bdf8', label: 'Recovery' }
-            ]
+            elements: layout.elements,
+            drawings: layout.drawings
         };
     }
 
     buildOpen(level, situation, phaseOfPlay, tactic, ballCharacteristics, title) {
+        const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ballCharacteristics, 'PROGRESSING_OPEN', level)
+            : { elements: [], drawings: [] };
+
         return {
             goal: `Transfer the ${phaseOfPlay} skill into dynamic rallies by introducing decision-making variables and court movement.`,
             drillDescription: `Live 2-player rally with conditional rules: Players must recognize when an opportunity arises to execute "${tactic}" and manipulate ball flight accordingly.`,
@@ -166,21 +162,16 @@ class SmartLTAGenerator {
                 'Anticipate bounce depth and adjust footwork cadence.'
             ],
             timeMinutes: 18,
-            elements: [
-                { type: 'player', id: 'p1', x: 0.40, y: 0.84, label: 'Player 1' },
-                { type: 'player', id: 'p2', x: 0.60, y: 0.16, label: 'Player 2' },
-                { type: 'target', id: 't1', x: 0.75, y: 0.20, points: 3 },
-                { type: 'target', id: 't2', x: 0.25, y: 0.80, points: 3 }
-            ],
-            drawings: [
-                { type: 'ball_path', from: { x: 0.40, y: 0.84 }, to: { x: 0.60, y: 0.16 }, style: 'solid', color: '#CCFF00', label: 'Dynamic Rally' },
-                { type: 'ball_path', from: { x: 0.60, y: 0.16 }, to: { x: 0.75, y: 0.80 }, style: 'solid', color: '#f97316' },
-                { type: 'move_path', from: { x: 0.40, y: 0.84 }, to: { x: 0.70, y: 0.82 }, style: 'dashed', color: '#38bdf8' }
-            ]
+            elements: layout.elements,
+            drawings: layout.drawings
         };
     }
 
     buildGame(level, situation, phaseOfPlay, tactic, title) {
+        const layout = window.LTA_FRAMEWORK?.buildTacticalLayout
+            ? window.LTA_FRAMEWORK.buildTacticalLayout(situation, phaseOfPlay, tactic, ['DEPTH', 'DIRECTION'], 'GAME', level)
+            : { elements: [], drawings: [] };
+
         return {
             goal: `Evaluate skill transfer in competitive match play with thematic bonus point rules, followed by player debrief.`,
             drillDescription: `Match play games with rotating serve. Any player who wins a point by successfully executing the ${phaseOfPlay} objective receives 2 bonus points.`,
@@ -190,14 +181,8 @@ class SmartLTAGenerator {
                 `What is your personal focus area for our next practice session?`
             ],
             timeMinutes: 12,
-            elements: [
-                { type: 'player', id: 'p1', x: 0.45, y: 0.88, label: 'Player 1' },
-                { type: 'player', id: 'p2', x: 0.55, y: 0.12, label: 'Player 2' },
-                { type: 'coach', id: 'coach', x: 0.88, y: 0.50, label: 'Coach' }
-            ],
-            drawings: [
-                { type: 'ball_path', from: { x: 0.45, y: 0.88 }, to: { x: 0.25, y: 0.18 }, style: 'solid', color: '#CCFF00', label: 'Match Winning Shot' }
-            ]
+            elements: layout.elements,
+            drawings: layout.drawings
         };
     }
 }

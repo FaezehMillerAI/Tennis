@@ -62,12 +62,66 @@ class LTASessionManager {
 
         this.activeStageKey = stageKey;
 
-        const stageData = this.activeSession.stages[stageKey];
+        let stageData = this.activeSession.stages[stageKey];
+        if (!stageData || !stageData.elements || stageData.elements.length === 0) {
+            if (window.LTA_FRAMEWORK?.buildTacticalLayout) {
+                const layout = LTA_FRAMEWORK.buildTacticalLayout(
+                    this.activeSession.situation || 'BOTH_BACK',
+                    this.activeSession.phaseOfPlay || 'RALLY',
+                    this.activeSession.tactic || 'CONTROL_SPACE',
+                    this.activeSession.ballCharacteristics || ['DEPTH', 'DIRECTION'],
+                    stageKey,
+                    this.activeSession.level || 'RED'
+                );
+                if (!stageData) {
+                    stageData = {
+                        goal: 'Stage Objective',
+                        drillDescription: 'Drill Description',
+                        timeMinutes: 15
+                    };
+                    this.activeSession.stages[stageKey] = stageData;
+                }
+                stageData.elements = layout.elements;
+                stageData.drawings = layout.drawings;
+            }
+        }
+
         if (stageData && this.court) {
             this.court.loadPhase(stageData);
         }
 
         window.tennisAudio?.playBounce();
+    }
+
+    applyTacticalMatrixUpdate(triggerCourtUpdate = true) {
+        if (!this.activeSession) return;
+        const currentStageKey = this.activeStageKey;
+        const session = this.activeSession;
+
+        if (triggerCourtUpdate && window.LTA_FRAMEWORK?.buildTacticalLayout) {
+            const layout = LTA_FRAMEWORK.buildTacticalLayout(
+                session.situation || 'BOTH_BACK',
+                session.phaseOfPlay || 'RALLY',
+                session.tactic || 'CONTROL_SPACE',
+                session.ballCharacteristics || ['DEPTH', 'DIRECTION'],
+                currentStageKey,
+                session.level || 'RED'
+            );
+
+            if (!session.stages[currentStageKey]) {
+                session.stages[currentStageKey] = {
+                    goal: 'Stage Objective',
+                    drillDescription: 'Drill Description',
+                    timeMinutes: 15
+                };
+            }
+            session.stages[currentStageKey].elements = layout.elements;
+            session.stages[currentStageKey].drawings = layout.drawings;
+
+            if (this.court) {
+                this.court.loadPhase(session.stages[currentStageKey]);
+            }
+        }
     }
 
     saveCurrentSession() {

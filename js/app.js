@@ -149,6 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionMetaSituation.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${tacticDef.titleEn}`;
         }
 
+        const simScenarioTitle = document.getElementById('sim-scenario-title');
+        if (simScenarioTitle) {
+            simScenarioTitle.textContent = `${sitDef.titleEn} • ${phaseDef.titleEn} • ${tacticDef.titleEn}`;
+        }
+
         // Highlight active surface button
         surfaceButtons.forEach(btn => {
             if (btn.dataset.surface === court.surface) {
@@ -194,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             if (!sessionMgr.activeSession) return;
             sessionMgr.activeSession.situation = btn.dataset.situation;
+            sessionMgr.applyTacticalMatrixUpdate(true);
             updateUIForCurrentStage();
             window.tennisAudio?.playHit();
         });
@@ -203,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             if (!sessionMgr.activeSession) return;
             sessionMgr.activeSession.phaseOfPlay = btn.dataset.phase;
+            sessionMgr.applyTacticalMatrixUpdate(true);
             updateUIForCurrentStage();
             window.tennisAudio?.playBounce();
         });
@@ -212,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             if (!sessionMgr.activeSession) return;
             sessionMgr.activeSession.tactic = btn.dataset.tactic;
+            sessionMgr.applyTacticalMatrixUpdate(true);
             updateUIForCurrentStage();
             window.tennisAudio?.playClick();
         });
@@ -228,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.push(ballKey);
             }
             sessionMgr.activeSession.ballCharacteristics = list;
+            sessionMgr.applyTacticalMatrixUpdate(true);
             updateUIForCurrentStage();
             window.tennisAudio?.playHit();
         });
@@ -558,7 +567,111 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => toast.remove(), 300);
         }, 3200);
     }
-    window.showToast = showToast;
+    // 3D Live Simulation & Video Player Controls
+    function bindSimulationControls() {
+        const simBtnPlay = document.getElementById('sim-btn-play');
+        const simPlayIcon = document.getElementById('sim-play-icon');
+        const simPlayLabel = document.getElementById('sim-play-label');
+        const simLiveBadge = document.getElementById('sim-live-badge');
+        const simBadgeText = document.getElementById('sim-badge-text');
+        const simBtnRestart = document.getElementById('sim-btn-restart');
+        const simScrubber = document.getElementById('sim-scrubber');
+        const simTimeDisplay = document.getElementById('sim-time-display');
+        const simSpeedButtons = document.querySelectorAll('.sim-speed-btn');
+        const simBtnTrackingCam = document.getElementById('sim-btn-tracking-cam');
+        const simBtnLoop = document.getElementById('sim-btn-loop');
+
+        const formatTime = (sec) => {
+            const m = Math.floor(sec / 60);
+            const s = (sec % 60).toFixed(1);
+            return `${m < 10 ? '0' : ''}${m}:${parseFloat(s) < 10 ? '0' : ''}${s}`;
+        };
+
+        if (simBtnPlay) {
+            simBtnPlay.addEventListener('click', () => {
+                court.toggleSimulation();
+            });
+        }
+
+        if (simBtnRestart) {
+            simBtnRestart.addEventListener('click', () => {
+                court.restartSimulation();
+            });
+        }
+
+        if (simScrubber) {
+            let isUserScrubbing = false;
+            simScrubber.addEventListener('mousedown', () => { isUserScrubbing = true; });
+            simScrubber.addEventListener('touchstart', () => { isUserScrubbing = true; });
+            
+            simScrubber.addEventListener('input', (e) => {
+                court.seekSimulation(parseFloat(e.target.value) / 100);
+            });
+
+            simScrubber.addEventListener('mouseup', () => { isUserScrubbing = false; });
+            simScrubber.addEventListener('touchend', () => { isUserScrubbing = false; });
+
+            court.onSimProgress = (time, duration, progress) => {
+                if (!isUserScrubbing) {
+                    simScrubber.value = (progress * 100).toFixed(1);
+                }
+                if (simTimeDisplay) {
+                    simTimeDisplay.textContent = `${formatTime(time)} / ${formatTime(duration)}`;
+                }
+            };
+        }
+
+        court.onSimStateChange = (isRunning) => {
+            if (simBtnPlay) {
+                simBtnPlay.classList.toggle('playing', isRunning);
+                if (simPlayLabel) simPlayLabel.textContent = isRunning ? 'Pause Simulation' : 'Play Live Scenario';
+                if (simPlayIcon) {
+                    simPlayIcon.innerHTML = isRunning
+                        ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+                        : '<polygon points="5 3 19 12 5 21 5 3"/>';
+                }
+            }
+            if (simLiveBadge) {
+                simLiveBadge.classList.toggle('paused', !isRunning);
+                if (simBadgeText) simBadgeText.textContent = isRunning ? 'LIVE 3D PLAY' : 'PAUSED';
+            }
+        };
+
+        simSpeedButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                simSpeedButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                court.setSimulationSpeed(btn.dataset.speed);
+                window.tennisAudio?.playClick();
+            });
+        });
+
+        if (simBtnTrackingCam) {
+            simBtnTrackingCam.addEventListener('click', () => {
+                const isActive = simBtnTrackingCam.classList.toggle('active');
+                court.setTrackingCam(isActive);
+                window.tennisAudio?.playClick();
+            });
+        }
+
+        if (simBtnLoop) {
+            simBtnLoop.addEventListener('click', () => {
+                const isLoop = simBtnLoop.classList.toggle('active');
+                court.setSimulationLoop(isLoop);
+                window.tennisAudio?.playClick();
+            });
+        }
+
+        // Spacebar shortcut to play/pause simulation
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                court.toggleSimulation();
+            }
+        });
+    }
+
+    bindSimulationControls();
 
     // Initial render
     updateUIForCurrentStage();
